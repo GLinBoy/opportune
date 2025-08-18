@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "1.9.25"
 	id("org.ec4j.editorconfig") version "0.1.0"
+	id("com.github.node-gradle.node") version "7.1.0"
 }
 
 group = "com.glinboy"
@@ -65,5 +66,48 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// Node.js configuration
+node {
+	version = "22.18.0"
+	download = true
+	workDir = file("${project.projectDir}/.gradle/nodejs")
+	npmWorkDir = file("${project.projectDir}/.gradle/npm")
+}
+
+// Frontend build tasks
+val installFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("installFrontend") {
+	description = "Install frontend dependencies"
+	args = listOf("install")
+}
+
+val buildFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("buildFrontend") {
+	description = "Build the frontend"
+	dependsOn(installFrontend)
+	args = listOf("run", "build")
+	inputs.dir("src/main/webapp")
+	outputs.dir("build/resources/main/static")
+}
+
+val cleanFrontend = tasks.register<Delete>("cleanFrontend") {
+	description = "Clean frontend build artifacts"
+	delete("build/resources/main/static")
+	delete("node_modules")
+}
+
+// Ensure frontend is built before processing resources
+tasks.processResources {
+	dependsOn(buildFrontend)
+}
+
+// Ensure frontend is built before bootJar
+tasks.bootJar {
+	dependsOn(buildFrontend)
+}
+
+// Clean frontend artifacts when cleaning
+tasks.clean {
+	dependsOn(cleanFrontend)
 }
 
