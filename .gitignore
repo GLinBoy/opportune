@@ -39,6 +39,8 @@ out/
 ### Kotlin ###
 .kotlin
 
+*:Zone.Identifier
+
 # Created by https://www.toptal.com/developers/gitignore/api/sbt,vim,java,emacs,linux,macos,maven,gradle,kotlin,eclipse,windows,intellij,netbeans,intellij+all,intellij+iml,visualstudiocode,vue,vuejs,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=sbt,vim,java,emacs,linux,macos,maven,gradle,kotlin,eclipse,windows,intellij,netbeans,intellij+all,intellij+iml,visualstudiocode,vue,vuejs,node
 
