@@ -1,7 +1,7 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": ["env.d.ts", "src/main/webapp/**/*", "src/main/webapp/**/*.vue"],
-  "exclude": ["src/**/__tests__/*", "src/main/webapp/app/**/*.spec.ts"],
+  "exclude": ["src/main/webapp/src/**/__tests__/*", "src/main/webapp/src/**/*.spec.ts"],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "composite": true,
