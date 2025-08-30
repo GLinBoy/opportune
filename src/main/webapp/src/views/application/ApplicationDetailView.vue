@@ -34,13 +34,40 @@
           </div>
         </div>
         <div class="d-flex align-center" style="gap: 12px">
-          <v-btn
-            color="success"
-            variant="flat"
-            icon="mdi-content-save"
-            :loading="saving"
-            @click="saveApplication"
-          />
+          <v-tooltip text="Upload resume for this application">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="info"
+                variant="outlined"
+                icon="mdi-file-upload"
+                @click="uploadResume"
+              />
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Show raw content from job posting">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="secondary"
+                variant="outlined"
+                icon="mdi-code-tags"
+                @click="showRawContent"
+              />
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Save changes">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="success"
+                variant="flat"
+                icon="mdi-content-save"
+                :loading="saving"
+                @click="saveApplication"
+              />
+            </template>
+          </v-tooltip>
         </div>
       </div>
 
@@ -134,7 +161,7 @@
           <v-icon icon="mdi-robot" class="mr-2" />
           AI Generated Content
         </v-card-title>
-        <v-tabs v-model="activeTab" color="primary">
+        <v-tabs v-model="activeTab" color="primary" grow>
           <v-tab value="job-description">Job Description</v-tab>
           <v-tab value="cover-letter">Cover Letter</v-tab>
           <v-tab value="resume-enhancer">Resume Enhancer</v-tab>
@@ -415,7 +442,7 @@ const newMetaData = ref<MetaData>({
 const metaDataHeaders = [
   { title: 'Key', value: 'key', width: '200px' },
   { title: 'Value', value: 'value', width: 'auto' },
-  { title: 'Actions', value: 'actions', width: '100px', sortable: false, align: 'center' },
+  { title: 'Actions', value: 'actions', width: '100px', sortable: false, align: 'center' as const },
 ]
 
 // AI Content
