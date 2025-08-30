@@ -1,14 +1,23 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/main/webapp/**/*", "src/main/webapp/**/*.vue"],
-  "exclude": ["src/main/webapp/src/**/__tests__/*", "src/main/webapp/src/**/*.spec.ts"],
+  "include": [
+    "env.d.ts",
+    "src/main/webapp/**/*",
+    "src/main/webapp/**/*.vue"
+  ],
+  "exclude": [
+    "src/main/webapp/src/**/__tests__/*",
+    "src/main/webapp/src/**/*.spec.ts"
+  ],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "composite": true,
     "baseUrl": "src/main/webapp/app",
     "outDir": "target/out-tsc/dist",
     "paths": {
-      "@/*": ["./src/main/webapp/src/*"]
+      "@/*": [
+        "./src/main/webapp/src/*"
+      ]
     }
   }
 }
