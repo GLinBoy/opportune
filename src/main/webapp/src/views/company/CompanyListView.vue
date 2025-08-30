@@ -37,7 +37,7 @@
         :loading="loading"
         item-value="id"
         class="elevation-1"
-        @click:row="(event, { item }) => goToCompanyDetail(event, { item })"
+        @click:row="handleRowClick"
       >
         <!-- Company Column with Logo -->
         <template #[`item.company`]="{ item }">
@@ -544,6 +544,10 @@ const updateCompanyStatus = async (companyId: number, newStatus: string) => {
 
 const goToCompanyDetail = (event: Event | null, { item }: { item: Company }) => {
   router.push(`/companies/${item.id}`)
+}
+
+const handleRowClick = (event: Event, { item }: { item: Company }) => {
+  goToCompanyDetail(event, { item })
 }
 
 const addNewCompany = () => {
