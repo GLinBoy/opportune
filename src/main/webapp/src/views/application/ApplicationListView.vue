@@ -42,7 +42,7 @@
         :loading="loading"
         item-value="id"
         class="elevation-1"
-        @click:row="(event, { item }) => goToApplicationDetail(event, { item })"
+        @click:row="handleRowClick"
       >
         <!-- Status Column with Editable Select -->
         <template #[`item.status`]="{ item }">
@@ -498,6 +498,10 @@ const updateApplicationStatus = async (applicationId: number, newStatus: string)
 
 const goToApplicationDetail = (event: Event | null, { item }: { item: Application }) => {
   router.push(`/applications/${item.id}`)
+}
+
+const handleRowClick = (event: Event, { item }: { item: Application }) => {
+  goToApplicationDetail(event, { item })
 }
 
 const addNewApplication = () => {
