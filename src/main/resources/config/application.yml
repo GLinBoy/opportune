@@ -3,3 +3,11 @@ spring:
     active: dev
   application:
     name: opportune
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  jpa:
+    open-in-view: false
+
+server:
+  shutdown: graceful
+
