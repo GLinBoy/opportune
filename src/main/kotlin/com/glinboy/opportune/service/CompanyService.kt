@@ -1,16 +1,9 @@
 package com.glinboy.opportune.service
 
-import com.glinboy.opportune.service.dto.CompanyDTO
+import com.glinboy.opportune.dto.CompanyDTO
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
-interface CompanyService {
-
-	fun createCompany(companyDTO: CompanyDTO): CompanyDTO
-
-	fun getCompany(id: Long): CompanyDTO
-
-	fun updateCompany(id: Long, companyDTO: CompanyDTO): CompanyDTO
-
-	fun deleteCompany(id: Long): Unit
+interface CompanyService: GenericService<CompanyDTO, UUID> {
 }

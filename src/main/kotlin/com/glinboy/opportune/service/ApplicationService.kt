@@ -1,14 +1,7 @@
 package com.glinboy.opportune.service
 
-import com.glinboy.opportune.service.dto.ApplicationDTO
+import com.glinboy.opportune.dto.ApplicationDTO
+import java.util.UUID
 
-interface ApplicationService {
-
-	fun createApplication(applicationDTO: ApplicationDTO): ApplicationDTO
-
-	fun getApplication(id: Long): ApplicationDTO
-
-	fun updateApplication(id: Long, applicationDTO: ApplicationDTO): ApplicationDTO
-
-	fun deleteApplication(id: Long): Unit
+interface ApplicationService: GenericService<ApplicationDTO, UUID> {
 }

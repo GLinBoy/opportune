@@ -1,37 +1,15 @@
 package com.glinboy.opportune.service.impl
 
 import com.glinboy.opportune.service.CompanyService
-import com.glinboy.opportune.service.dto.CompanyDTO
+import com.glinboy.opportune.dto.CompanyDTO
+import com.glinboy.opportune.entity.Company
+import com.glinboy.opportune.repository.CompanyRepository
+import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
-class CompanyServiceImpl : CompanyService {
-
-	override fun createCompany(companyDTO: CompanyDTO): CompanyDTO {
-		return CompanyDTO(
-			id = 1,
-			name = companyDTO.name,
-			address = companyDTO.address
-		)
-	}
-
-	override fun getCompany(id: Long): CompanyDTO {
-		return CompanyDTO(
-			id = id,
-			name = "Sample Company",
-			address = "123 Sample St"
-		)
-	}
-
-	override fun updateCompany(id: Long, companyDTO: CompanyDTO): CompanyDTO {
-		return CompanyDTO(
-			id = id,
-			name = companyDTO.name,
-			address = companyDTO.address
-		)
-	}
-
-	override fun deleteCompany(id: Long) {
-		// Implementation for deleting a company
-	}
+class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: ModelMapper)
+	: GenericServiceImpl<CompanyDTO, Company, UUID, CompanyRepository>(companyRepository,
+	mapper, CompanyDTO::class.java, Company::class.java), CompanyService {
 }

@@ -1,40 +1,15 @@
 package com.glinboy.opportune.service.impl
 
+import com.glinboy.opportune.dto.ApplicationDTO
+import com.glinboy.opportune.entity.Application
+import com.glinboy.opportune.repository.ApplicationRepository
 import com.glinboy.opportune.service.ApplicationService
-import com.glinboy.opportune.service.dto.ApplicationDTO
+import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
-class ApplicationServiceImpl : ApplicationService {
-
-	override fun createApplication(applicationDTO: ApplicationDTO): ApplicationDTO {
-		return ApplicationDTO(
-			id = 1,
-			jobId = applicationDTO.jobId,
-			applicantName = applicationDTO.applicantName,
-			applicantEmail = applicationDTO.applicantEmail
-		)
-	}
-
-	override fun getApplication(id: Long): ApplicationDTO {
-		return ApplicationDTO(
-			id = id,
-			jobId = 1,
-			applicantName = "John Doe",
-			applicantEmail = "john.doe@example.com"
-		)
-	}
-
-	override fun updateApplication(id: Long, applicationDTO: ApplicationDTO): ApplicationDTO {
-		return ApplicationDTO(
-			id = id,
-			jobId = applicationDTO.jobId,
-			applicantName = applicationDTO.applicantName,
-			applicantEmail = applicationDTO.applicantEmail
-		)
-	}
-
-	override fun deleteApplication(id: Long) {
-		// Implementation for deleting an application
-	}
+class ApplicationServiceImpl( applicationRepository: ApplicationRepository, mapper: ModelMapper)
+	: GenericServiceImpl<ApplicationDTO, Application, UUID, ApplicationRepository>(applicationRepository,
+	mapper, ApplicationDTO::class.java, Application::class.java), ApplicationService {
 }
