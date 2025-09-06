@@ -25,7 +25,7 @@ spring:
       ddl-auto: none
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration,classpath:db/migration/h2
     baseline-on-migrate: true
     baseline-version: 0
     out-of-order: true
