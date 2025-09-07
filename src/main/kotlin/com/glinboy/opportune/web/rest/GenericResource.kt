@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 
-abstract class GenericResource<T: Any, ID, S: GenericService<T, ID>>(
+abstract class GenericResource<D: Any, ID, S: GenericService<D, ID>>(
 	protected val service: S
 ) {
 
@@ -30,8 +30,8 @@ abstract class GenericResource<T: Any, ID, S: GenericService<T, ID>>(
 	fun getAll(
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
-	): ResponseEntity<List<T>> {
-		val page: Page<T> = service.findAll(pageable)
+	): ResponseEntity<List<D>> {
+		val page: Page<D> = service.findAll(pageable)
 		val headers: HttpHeaders =
 			PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
@@ -39,16 +39,16 @@ abstract class GenericResource<T: Any, ID, S: GenericService<T, ID>>(
 	}
 
 	@GetMapping("/{id}")
-	fun getById(@PathVariable id: ID): ResponseEntity<T> {
+	fun getById(@PathVariable id: ID): ResponseEntity<D> {
 		val entity = service.getById(id)
 		return ResponseEntity.ok().body(entity)
 	}
 
 //	@PostMapping
 //	fun save(
-//		@Valid @RequestBody entity: T,
+//		@Valid @RequestBody entity: D,
 //		request: HttpServletRequest
-//	): ResponseEntity<T> {
+//	): ResponseEntity<D> {
 //		val savedEntity = service.save(entity)
 //		val location = URI.create("${request.requestURI}/${savedEntity.id}")
 //		return ResponseEntity.created(location)
@@ -57,7 +57,7 @@ abstract class GenericResource<T: Any, ID, S: GenericService<T, ID>>(
 //	}
 
 //	@PutMapping
-//	fun update(@Valid @RequestBody entity: T): ResponseEntity<T> {
+//	fun update(@Valid @RequestBody entity: D): ResponseEntity<D> {
 //		if (entity.id == null) {
 //			throw ResponseStatusException(
 //				HttpStatus.BAD_REQUEST, "ID must not be null"
