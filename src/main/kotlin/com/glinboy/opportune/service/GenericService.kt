@@ -4,18 +4,18 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-interface GenericService<T, ID> {
-	fun save(t: T): T
+interface GenericService<D, ID> {
+	fun save(t: D): D
 
-	fun saveAll(entities: List<T>): List<T>
+	fun saveAll(entities: List<D>): List<D>
 
-	fun findById(id: ID): Optional<T>
+	fun findById(id: ID): Optional<D>
 
-	fun getById(id: ID): T
+	fun getById(id: ID): D
 
-	fun findAll(pageable: Pageable): Page<T>
+	fun findAll(pageable: Pageable): Page<D>
 
-	fun update(t: T): T
+	fun update(t: D): D
 
 	fun delete(id: ID): Unit
 
