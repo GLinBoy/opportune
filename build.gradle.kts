@@ -43,7 +43,6 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.12")
-	implementation("org.modelmapper:modelmapper:3.2.4")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
@@ -112,4 +111,3 @@ tasks.bootJar {
 tasks.clean {
 	dependsOn(cleanFrontend)
 }
-
