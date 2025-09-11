@@ -1,7 +1,7 @@
 package com.glinboy.opportune.service
 
 import com.glinboy.opportune.dto.ApplicationDTO
-import java.util.UUID
+import java.util.*
 
-interface ApplicationService: GenericService<ApplicationDTO, UUID> {
+interface ApplicationService: GenericService<UUID, ApplicationDTO> {
 }
