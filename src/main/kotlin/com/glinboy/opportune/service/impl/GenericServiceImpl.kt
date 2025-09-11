@@ -1,26 +1,32 @@
 package com.glinboy.opportune.service.impl
 
+import com.glinboy.opportune.dto.BaseDTO
+import com.glinboy.opportune.entity.BaseEntity
 import com.glinboy.opportune.mapper.GenericMapper
 import com.glinboy.opportune.service.GenericService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
-abstract class GenericServiceImpl<D : Any, E : Any, ID : Any,
+abstract class GenericServiceImpl<ID : Any, D : BaseDTO, E : BaseEntity,
 	S : JpaRepository<E, ID>, M : GenericMapper<D, E>>(
 	protected val repository: S,
 	protected val mapper: M,
-) : GenericService<D, ID> {
+) : GenericService<ID, D> {
+
+	private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
 	override fun save(t: D): D {
-		val entity: E = mapper.toEntity(t)
+		val entity: E = mapper.createEntity(t)
 		val savedEntity: E = repository.save(entity)
 		return mapper.toDto(savedEntity)
 	}
 
 	override fun saveAll(entities: List<D>): List<D> {
-		val entityList: List<E> = entities.map { mapper.toEntity(it) }
+		val entityList: List<E> = entities.map { mapper.createEntity(it) }
 		val savedEntities: List<E> = repository.saveAll(entityList)
 		return savedEntities.map { mapper.toDto(it) }
 	}
@@ -41,9 +47,11 @@ abstract class GenericServiceImpl<D : Any, E : Any, ID : Any,
 	}
 
 	override fun update(t: D): D {
-		val entity: E = mapper.toEntity(t)
-		val updatedEntity: E = repository.save(entity)
-		return mapper.toDto(updatedEntity)
+		return this.repository.findById(t.id as ID)
+			.map { mapper.updateEntity(t, it) }
+			.map { repository.save(it) }
+			.map { mapper.toDto(it) }
+			.orElseThrow { NoSuchElementException("Entity with id ${t.id} not found") }
 	}
 
 	override fun delete(id: ID) {
