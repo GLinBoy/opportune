@@ -8,6 +8,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/applications")
-class ApplicationResource(applicationService: ApplicationService):
+class ApplicationResource(applicationService: ApplicationService) :
 	GenericResource<UUID, ApplicationDTO, ApplicationService>(applicationService) {
 }

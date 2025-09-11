@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ApplicationTimelineServiceImpl(applicationTimelineRepository: ApplicationTimelineRepository, mapper: ApplicationTimelineMapper)
-    : GenericServiceImpl<UUID, ApplicationTimelineDTO, ApplicationTimeline, ApplicationTimelineRepository,
-    ApplicationTimelineMapper>(applicationTimelineRepository, mapper), ApplicationTimelineService {
+class ApplicationTimelineServiceImpl(
+	applicationTimelineRepository: ApplicationTimelineRepository,
+	mapper: ApplicationTimelineMapper
+) : GenericServiceImpl<UUID, ApplicationTimelineDTO, ApplicationTimeline, ApplicationTimelineRepository,
+	ApplicationTimelineMapper>(applicationTimelineRepository, mapper), ApplicationTimelineService {
 }
 

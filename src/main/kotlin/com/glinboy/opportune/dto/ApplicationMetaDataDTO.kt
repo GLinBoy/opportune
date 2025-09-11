@@ -11,4 +11,4 @@ class ApplicationMetaDataDTO(
 	override val metaName: String? = null,
 	override val metaValue: String? = null,
 	val applicationId: UUID? = null
-): MetaDataDTO()
+) : MetaDataDTO()

@@ -13,5 +13,5 @@ class CompanyMetaData(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "company_id", insertable = false, updatable = false)
 	val company: Company? = null
-): MetaData(id, metaName, metaValue)
+) : MetaData(id, metaName, metaValue)
 

@@ -21,4 +21,4 @@ abstract class Attachment(
 
 	@Column(name = "content_length")
 	val contentLength: Long? = null
-): BaseEntity()
+) : BaseEntity()

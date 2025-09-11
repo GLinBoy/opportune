@@ -72,4 +72,4 @@ data class Application(
 
 	@OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 	val attachments: Set<ApplicationAttachment> = emptySet()
-): BaseEntity()
+) : BaseEntity()

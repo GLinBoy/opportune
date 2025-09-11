@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-interface GenericService<ID, D: BaseDTO> {
+interface GenericService<ID, D : BaseDTO> {
 	fun save(t: D): D
 
 	fun saveAll(entities: List<D>): List<D>

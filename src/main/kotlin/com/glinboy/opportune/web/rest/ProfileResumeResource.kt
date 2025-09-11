@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/profile-resumes")
-class ProfileResumeResource(profileResumeService: ProfileResumeService):
-    GenericResource<UUID, ProfileResumeDTO, ProfileResumeService>(profileResumeService) {
+class ProfileResumeResource(profileResumeService: ProfileResumeService) :
+	GenericResource<UUID, ProfileResumeDTO, ProfileResumeService>(profileResumeService) {
 }
 

@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/application-timelines")
-class ApplicationTimelineResource(applicationTimelineService: ApplicationTimelineService):
-    GenericResource<UUID, ApplicationTimelineDTO, ApplicationTimelineService>(applicationTimelineService) {
+class ApplicationTimelineResource(applicationTimelineService: ApplicationTimelineService) :
+	GenericResource<UUID, ApplicationTimelineDTO, ApplicationTimelineService>(applicationTimelineService) {
 }
 

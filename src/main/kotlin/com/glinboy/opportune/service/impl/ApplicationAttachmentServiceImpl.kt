@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ApplicationAttachmentServiceImpl(applicationAttachmentRepository: ApplicationAttachmentRepository, mapper: ApplicationAttachmentMapper)
-    : GenericServiceImpl<UUID, ApplicationAttachmentDTO, ApplicationAttachment, ApplicationAttachmentRepository,
-    ApplicationAttachmentMapper>(applicationAttachmentRepository, mapper), ApplicationAttachmentService {
+class ApplicationAttachmentServiceImpl(
+	applicationAttachmentRepository: ApplicationAttachmentRepository,
+	mapper: ApplicationAttachmentMapper
+) : GenericServiceImpl<UUID, ApplicationAttachmentDTO, ApplicationAttachment, ApplicationAttachmentRepository,
+	ApplicationAttachmentMapper>(applicationAttachmentRepository, mapper), ApplicationAttachmentService {
 }
 

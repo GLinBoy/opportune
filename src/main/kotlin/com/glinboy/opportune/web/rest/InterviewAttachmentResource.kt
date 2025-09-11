@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/interview-attachments")
-class InterviewAttachmentResource(interviewAttachmentService: InterviewAttachmentService):
-    GenericResource<UUID, InterviewAttachmentDTO, InterviewAttachmentService>(interviewAttachmentService) {
+class InterviewAttachmentResource(interviewAttachmentService: InterviewAttachmentService) :
+	GenericResource<UUID, InterviewAttachmentDTO, InterviewAttachmentService>(interviewAttachmentService) {
 }
 

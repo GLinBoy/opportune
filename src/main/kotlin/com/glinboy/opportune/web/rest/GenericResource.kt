@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 
-abstract class GenericResource<ID, D: BaseDTO, S: GenericService<ID, D>>(
+abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	protected val service: S
 ) {
 

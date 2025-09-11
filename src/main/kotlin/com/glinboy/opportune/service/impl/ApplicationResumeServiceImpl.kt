@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ApplicationResumeServiceImpl(applicationResumeRepository: ApplicationResumeRepository, mapper: ApplicationResumeMapper)
-    : GenericServiceImpl<UUID, ApplicationResumeDTO, ApplicationResume, ApplicationResumeRepository,
-    ApplicationResumeMapper>(applicationResumeRepository, mapper), ApplicationResumeService {
+class ApplicationResumeServiceImpl(
+	applicationResumeRepository: ApplicationResumeRepository,
+	mapper: ApplicationResumeMapper
+) : GenericServiceImpl<UUID, ApplicationResumeDTO, ApplicationResume, ApplicationResumeRepository,
+	ApplicationResumeMapper>(applicationResumeRepository, mapper), ApplicationResumeService {
 }
 

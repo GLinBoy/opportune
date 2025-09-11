@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ProfileResumeServiceImpl(profileResumeRepository: ProfileResumeRepository, mapper: ProfileResumeMapper)
-    : GenericServiceImpl<UUID, ProfileResumeDTO, ProfileResume, ProfileResumeRepository,
-    ProfileResumeMapper>(profileResumeRepository, mapper), ProfileResumeService {
+class ProfileResumeServiceImpl(profileResumeRepository: ProfileResumeRepository, mapper: ProfileResumeMapper) :
+	GenericServiceImpl<UUID, ProfileResumeDTO, ProfileResume, ProfileResumeRepository,
+		ProfileResumeMapper>(profileResumeRepository, mapper), ProfileResumeService {
 }
 

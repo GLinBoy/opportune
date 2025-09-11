@@ -11,4 +11,4 @@ data class CompanyMetaDataDTO(
 	override val metaName: String? = null,
 	override val metaValue: String? = null,
 	val companyId: UUID? = null
-): MetaDataDTO()
+) : MetaDataDTO()

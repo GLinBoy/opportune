@@ -15,4 +15,4 @@ class ApplicationAttachment(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null,
-): Attachment(id, name, path, contentType, contentLength)
+) : Attachment(id, name, path, contentType, contentLength)

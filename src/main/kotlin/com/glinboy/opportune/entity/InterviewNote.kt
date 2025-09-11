@@ -24,5 +24,5 @@ data class InterviewNote(
 
 	@OneToMany(mappedBy = "interviewNote", cascade = [CascadeType.ALL], orphanRemoval = true)
 	val attachments: List<InterviewAttachment> = emptyList()
-): BaseEntity()
+) : BaseEntity()
 

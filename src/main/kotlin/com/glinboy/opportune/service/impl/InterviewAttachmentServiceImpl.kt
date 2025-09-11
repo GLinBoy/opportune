@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class InterviewAttachmentServiceImpl(interviewAttachmentRepository: InterviewAttachmentRepository, mapper: InterviewAttachmentMapper)
-    : GenericServiceImpl<UUID, InterviewAttachmentDTO, InterviewAttachment, InterviewAttachmentRepository,
-    InterviewAttachmentMapper>(interviewAttachmentRepository, mapper), InterviewAttachmentService {
+class InterviewAttachmentServiceImpl(
+	interviewAttachmentRepository: InterviewAttachmentRepository,
+	mapper: InterviewAttachmentMapper
+) : GenericServiceImpl<UUID, InterviewAttachmentDTO, InterviewAttachment, InterviewAttachmentRepository,
+	InterviewAttachmentMapper>(interviewAttachmentRepository, mapper), InterviewAttachmentService {
 }
 

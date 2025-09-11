@@ -49,4 +49,4 @@ data class Company(
 
 	@OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val metaData: Set<CompanyMetaData> = emptySet()
-): BaseEntity()
+) : BaseEntity()

@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/interview-notes")
-class InterviewNoteResource(interviewNoteService: InterviewNoteService):
-    GenericResource<UUID, InterviewNoteDTO, InterviewNoteService>(interviewNoteService) {
+class InterviewNoteResource(interviewNoteService: InterviewNoteService) :
+	GenericResource<UUID, InterviewNoteDTO, InterviewNoteService>(interviewNoteService) {
 }
 

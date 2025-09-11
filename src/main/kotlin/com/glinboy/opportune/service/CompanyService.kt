@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-interface CompanyService: GenericService<UUID, CompanyDTO> {
+interface CompanyService : GenericService<UUID, CompanyDTO> {
 }

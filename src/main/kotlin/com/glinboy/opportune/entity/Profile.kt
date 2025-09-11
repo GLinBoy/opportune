@@ -51,4 +51,4 @@ data class Profile(
 
 	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val applications: Set<Application> = emptySet()
-): BaseEntity()
+) : BaseEntity()

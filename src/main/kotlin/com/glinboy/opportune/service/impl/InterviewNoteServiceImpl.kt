@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class InterviewNoteServiceImpl(interviewNoteRepository: InterviewNoteRepository, mapper: InterviewNoteMapper)
-    : GenericServiceImpl<UUID, InterviewNoteDTO, InterviewNote, InterviewNoteRepository,
-    InterviewNoteMapper>(interviewNoteRepository, mapper), InterviewNoteService {
+class InterviewNoteServiceImpl(interviewNoteRepository: InterviewNoteRepository, mapper: InterviewNoteMapper) :
+	GenericServiceImpl<UUID, InterviewNoteDTO, InterviewNote, InterviewNoteRepository,
+		InterviewNoteMapper>(interviewNoteRepository, mapper), InterviewNoteService {
 }
 

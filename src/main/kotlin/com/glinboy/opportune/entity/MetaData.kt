@@ -16,4 +16,4 @@ abstract class MetaData(
 	@Lob
 	@Column(name = "meta_value")
 	val metaValue: String? = null
-): BaseEntity()
+) : BaseEntity()

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ApplicationServiceImpl(applicationRepository: ApplicationRepository, mapper: ApplicationMapper)
-	: GenericServiceImpl<UUID, ApplicationDTO, Application, ApplicationRepository,
-	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
+class ApplicationServiceImpl(applicationRepository: ApplicationRepository, mapper: ApplicationMapper) :
+	GenericServiceImpl<UUID, ApplicationDTO, Application, ApplicationRepository,
+		ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 }

@@ -13,6 +13,6 @@ class ApplicationMetaData(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null,
-): MetaData(id, metaName, metaValue)
+) : MetaData(id, metaName, metaValue)
 
 

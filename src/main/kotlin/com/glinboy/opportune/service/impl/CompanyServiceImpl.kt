@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMapper)
-	: GenericServiceImpl<UUID, CompanyDTO, Company, CompanyRepository, CompanyMapper>(companyRepository, mapper),
+class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMapper) :
+	GenericServiceImpl<UUID, CompanyDTO, Company, CompanyRepository, CompanyMapper>(companyRepository, mapper),
 	CompanyService {
 }

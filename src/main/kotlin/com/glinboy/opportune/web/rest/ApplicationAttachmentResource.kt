@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/application-attachments")
-class ApplicationAttachmentResource(applicationAttachmentService: ApplicationAttachmentService):
-    GenericResource<UUID, ApplicationAttachmentDTO, ApplicationAttachmentService>(applicationAttachmentService) {
+class ApplicationAttachmentResource(applicationAttachmentService: ApplicationAttachmentService) :
+	GenericResource<UUID, ApplicationAttachmentDTO, ApplicationAttachmentService>(applicationAttachmentService) {
 }
 

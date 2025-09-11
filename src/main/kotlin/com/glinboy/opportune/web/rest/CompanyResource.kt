@@ -8,6 +8,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/companies")
-class CompanyResource(companyService: CompanyService):
-	GenericResource<UUID, CompanyDTO, CompanyService>(companyService){
+class CompanyResource(companyService: CompanyService) :
+	GenericResource<UUID, CompanyDTO, CompanyService>(companyService) {
 }

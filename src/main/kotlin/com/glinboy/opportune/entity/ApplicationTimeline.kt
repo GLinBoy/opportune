@@ -29,4 +29,4 @@ data class ApplicationTimeline(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null
-): BaseEntity()
+) : BaseEntity()
