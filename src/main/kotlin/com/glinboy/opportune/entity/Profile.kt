@@ -8,8 +8,9 @@ import java.util.*
 @Entity
 @Table(name = "profile")
 data class Profile(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	@GeneratedValue(strategy = GenerationType.UUID)
+	override val id: UUID? = null,
 
 	@Column(name = "email")
 	val email: String? = null,
@@ -50,4 +51,4 @@ data class Profile(
 
 	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val applications: Set<Application> = emptySet()
-)
+): BaseEntity()

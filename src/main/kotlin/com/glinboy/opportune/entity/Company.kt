@@ -7,8 +7,9 @@ import java.util.*
 @Entity
 @Table(name = "company")
 data class Company(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	@GeneratedValue(strategy = GenerationType.UUID)
+	override val id: UUID? = null,
 
 	@Column(name = "name")
 	val name: String? = null,
@@ -48,4 +49,4 @@ data class Company(
 
 	@OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val metaData: Set<CompanyMetaData> = emptySet()
-)
+): BaseEntity()

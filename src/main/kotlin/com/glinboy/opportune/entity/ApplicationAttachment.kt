@@ -6,13 +6,13 @@ import java.util.*
 @Entity
 @Table(name = "application_attachment")
 class ApplicationAttachment(
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_id")
-	val application: Application? = null,
-
-	id: UUID = UUID.randomUUID(),
+	id: UUID? = null,
 	name: String? = null,
 	path: String? = null,
 	contentType: String? = null,
-	contentLength: Long? = null
-) : Attachment(id, name, path, contentType, contentLength)
+	contentLength: Long? = null,
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "application_id")
+	val application: Application? = null,
+): Attachment(id, name, path, contentType, contentLength)

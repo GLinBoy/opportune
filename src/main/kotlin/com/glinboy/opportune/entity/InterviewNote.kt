@@ -7,8 +7,9 @@ import java.util.*
 @Entity
 @Table(name = "interview_note")
 data class InterviewNote(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	@GeneratedValue(strategy = GenerationType.UUID)
+	override val id: UUID? = null,
 
 	@Column(name = "date")
 	val date: Instant? = null,
@@ -23,5 +24,5 @@ data class InterviewNote(
 
 	@OneToMany(mappedBy = "interviewNote", cascade = [CascadeType.ALL], orphanRemoval = true)
 	val attachments: List<InterviewAttachment> = emptyList()
-)
+): BaseEntity()
 

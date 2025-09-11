@@ -8,8 +8,8 @@ import java.util.*
 @Entity
 @Table(name = "application")
 data class Application(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	override val id: UUID? = null,
 
 	@Column(name = "url")
 	val url: String? = null,
@@ -72,4 +72,4 @@ data class Application(
 
 	@OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 	val attachments: Set<ApplicationAttachment> = emptySet()
-)
+): BaseEntity()

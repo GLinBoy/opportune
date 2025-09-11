@@ -7,8 +7,8 @@ import java.util.*
 @Table(name = "attachment")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class Attachment(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	override val id: UUID? = null,
 
 	@Column(name = "name")
 	val name: String? = null,
@@ -21,4 +21,4 @@ abstract class Attachment(
 
 	@Column(name = "content_length")
 	val contentLength: Long? = null
-)
+): BaseEntity()

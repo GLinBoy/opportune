@@ -8,8 +8,9 @@ import java.util.*
 @Entity
 @Table(name = "application_timeline")
 data class ApplicationTimeline(
-	@Id
-	val id: UUID = UUID.randomUUID(),
+
+	@GeneratedValue(strategy = GenerationType.UUID)
+	override val id: UUID? = null,
 
 	@Column(name = "title")
 	val title: String? = null,
@@ -28,4 +29,4 @@ data class ApplicationTimeline(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null
-)
+): BaseEntity()
