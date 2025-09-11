@@ -5,7 +5,7 @@ import java.time.Instant
 import java.util.*
 
 data class ApplicationDTO(
-    val id: UUID? = null,
+    override val id: UUID? = null,
     val url: String? = null,
     val title: String? = null,
     val location: String? = null,
@@ -20,4 +20,4 @@ data class ApplicationDTO(
     val companyId: UUID? = null,
     val profileId: UUID? = null,
     val resumeId: UUID? = null
-)
+): BaseDTO()
