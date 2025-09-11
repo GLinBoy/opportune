@@ -1,5 +1,6 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.dto.BaseDTO
 import com.glinboy.opportune.service.GenericService
 import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
@@ -12,16 +13,11 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 
-abstract class GenericResource<D: Any, ID, S: GenericService<D, ID>>(
+abstract class GenericResource<ID, D: BaseDTO, S: GenericService<ID, D>>(
 	protected val service: S
 ) {
 
@@ -44,28 +40,28 @@ abstract class GenericResource<D: Any, ID, S: GenericService<D, ID>>(
 		return ResponseEntity.ok().body(entity)
 	}
 
-//	@PostMapping
-//	fun save(
-//		@Valid @RequestBody entity: D,
-//		request: HttpServletRequest
-//	): ResponseEntity<D> {
-//		val savedEntity = service.save(entity)
-//		val location = URI.create("${request.requestURI}/${savedEntity.id}")
-//		return ResponseEntity.created(location)
-//			.contentType(MediaType.APPLICATION_JSON)
-//			.body(savedEntity)
-//	}
+	@PostMapping
+	fun save(
+		@Valid @RequestBody entity: D,
+		request: HttpServletRequest
+	): ResponseEntity<D> {
+		val savedEntity = service.save(entity)
+		val location = URI.create("${request.requestURI}/${savedEntity.id}")
+		return ResponseEntity.created(location)
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(savedEntity)
+	}
 
-//	@PutMapping
-//	fun update(@Valid @RequestBody entity: D): ResponseEntity<D> {
-//		if (entity.id == null) {
-//			throw ResponseStatusException(
-//				HttpStatus.BAD_REQUEST, "ID must not be null"
-//			)
-//		}
-//		val updatedEntity = service.update(entity)
-//		return ResponseEntity.ok().body(updatedEntity)
-//	}
+	@PutMapping
+	fun update(@Valid @RequestBody entity: D): ResponseEntity<D> {
+		if (entity.id == null) {
+			throw ResponseStatusException(
+				HttpStatus.BAD_REQUEST, "ID must not be null"
+			)
+		}
+		val updatedEntity = service.update(entity)
+		return ResponseEntity.ok().body(updatedEntity)
+	}
 
 	@DeleteMapping("/{id}")
 	fun deleteById(@PathVariable id: ID): ResponseEntity<Void> {
