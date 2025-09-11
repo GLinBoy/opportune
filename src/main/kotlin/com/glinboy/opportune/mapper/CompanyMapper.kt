@@ -6,36 +6,54 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class CompanyMapper: GenericMapper<CompanyDTO, Company> {
-    override fun toEntity(dto: CompanyDTO): Company {
-        return Company(
-            id = dto.id ?: UUID.randomUUID(),
-            name = dto.name,
-            industry = dto.industry,
-            website = dto.website,
-            companySize = dto.companySize,
-            location = dto.location,
-            foundedYear = dto.foundedYear,
-            description = dto.description,
-            note = dto.note,
-            logo = dto.logo,
-            status = dto.status
-        )
-    }
+class CompanyMapper : GenericMapper<CompanyDTO, Company> {
+	override fun createEntity(dto: CompanyDTO): Company {
+		return Company(
+			id = UUID.randomUUID(),
+			name = dto.name,
+			industry = dto.industry,
+			website = dto.website,
+			companySize = dto.companySize,
+			location = dto.location,
+			foundedYear = dto.foundedYear,
+			description = dto.description,
+			note = dto.note,
+			logo = dto.logo,
+			status = dto.status
+		)
+	}
 
-    override fun toDto(entity: Company): CompanyDTO {
-        return CompanyDTO(
-            id = entity.id,
-            name = entity.name,
-            industry = entity.industry,
-            website = entity.website,
-            companySize = entity.companySize,
-            location = entity.location,
-            foundedYear = entity.foundedYear,
-            description = entity.description,
-            note = entity.note,
-            logo = entity.logo,
-            status = entity.status
-        )
-    }
+	override fun updateEntity(dto: CompanyDTO, entity: Company): Company {
+		return entity.copy(
+			id = dto.id ?: entity.id,
+			name = dto.name,
+			industry = dto.industry,
+			website = dto.website,
+			companySize = dto.companySize,
+			location = dto.location,
+			foundedYear = dto.foundedYear,
+			description = dto.description,
+			note = dto.note,
+			logo = dto.logo,
+			status = dto.status,
+			applications = entity.applications,
+			metaData = entity.metaData
+		)
+	}
+
+	override fun toDto(entity: Company): CompanyDTO {
+		return CompanyDTO(
+			id = entity.id,
+			name = entity.name,
+			industry = entity.industry,
+			website = entity.website,
+			companySize = entity.companySize,
+			location = entity.location,
+			foundedYear = entity.foundedYear,
+			description = entity.description,
+			note = entity.note,
+			logo = entity.logo,
+			status = entity.status
+		)
+	}
 }
