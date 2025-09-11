@@ -1,10 +1,11 @@
 package com.glinboy.opportune.service
 
+import com.glinboy.opportune.dto.BaseDTO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-interface GenericService<D, ID> {
+interface GenericService<ID, D: BaseDTO> {
 	fun save(t: D): D
 
 	fun saveAll(entities: List<D>): List<D>
