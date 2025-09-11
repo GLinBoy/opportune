@@ -117,19 +117,19 @@ CREATE TABLE interview_attachment (
 
 -- Create CompanyMetaData table with composite primary key
 CREATE TABLE company_meta_data (
+    id UUID NOT NULL PRIMARY KEY,
     company_id UUID NOT NULL,
     meta_name VARCHAR(255) NOT NULL,
     meta_value TEXT,
-    PRIMARY KEY (company_id, meta_name),
     CONSTRAINT fk_company_meta_data_company FOREIGN KEY (company_id) REFERENCES company(id)
 );
 
 -- Create ApplicationMetaData table with composite primary key
 CREATE TABLE application_meta_data (
+    id UUID NOT NULL PRIMARY KEY,
     application_id UUID NOT NULL,
     meta_name VARCHAR(255) NOT NULL,
     meta_value TEXT,
-    PRIMARY KEY (application_id, meta_name),
     CONSTRAINT fk_application_meta_data_application FOREIGN KEY (application_id) REFERENCES application(id)
 );
 

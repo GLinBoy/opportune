@@ -16,19 +16,19 @@ INSERT INTO company (id, name, industry, website, company_size, location, founde
 ('660e8400-e29b-41d4-a716-446655440005', 'MegaCorp Enterprise', 'Enterprise Software', 'https://megacorp.com', '1000+', 'Chicago, IL', '1995', 'Large enterprise software company with global presence.', 'Stable but slow-moving corporate environment', null, 'BLOCKED');
 
 -- Insert fake company meta data
-INSERT INTO company_meta_data (company_id, meta_name, meta_value) VALUES
-('660e8400-e29b-41d4-a716-446655440001', 'core_technologies', 'Java, Spring Boot, Kubernetes'),
-('660e8400-e29b-41d4-a716-446655440001', 'remote_policy', 'Hybrid (3 days remote/week)'),
-('660e8400-e29b-41d4-a716-446655440001', 'linkedin', 'https://linkedin.com/company/techcorp-solutions'),
-('660e8400-e29b-41d4-a716-446655440002', 'core_technologies', 'Python, Spark, TensorFlow'),
-('660e8400-e29b-41d4-a716-446655440002', 'funding_stage', 'Series B'),
-('660e8400-e29b-41d4-a716-446655440002', 'remote_policy', 'Remote-first'),
-('660e8400-e29b-41d4-a716-446655440003', 'cloud_providers', 'AWS, GCP'),
-('660e8400-e29b-41d4-a716-446655440003', 'certifications', 'AWS Advanced Consulting Partner'),
-('660e8400-e29b-41d4-a716-446655440004', 'recent_awards', 'Best Startup 2023'),
-('660e8400-e29b-41d4-a716-446655440004', 'core_technologies', 'Rust, ML Ops'),
-('660e8400-e29b-41d4-a716-446655440005', 'global_offices', 'Chicago; London; Bangalore'),
-('660e8400-e29b-41d4-a716-446655440005', 'enterprise_customers', 'BankCorp; InsureCo');
+INSERT INTO company_meta_data (id, company_id, meta_name, meta_value) VALUES
+('d70e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', 'core_technologies', 'Java, Spring Boot, Kubernetes'),
+('d70e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440001', 'remote_policy', 'Hybrid (3 days remote/week)'),
+('d70e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440001', 'linkedin', 'https://linkedin.com/company/techcorp-solutions'),
+('d70e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440002', 'core_technologies', 'Python, Spark, TensorFlow'),
+('d70e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440002', 'funding_stage', 'Series B'),
+('d70e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440002', 'remote_policy', 'Remote-first'),
+('d70e8400-e29b-41d4-a716-446655440007', '660e8400-e29b-41d4-a716-446655440003', 'cloud_providers', 'AWS, GCP'),
+('d70e8400-e29b-41d4-a716-446655440008', '660e8400-e29b-41d4-a716-446655440003', 'certifications', 'AWS Advanced Consulting Partner'),
+('d70e8400-e29b-41d4-a716-446655440009', '660e8400-e29b-41d4-a716-446655440004', 'recent_awards', 'Best Startup 2023'),
+('d70e8400-e29b-41d4-a716-44665544000a', '660e8400-e29b-41d4-a716-446655440004', 'core_technologies', 'Rust, ML Ops'),
+('d70e8400-e29b-41d4-a716-44665544000b', '660e8400-e29b-41d4-a716-446655440005', 'global_offices', 'Chicago; London; Bangalore'),
+('d70e8400-e29b-41d4-a716-44665544000c', '660e8400-e29b-41d4-a716-446655440005', 'enterprise_customers', 'BankCorp; InsureCo');
 
 -- Insert fake applications
 INSERT INTO application (id, url, title, location, applied_at, salary, note, raw_content, description, cover_letter, resume_insights, status, company_id, profile_id) VALUES
@@ -40,19 +40,19 @@ INSERT INTO application (id, url, title, location, applied_at, salary, note, raw
 ('770e8400-e29b-41d4-a716-446655440006', 'https://megacorp.com/careers/architect', 'Software Architect', 'Chicago, IL', '2024-07-30 16:20:00', '$160,000 - $200,000', 'Enterprise architecture role', 'Software Architect position...', 'Senior architect role for enterprise solutions', 'My architectural experience with enterprise systems...', 'Strong enterprise architecture background', 'DECLINED', '660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440001');
 
 -- Insert fake application meta data
-INSERT INTO application_meta_data (application_id, meta_name, meta_value) VALUES
-('770e8400-e29b-41d4-a716-446655440001', 'recruiter', 'Alice Reynolds'),
-('770e8400-e29b-41d4-a716-446655440001', 'referral', 'Employee Referral: Jane Smith'),
-('770e8400-e29b-41d4-a716-446655440002', 'tech_stack', 'React, TypeScript'),
-('770e8400-e29b-41d4-a716-446655440002', 'hiring_manager', 'Carlos Diaz'),
-('770e8400-e29b-41d4-a716-446655440003', 'interview_location', 'Remote'),
-('770e8400-e29b-41d4-a716-446655440003', 'required_certifications', 'AWS Certified Solutions Architect'),
-('770e8400-e29b-41d4-a716-446655440004', 'product_area', 'AI tooling'),
-('770e8400-e29b-41d4-a716-446655440004', 'team_size', '5-10'),
-('770e8400-e29b-41d4-a716-446655440005', 'level', 'Junior-Mid'),
-('770e8400-e29b-41d4-a716-446655440005', 'application_source', 'Company Careers Page'),
-('770e8400-e29b-41d4-a716-446655440006', 'sponsorship', 'No'),
-('770e8400-e29b-41d4-a716-446655440006', 'remote_possible', 'Yes');
+INSERT INTO application_meta_data (id, application_id, meta_name, meta_value) VALUES
+('a70e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440001', 'recruiter', 'Alice Reynolds'),
+('a70e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440001', 'referral', 'Employee Referral: Jane Smith'),
+('a70e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440002', 'tech_stack', 'React, TypeScript'),
+('a70e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440002', 'hiring_manager', 'Carlos Diaz'),
+('a70e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440003', 'interview_location', 'Remote'),
+('a70e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440003', 'required_certifications', 'AWS Certified Solutions Architect'),
+('a70e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440004', 'product_area', 'AI tooling'),
+('a70e8400-e29b-41d4-a716-446655440008', '770e8400-e29b-41d4-a716-446655440004', 'team_size', '5-10'),
+('a70e8400-e29b-41d4-a716-446655440009', '770e8400-e29b-41d4-a716-446655440005', 'level', 'Junior-Mid'),
+('a70e8400-e29b-41d4-a716-44665544000a', '770e8400-e29b-41d4-a716-446655440005', 'application_source', 'Company Careers Page'),
+('a70e8400-e29b-41d4-a716-44665544000b', '770e8400-e29b-41d4-a716-446655440006', 'sponsorship', 'No'),
+('a70e8400-e29b-41d4-a716-44665544000c', '770e8400-e29b-41d4-a716-446655440006', 'remote_possible', 'Yes');
 
 -- Insert fake application attachments
 INSERT INTO application_attachment (id, name, path, content_type, content_length, application_id) VALUES
