@@ -26,7 +26,9 @@ CREATE TABLE company (
     description TEXT,
     note TEXT,
     logo VARCHAR(255),
-    status VARCHAR(50) CHECK (status IN ('INTERESTED', 'NOT_INTERESTED', 'BLOCKED'))
+    status VARCHAR(50) CHECK (status IN ('INTERESTED', 'NOT_INTERESTED', 'BLOCKED')),
+    profile_id UUID,
+    CONSTRAINT fk_company_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
 
 -- Create Application table

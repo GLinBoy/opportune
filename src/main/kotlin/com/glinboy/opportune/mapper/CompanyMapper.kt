@@ -2,6 +2,7 @@ package com.glinboy.opportune.mapper
 
 import com.glinboy.opportune.dto.CompanyDTO
 import com.glinboy.opportune.entity.Company
+import com.glinboy.opportune.entity.Profile
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -19,7 +20,8 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			description = dto.description,
 			note = dto.note,
 			logo = dto.logo,
-			status = dto.status
+			status = dto.status,
+			profile = dto.profileId?.let { Profile(id = it) },
 		)
 	}
 
@@ -37,7 +39,8 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			logo = dto.logo,
 			status = dto.status,
 			applications = entity.applications,
-			metaData = entity.metaData
+			metaData = entity.metaData,
+			profile = entity.profile,
 		)
 	}
 
@@ -53,7 +56,8 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			description = entity.description,
 			note = entity.note,
 			logo = entity.logo,
-			status = entity.status
+			status = entity.status,
+			profileId = entity.profile?.id,
 		)
 	}
 }
