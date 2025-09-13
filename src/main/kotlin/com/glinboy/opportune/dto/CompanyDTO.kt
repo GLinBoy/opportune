@@ -14,5 +14,6 @@ data class CompanyDTO(
 	val description: String? = null,
 	val note: String? = null,
 	val logo: String? = null,
-	val status: CompanyStatus? = null
+	val status: CompanyStatus? = null,
+	val profileId: UUID? = null,
 ) : BaseDTO()
