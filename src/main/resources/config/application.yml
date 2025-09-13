@@ -11,3 +11,19 @@ spring:
 server:
   shutdown: graceful
 
+springdoc:
+  swagger-ui:
+    docExpansion: none
+
+application:
+  info:
+    name: \${spring.application.name}
+    version: ${version}
+    description: ${description}
+    license: Apache-2.0 license
+    website: \${application.info.github-url}
+    github-url: https://github.com/GLinBoy/opportune
+    license-url: https://github.com/GLinBoy/opportune/blob/main/LICENSE.md
+    servers:
+      - url: http://localhost:\${server.port}
+        description: local server
