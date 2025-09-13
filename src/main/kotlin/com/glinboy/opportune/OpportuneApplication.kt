@@ -1,7 +1,9 @@
 package com.glinboy.opportune
 
+import com.glinboy.opportune.config.ApplicationProperties
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.core.env.Environment
@@ -10,9 +12,8 @@ import java.net.UnknownHostException
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
+@EnableConfigurationProperties(ApplicationProperties::class)
 class OpportuneApplication {
-
-	private val log = LoggerFactory.getLogger(javaClass)
 
 	companion object {
 		@JvmStatic
