@@ -99,6 +99,9 @@ val cleanFrontend = tasks.register<Delete>("cleanFrontend") {
 
 // Ensure frontend is built before processing resources
 tasks.processResources {
+	filesMatching("config/**") {
+		expand(project.properties)
+	}
 	dependsOn(buildFrontend)
 }
 
