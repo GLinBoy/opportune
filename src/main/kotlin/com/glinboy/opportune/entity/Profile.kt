@@ -9,7 +9,6 @@ import java.util.*
 @Table(name = "profile")
 data class Profile(
 
-	@GeneratedValue(strategy = GenerationType.UUID)
 	override val id: UUID? = null,
 
 	@Column(name = "email")
@@ -50,5 +49,8 @@ data class Profile(
 	val resume: ProfileResume? = null,
 
 	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-	val applications: Set<Application> = emptySet()
+	val applications: Set<Application> = emptySet(),
+
+	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+val companies: Set<Company> = emptySet(),
 ) : BaseEntity()

@@ -6,7 +6,7 @@ import java.util.*
 @Entity
 @Table(name = "application_resume")
 class ApplicationResume(
-	id: UUID = UUID.randomUUID(),
+	id: UUID? = null,
 	name: String? = null,
 	path: String? = null,
 	contentType: String? = null,

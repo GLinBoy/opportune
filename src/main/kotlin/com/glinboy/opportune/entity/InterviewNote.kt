@@ -8,7 +8,6 @@ import java.util.*
 @Table(name = "interview_note")
 data class InterviewNote(
 
-	@GeneratedValue(strategy = GenerationType.UUID)
 	override val id: UUID? = null,
 
 	@Column(name = "date")

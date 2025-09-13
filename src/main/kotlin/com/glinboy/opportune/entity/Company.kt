@@ -8,7 +8,6 @@ import java.util.*
 @Table(name = "company")
 data class Company(
 
-	@GeneratedValue(strategy = GenerationType.UUID)
 	override val id: UUID? = null,
 
 	@Column(name = "name")
@@ -43,6 +42,10 @@ data class Company(
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	val status: CompanyStatus? = null,
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "profile_id")
+	val profile: Profile? = null,
 
 	@OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val applications: Set<Application> = emptySet(),

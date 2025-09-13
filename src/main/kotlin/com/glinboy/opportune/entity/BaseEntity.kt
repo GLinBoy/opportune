@@ -12,5 +12,5 @@ import java.util.*
 abstract class BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	val id: UUID? = null
+	open val id: UUID? = null
 }

@@ -9,7 +9,6 @@ import java.util.*
 @Table(name = "application_timeline")
 data class ApplicationTimeline(
 
-	@GeneratedValue(strategy = GenerationType.UUID)
 	override val id: UUID? = null,
 
 	@Column(name = "title")
