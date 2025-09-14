@@ -1,0 +1,21 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover\:bg-grey-lighten-5:hover {
+  background-color: rgb(var(--v-theme-grey-lighten-5)) !important;
+}
+
+/* Custom styling for the data table */
+:deep(.v-data-table__tr:hover) {
+  background-color: rgb(var(--v-theme-grey-lighten-5)) !important;
+}
+
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+
+/* Ensure status column doesn't interfere with row clicks */
+:deep(.v-data-table__td:last-child) {
+  position: relative;
+}
