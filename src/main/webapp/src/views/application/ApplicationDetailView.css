@@ -1,0 +1,10 @@
+/* Custom timeline styling */
+:deep(.v-timeline-item__body) {
+  padding-top: 2px;
+}
+
+:deep(.v-timeline-item__opposite) {
+  padding-top: 4px;
+}
+
+/* Add your styles here */
