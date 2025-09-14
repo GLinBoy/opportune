@@ -140,4 +140,4 @@
 
 <script lang="ts" src="./ApplicationListView.ts" />
 
-<style lang="scss" scoped src="./ApplicationListView.css" />
+<style lang="css" scoped src="./ApplicationListView.css" />

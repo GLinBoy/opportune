@@ -365,4 +365,4 @@
 
 <script lang="ts" src="./ApplicationDetailView.ts" />
 
-<style lang="scss" scoped src="./ApplicationDetailView.css" />
+<style lang="css" scoped src="./ApplicationDetailView.css" />

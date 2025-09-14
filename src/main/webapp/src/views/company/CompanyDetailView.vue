@@ -278,4 +278,4 @@
 </template>
 <script lang="ts" src="./CompanyDetailView.ts" />
 
-<style lang="scss" scoped src="./CompanyDetailView.css" />
+<style lang="css" scoped src="./CompanyDetailView.css" />

@@ -165,4 +165,4 @@
 </template>
 <script lang="ts" src="./CompanyListView.ts" />
 
-<style lang="scss" scoped src="./CompanyListView.css" />
+<style lang="css" scoped src="./CompanyListView.css" />
