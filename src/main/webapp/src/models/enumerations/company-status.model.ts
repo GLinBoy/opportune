@@ -1,0 +1,5 @@
+export enum CompanyStatus {
+  INTERESTED = 'INTERESTED',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+  BLOCKED = 'BLOCKED'
+}
