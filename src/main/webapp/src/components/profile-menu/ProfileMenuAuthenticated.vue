@@ -17,7 +17,11 @@
               Profile
             </v-btn>
             <v-divider class="my-3"></v-divider>
-            <v-btn color="primary" variant="text" prepend-icon="mdi-logout-variant"> Logout </v-btn>
+            <v-btn color="primary" variant="text" prepend-icon="mdi-shield-crown-outline">
+              Control Panel
+            </v-btn>
+            <v-divider class="my-3"></v-divider>
+            <v-btn color="primary" variant="text" prepend-icon="mdi-logout"> Logout </v-btn>
           </div>
         </v-card-text>
       </v-card>
