@@ -11,7 +11,7 @@ export interface ICompany {
   description?: string
   note?: string
   logo?: string
-  status?: CompanyStatus
+  status?: keyof typeof CompanyStatus | null
   profileId?: string
 }
 
@@ -27,7 +27,7 @@ export class Company implements ICompany {
     public description?: string,
     public note?: string,
     public logo?: string,
-    public status?: CompanyStatus,
+    public status?: keyof typeof CompanyStatus | null,
     public profileId?: string
   ) { }
 }
