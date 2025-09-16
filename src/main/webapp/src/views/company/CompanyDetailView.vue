@@ -82,7 +82,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="company.size"
+                v-model="company.companySize"
                 label="Company Size"
                 variant="outlined"
                 prepend-inner-icon="mdi-account-group"
@@ -101,7 +101,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="company.founded"
+                v-model="company.foundedYear"
                 label="Founded Year"
                 type="number"
                 variant="outlined"
@@ -121,12 +121,12 @@
             </v-col>
             <v-col cols="12">
               <v-textarea
-                v-model="company.notes"
-                label="Notes"
+                v-model="company.note"
+                label="Note"
                 variant="outlined"
                 prepend-inner-icon="mdi-note-text"
                 rows="3"
-                placeholder="Personal notes about the company"
+                placeholder="Personal note about the company"
                 @input="markAsModified"
               />
             </v-col>
@@ -153,18 +153,18 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
-            v-if="company.metaData && company.metaData.length > 0"
+            v-if="companyMetaData && companyMetaData.length > 0"
             :headers="metaDataHeaders"
-            :items="company.metaData"
+            :items="companyMetaData"
             hide-default-footer
             density="compact"
           >
-            <template v-slot:[`item.key`]="{ item }">
-              <span class="font-weight-medium">{{ item.key }}</span>
+            <template v-slot:[`item.metaName`]="{ item }">
+              <span class="font-weight-medium">{{ item.metaName }}</span>
             </template>
             <template v-slot:[`item.value`]="{ item }">
               <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
-                {{ item.value }}
+                {{ item.metaValue }}
               </div>
             </template>
             <template v-slot:[`item.actions`]="{ index }">
@@ -238,7 +238,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="newMetaData.key"
+                  v-model="newMetaData.metaName"
                   label="Key"
                   variant="outlined"
                   prepend-inner-icon="mdi-key"
@@ -248,7 +248,7 @@
               </v-col>
               <v-col cols="12">
                 <v-textarea
-                  v-model="newMetaData.value"
+                  v-model="newMetaData.metaValue"
                   label="Value"
                   variant="outlined"
                   prepend-inner-icon="mdi-text"
