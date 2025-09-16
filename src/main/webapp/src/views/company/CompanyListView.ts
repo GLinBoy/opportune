@@ -28,52 +28,52 @@ export default defineComponent({
 
     const companies: Ref<ICompany[]> = ref([])
 
-    const isFetching = ref(false);
+    const isFetching = ref(false)
 
     const clear = () => {
-      page.value = 1;
-    };
+      page.value = 1
+    }
 
     const sort = (): Array<any> => {
-      const result = [`${propOrder.value},${reverse.value ? 'desc' : 'asc'}`];
+      const result = [`${propOrder.value},${reverse.value ? 'desc' : 'asc'}`]
       if (propOrder.value !== 'id') {
-        result.push('id');
+        result.push('id')
       }
-      return result;
-    };
+      return result
+    }
 
     const search = (): string => {
-      let result = '';
+      let result = ''
       if (currentSearch.value) {
-        result = `receiver==*${currentSearch.value}* or subject==*${currentSearch.value}* or content==*${currentSearch.value}* or createdBy==*${currentSearch.value}*`;
+        result = `receiver==*${currentSearch.value}* or subject==*${currentSearch.value}* or content==*${currentSearch.value}* or createdBy==*${currentSearch.value}*`
       }
-      return result;
-    };
+      return result
+    }
 
     const retrieveCompanies = async () => {
-      isFetching.value = true;
+      isFetching.value = true
       try {
         const paginationQuery = {
           page: page.value - 1,
           size: itemsPerPage.value,
           sort: sort(),
           query: search(),
-        };
-        const res = await companyService().retrieve(paginationQuery);
-        totalItems.value = Number(res.headers['x-total-count']);
-        queryCount.value = totalItems.value;
-        companies.value = res.data;
+        }
+        const res = await companyService().retrieve(paginationQuery)
+        totalItems.value = Number(res.headers['x-total-count'])
+        queryCount.value = totalItems.value
+        companies.value = res.data
       } catch (err) {
         // TODO: Toast error
-        console.error(err);
+        console.error(err)
       } finally {
-        isFetching.value = false;
+        isFetching.value = false
       }
-    };
+    }
 
     const handleSyncList = () => {
-      retrieveCompanies();
-    };
+      retrieveCompanies()
+    }
 
     const goToCompanyDetail = (event: Event | null, { item }: { item: ICompany }) => {
       router.push(`/companies/${item.id}`)
@@ -84,14 +84,14 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await retrieveCompanies();
-    });
+      await retrieveCompanies()
+    })
 
     const changeOrder = (newOrder: string) => {
       if (propOrder.value === newOrder) {
-        reverse.value = !reverse.value;
+        reverse.value = !reverse.value
       } else {
-        reverse.value = false;
+        reverse.value = false
       }
       propOrder.value = newOrder
     }
@@ -99,20 +99,20 @@ export default defineComponent({
     watch([propOrder, reverse], async () => {
       if (page.value === 1) {
         // first page, retrieve new data
-        await retrieveCompanies();
+        await retrieveCompanies()
       } else {
         // reset the pagination
-        clear();
+        clear()
       }
-    });
+    })
 
     watch(page, async () => {
-      await retrieveCompanies();
-    });
+      await retrieveCompanies()
+    })
 
     const handleSearch = () => {
-      retrieveCompanies();
-    };
+      retrieveCompanies()
+    }
 
     return {
       companies,
