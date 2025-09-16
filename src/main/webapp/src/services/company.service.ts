@@ -16,4 +16,13 @@ export default class CompanyService {
     })
   }
 
+  find(id: string): Promise<ICompany> {
+    return new Promise<ICompany>((resolve, reject) => {
+      apiClient
+        .get(`${COMPANY_API_URL}/${id}`)
+        .then(res => { resolve(res.data) })
+        .catch(err => { reject(err) })
+    });
+  }
+
 }
