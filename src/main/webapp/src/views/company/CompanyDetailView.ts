@@ -1,5 +1,8 @@
-import { ref, computed, onMounted, defineComponent } from 'vue'
+import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { type ICompany } from '../../models'
+import { type ICompanyMetaData } from '../../models'
+import CompanyService from '../../services/company.service'
 
 // Types
 export interface MetaData {
@@ -14,19 +17,6 @@ export interface Application {
   status: string
 }
 
-export interface Company {
-  id: number
-  name: string
-  industry: string
-  website?: string
-  size?: string
-  location?: string
-  founded?: number
-  description?: string
-  notes?: string
-  metaData?: MetaData[]
-}
-
 export interface Snackbar {
   show: boolean
   message: string
@@ -37,12 +27,13 @@ export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyDetailView',
   setup() {
-    // Router
+    const companyService = inject('companyService', () => new CompanyService())
     const route = useRoute()
     const router = useRouter()
 
     // Reactive data
-    const company = ref<Company | null>(null)
+    const company = ref<ICompany | null>(null)
+    const companyMetaData = ref<ICompanyMetaData[]>([])
     const associatedApplications = ref<Application[]>([])
     const loading = ref(false)
     const saving = ref(false)
@@ -52,7 +43,7 @@ export default defineComponent({
     const showMetaDataDialog = ref(false)
     const metaDataFormValid = ref(false)
     const savingMetaData = ref(false)
-    const newMetaData = ref<MetaData>({ key: '', value: '' })
+    const newMetaData = ref<ICompanyMetaData>({ metaName: '', metaValue: '' })
 
     // Snackbar
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
@@ -107,13 +98,13 @@ export default defineComponent({
     }
 
     const showAddMetaDataDialog = () => {
-      newMetaData.value = { key: '', value: '' }
+      newMetaData.value = {}
       showMetaDataDialog.value = true
     }
 
     const cancelAddMetaData = () => {
       showMetaDataDialog.value = false
-      newMetaData.value = { key: '', value: '' }
+      newMetaData.value = {}
     }
 
     const saveMetaData = async () => {
@@ -121,13 +112,13 @@ export default defineComponent({
 
       savingMetaData.value = true
       try {
-        if (!company.value!.metaData) {
-          company.value!.metaData = []
+        if (!companyMetaData.value) {
+          companyMetaData.value = []
         }
-        company.value!.metaData.push({ ...newMetaData.value })
+        companyMetaData.value.push({ ...newMetaData.value })
 
         showMetaDataDialog.value = false
-        newMetaData.value = { key: '', value: '' }
+        newMetaData.value = {}
         markAsModified()
         showSnackbar('Meta data added successfully!', 'success')
       } catch (error) {
@@ -139,8 +130,8 @@ export default defineComponent({
     }
 
     const removeMetaData = (index: number) => {
-      if (company.value?.metaData) {
-        company.value.metaData.splice(index, 1)
+      if (companyMetaData.value) {
+        companyMetaData.value.splice(index, 1)
         markAsModified()
         showSnackbar('Meta data removed successfully!', 'success')
       }
@@ -172,7 +163,7 @@ export default defineComponent({
     }
 
     const loadCompany = async () => {
-      const companyId = parseInt(route.params.id as string)
+      const companyId = route.params.id as string
       if (!companyId) return
 
       loading.value = true
@@ -180,24 +171,11 @@ export default defineComponent({
         // Mock loading time - replace with actual API implementation
         await new Promise((resolve) => setTimeout(resolve, 500))
 
-        // Mock data - replace with API call
-        company.value = {
-          id: companyId,
-          name: 'Tech Corp',
-          industry: 'Technology',
-          website: 'https://techcorp.com',
-          size: '200-500 employees',
-          location: 'San Francisco, CA',
-          founded: 2015,
-          description:
-            'A leading technology company focused on innovative solutions for modern businesses.',
-          notes: 'Great company culture, competitive salary, remote-friendly',
-          metaData: [
-            { key: 'Contact Person', value: 'John Doe - HR Manager' },
-            { key: 'Revenue', value: '$50M annually' },
-            { key: 'Culture', value: 'Collaborative, innovative, work-life balance focused' },
-          ],
-        }
+        companyService().find(companyId).then(data => {
+          company.value = data
+        }).catch(err => {
+          console.error(err)
+        })
 
         // Mock associated applications
         associatedApplications.value = [
@@ -229,6 +207,7 @@ export default defineComponent({
 
     return {
       company,
+      companyMetaData,
       associatedApplications,
       loading,
       saving,
