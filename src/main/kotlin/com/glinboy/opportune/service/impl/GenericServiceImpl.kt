@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.Optional
+import java.util.*
 
 abstract class GenericServiceImpl<ID : Any, D : BaseDTO, E : BaseEntity,
 	S : JpaRepository<E, ID>, M : GenericMapper<D, E>>(
