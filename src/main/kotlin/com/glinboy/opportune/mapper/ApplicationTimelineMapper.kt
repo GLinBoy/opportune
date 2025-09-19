@@ -4,13 +4,12 @@ import com.glinboy.opportune.dto.ApplicationTimelineDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationTimeline
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, ApplicationTimeline> {
 	override fun createEntity(dto: ApplicationTimelineDTO): ApplicationTimeline {
 		return ApplicationTimeline(
-			id = UUID.randomUUID(),
+			id = null,
 			title = dto.title,
 			description = dto.description,
 			status = dto.status,
@@ -21,7 +20,7 @@ class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, Applicat
 
 	override fun updateEntity(dto: ApplicationTimelineDTO, entity: ApplicationTimeline): ApplicationTimeline {
 		return entity.copy(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			title = dto.title,
 			description = dto.description,
 			status = dto.status,

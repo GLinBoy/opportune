@@ -4,13 +4,12 @@ import com.glinboy.opportune.dto.CompanyDTO
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 	override fun createEntity(dto: CompanyDTO): Company {
 		return Company(
-			id = UUID.randomUUID(),
+			id = null,
 			name = dto.name,
 			industry = dto.industry,
 			website = dto.website,
@@ -27,7 +26,7 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 
 	override fun updateEntity(dto: CompanyDTO, entity: Company): Company {
 		return entity.copy(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			name = dto.name,
 			industry = dto.industry,
 			website = dto.website,

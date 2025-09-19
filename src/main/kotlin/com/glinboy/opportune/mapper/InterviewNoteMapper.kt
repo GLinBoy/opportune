@@ -4,13 +4,12 @@ import com.glinboy.opportune.dto.InterviewNoteDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.InterviewNote
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 	override fun createEntity(dto: InterviewNoteDTO): InterviewNote {
 		return InterviewNote(
-			id = UUID.randomUUID(),
+			id = null,
 			date = dto.date,
 			notes = dto.notes,
 			application = dto.applicationId?.let { Application(id = it) }
@@ -19,7 +18,7 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 
 	override fun updateEntity(dto: InterviewNoteDTO, entity: InterviewNote): InterviewNote {
 		return entity.copy(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			date = dto.date,
 			notes = dto.notes,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
