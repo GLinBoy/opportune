@@ -4,29 +4,28 @@ import com.glinboy.opportune.dto.InterviewAttachmentDTO
 import com.glinboy.opportune.entity.InterviewAttachment
 import com.glinboy.opportune.entity.InterviewNote
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, InterviewAttachment> {
 	override fun createEntity(dto: InterviewAttachmentDTO): InterviewAttachment {
 		return InterviewAttachment(
-			interviewNote = dto.interviewNoteId?.let { InterviewNote(id = it) },
-			id = UUID.randomUUID(),
+			id = null,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			interviewNote = dto.interviewNoteId?.let { InterviewNote(id = it) },
 		)
 	}
 
 	override fun updateEntity(dto: InterviewAttachmentDTO, entity: InterviewAttachment): InterviewAttachment {
 		return InterviewAttachment(
-			interviewNote = entity.interviewNote ?: dto.interviewNoteId?.let { InterviewNote(id = it) },
-			id = dto.id ?: entity.id ?: UUID.randomUUID(),
+			id = entity.id,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			interviewNote = entity.interviewNote ?: dto.interviewNoteId?.let { InterviewNote(id = it) },
 		)
 	}
 

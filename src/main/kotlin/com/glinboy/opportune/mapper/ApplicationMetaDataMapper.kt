@@ -4,13 +4,12 @@ import com.glinboy.opportune.dto.ApplicationMetaDataDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationMetaData
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ApplicationMetaDataMapper : GenericMapper<ApplicationMetaDataDTO, ApplicationMetaData> {
 	override fun createEntity(dto: ApplicationMetaDataDTO): ApplicationMetaData {
 		return ApplicationMetaData(
-			id = UUID.randomUUID(),
+			id = null,
 			metaName = dto.metaName,
 			metaValue = dto.metaValue,
 			application = dto.applicationId?.let { Application(id = it) }
@@ -19,7 +18,7 @@ class ApplicationMetaDataMapper : GenericMapper<ApplicationMetaDataDTO, Applicat
 
 	override fun updateEntity(dto: ApplicationMetaDataDTO, entity: ApplicationMetaData): ApplicationMetaData {
 		return ApplicationMetaData(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			metaName = dto.metaName,
 			metaValue = dto.metaValue,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) }

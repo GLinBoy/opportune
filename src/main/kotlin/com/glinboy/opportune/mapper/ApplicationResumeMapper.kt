@@ -4,29 +4,28 @@ import com.glinboy.opportune.dto.ApplicationResumeDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationResume
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ApplicationResumeMapper : GenericMapper<ApplicationResumeDTO, ApplicationResume> {
 	override fun createEntity(dto: ApplicationResumeDTO): ApplicationResume {
 		return ApplicationResume(
-			application = dto.applicationId?.let { Application(id = it) },
-			id = UUID.randomUUID(),
+			id = null,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			application = dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
 	override fun updateEntity(dto: ApplicationResumeDTO, entity: ApplicationResume): ApplicationResume {
 		return ApplicationResume(
-			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
-			id = dto.id ?: entity.id ?: UUID.randomUUID(),
+			id = entity.id,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 		)
 	}
 

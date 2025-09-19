@@ -4,29 +4,28 @@ import com.glinboy.opportune.dto.ApplicationAttachmentDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationAttachment
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, ApplicationAttachment> {
 	override fun createEntity(dto: ApplicationAttachmentDTO): ApplicationAttachment {
 		return ApplicationAttachment(
-			application = dto.applicationId?.let { Application(id = it) },
-			id = UUID.randomUUID(),
+			id = null,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			application = dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
 	override fun updateEntity(dto: ApplicationAttachmentDTO, entity: ApplicationAttachment): ApplicationAttachment {
 		return ApplicationAttachment(
-			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
-			id = dto.id ?: entity.id ?: UUID.randomUUID(),
+			id = entity.id,
 			name = dto.name,
 			path = dto.path,
 			contentType = dto.contentType,
-			contentLength = dto.contentLength
+			contentLength = dto.contentLength,
+			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 		)
 	}
 

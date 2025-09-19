@@ -4,13 +4,12 @@ import com.glinboy.opportune.dto.ProfileDTO
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.entity.ProfileResume
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 	override fun createEntity(dto: ProfileDTO): Profile {
 		return Profile(
-			id = UUID.randomUUID(),
+			id = null,
 			email = dto.email,
 			forename = dto.forename,
 			surname = dto.surname,
@@ -28,7 +27,7 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 
 	override fun updateEntity(dto: ProfileDTO, entity: Profile): Profile {
 		return entity.copy(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			email = dto.email,
 			forename = dto.forename,
 			surname = dto.surname,

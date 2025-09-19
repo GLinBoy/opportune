@@ -5,13 +5,12 @@ import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 	override fun createEntity(dto: ApplicationDTO): Application {
 		return Application(
-			id = UUID.randomUUID(),
+			id = null,
 			url = dto.url,
 			title = dto.title,
 			location = dto.location,
@@ -30,7 +29,7 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 
 	override fun updateEntity(dto: ApplicationDTO, entity: Application): Application {
 		return entity.copy(
-			id = dto.id ?: entity.id,
+			id = entity.id,
 			url = dto.url,
 			title = dto.title,
 			location = dto.location,
