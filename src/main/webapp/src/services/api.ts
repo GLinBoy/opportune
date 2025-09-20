@@ -2,7 +2,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 
 // API configuration
 const apiConfig: AxiosRequestConfig = {
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://localhost:8080',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
