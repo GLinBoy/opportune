@@ -12,5 +12,12 @@ import java.util.*
 class ProfileServiceImpl(profileRepository: ProfileRepository, mapper: ProfileMapper) :
 	GenericServiceImpl<UUID, ProfileDTO, Profile, ProfileRepository,
 		ProfileMapper>(profileRepository, mapper), ProfileService {
+
+	private val currentUserID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001")
+
+	override fun getCurrentProfile(): Optional<ProfileDTO> {
+		// FIXME user ID must read from the security context
+		return repository.findById(currentUserID).map(mapper::toDto)
+	}
 }
 
