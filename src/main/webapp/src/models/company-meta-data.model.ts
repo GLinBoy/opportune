@@ -1,11 +1,11 @@
-export interface ICompanyMetaData {
+export interface ICompanyMetadata {
   id?: string
   metaName?: string
   metaValue?: string
   companyId?: string
 }
 
-export class CompanyMetaData implements ICompanyMetaData {
+export class CompanyMetadata implements ICompanyMetadata {
   constructor(
     public id?: string,
     public metaName?: string,
