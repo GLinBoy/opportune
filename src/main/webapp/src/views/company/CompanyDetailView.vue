@@ -14,12 +14,19 @@
       </v-breadcrumbs>
 
       <!-- Page Header -->
-      <div class="d-flex justify-space-between align-center mb-6">
-        <div>
+      <v-row class="mb-6" align="center">
+        <v-col cols="auto">
+          <v-avatar size="64" class="pa-1" rounded="0">
+            <v-img :alt="company.name" :src="company.logo ? company.logo : defaultCompanyLogo" />
+          </v-avatar>
+        </v-col>
+        <v-col>
           <h1 class="text-h4 font-weight-bold">{{ company.name }}</h1>
-          <p class="text-subtitle-1 text-medium-emphasis">{{ company.industry }}</p>
-          <div v-if="company.website" class="mt-1">
+          <div class="d-flex align-center text-subtitle-1 text-medium-emphasis">
+            <span>{{ company.industry }}</span>
+            <span v-if="company.website" class="mx-2">•</span>
             <v-btn
+              v-if="company.website"
               :href="company.website"
               target="_blank"
               variant="text"
@@ -32,8 +39,8 @@
               Visit Website
             </v-btn>
           </div>
-        </div>
-        <div class="d-flex align-center" style="gap: 12px">
+        </v-col>
+        <v-col cols="auto" class="d-flex align-center" style="gap: 12px">
           <v-btn
             color="success"
             variant="flat"
@@ -41,98 +48,15 @@
             :loading="saving"
             @click="saveCompany"
           />
-        </div>
-      </div>
+        </v-col>
+      </v-row>
 
       <!-- 1. Company Details -->
-      <v-card class="mb-6">
-        <v-card-title class="d-flex align-center">
-          <v-icon icon="mdi-domain" class="mr-2" />
-          Company Details
-        </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.name"
-                label="Company Name"
-                variant="outlined"
-                prepend-inner-icon="mdi-domain"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.industry"
-                label="Industry"
-                variant="outlined"
-                prepend-inner-icon="mdi-factory"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.website"
-                label="Website"
-                type="url"
-                variant="outlined"
-                prepend-inner-icon="mdi-web"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.companySize"
-                label="Company Size"
-                variant="outlined"
-                prepend-inner-icon="mdi-account-group"
-                placeholder="e.g., 50-200 employees"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.location"
-                label="Location"
-                variant="outlined"
-                prepend-inner-icon="mdi-map-marker"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="company.foundedYear"
-                label="Founded Year"
-                type="number"
-                variant="outlined"
-                prepend-inner-icon="mdi-calendar"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="company.description"
-                label="Description"
-                variant="outlined"
-                prepend-inner-icon="mdi-text"
-                rows="4"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="company.note"
-                label="Note"
-                variant="outlined"
-                prepend-inner-icon="mdi-note-text"
-                rows="3"
-                placeholder="Personal note about the company"
-                @input="markAsModified"
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+      <CompanyForm
+        v-model="company"
+        @change="markAsModified"
+        class="mb-6"
+      />
 
       <!-- 2. Meta Data -->
       <v-card class="mb-6">
@@ -153,9 +77,9 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
-            v-if="companyMetaData && companyMetaData.length > 0"
+            v-if="companyMetadata && companyMetadata.length > 0"
             :headers="metaDataHeaders"
-            :items="companyMetaData"
+            :items="companyMetadata"
             hide-default-footer
             density="compact"
           >
@@ -198,28 +122,6 @@
             hide-default-footer
             density="compact"
           >
-            <template v-slot:[`item.position`]="{ item }">
-              <div>
-                <div class="font-weight-medium">{{ item.position }}</div>
-                <div class="text-caption text-medium-emphasis">
-                  Applied: {{ formatDate(item.dateApplied) }}
-                </div>
-              </div>
-            </template>
-            <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getStatusColor(item.status)" size="small" variant="flat">
-                {{ item.status }}
-              </v-chip>
-            </template>
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-btn
-                color="primary"
-                variant="text"
-                icon="mdi-eye"
-                size="small"
-                @click="viewApplication(item.id)"
-              />
-            </template>
           </v-data-table>
           <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-briefcase-outline" size="48" class="mb-2" />

@@ -1,21 +1,13 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { type ICompany } from '../../models'
-import { type ICompanyMetaData } from '../../models'
+import { type ICompany, type ICompanyMetadata } from '../../models'
+import { type IApplication } from '../../models/application.model'
 import CompanyService from '../../services/company.service'
+import CompanyMetadataService from '../../services/company-metadata.service'
+import CompanyApplicationService from '../../services/company-application.service'
+import CompanyForm from '../../components/CompanyForm.vue'
 
-// Types
-export interface MetaData {
-  key: string
-  value: string
-}
-
-export interface Application {
-  id: number
-  position: string
-  dateApplied: string
-  status: string
-}
+import defaultCompanyLogo from '@/assets/images/office-building.png'
 
 export interface Snackbar {
   show: boolean
@@ -26,15 +18,20 @@ export interface Snackbar {
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyDetailView',
+  components: {
+    CompanyForm
+  },
   setup() {
     const companyService = inject('companyService', () => new CompanyService())
+    const companyMetadataService = inject('companyMetadataService', () => new CompanyMetadataService())
+    const companyApplicationService = inject('companyApplicationService', () => new CompanyApplicationService())
     const route = useRoute()
     const router = useRouter()
 
     // Reactive data
     const company = ref<ICompany | null>(null)
-    const companyMetaData = ref<ICompanyMetaData[]>([])
-    const associatedApplications = ref<Application[]>([])
+    const companyMetadata = ref<ICompanyMetadata[]>([])
+    const associatedApplications = ref<IApplication[]>([])
     const loading = ref(false)
     const saving = ref(false)
     const hasModifications = ref(false)
@@ -43,7 +40,7 @@ export default defineComponent({
     const showMetaDataDialog = ref(false)
     const metaDataFormValid = ref(false)
     const savingMetaData = ref(false)
-    const newMetaData = ref<ICompanyMetaData>({ metaName: '', metaValue: '' })
+    const newMetaData = ref<ICompanyMetadata>({ metaName: '', metaValue: '' })
 
     // Snackbar
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
@@ -57,16 +54,17 @@ export default defineComponent({
 
     // Table headers for meta data
     const metaDataHeaders = [
-      { title: 'Key', value: 'key', sortable: false },
-      { title: 'Value', value: 'value', sortable: false },
+      { title: 'Key', value: 'metaName', sortable: false },
+      { title: 'Value', value: 'metaValue', sortable: false },
       { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
     ]
 
     // Table headers for applications
     const applicationHeaders = [
-      { title: 'Position', value: 'position', sortable: false },
-      { title: 'Status', value: 'status', sortable: false },
-      { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
+      { title: 'Title', value: 'title', sortable: true },
+      { title: 'Applied at', value: 'appliedAt', sortable: true },
+      { title: 'Status', value: 'status', sortable: true },
+      { title: 'Actions', value: 'actions', sortable: true, width: '80px' },
     ]
 
     // Validation rules
@@ -112,10 +110,10 @@ export default defineComponent({
 
       savingMetaData.value = true
       try {
-        if (!companyMetaData.value) {
-          companyMetaData.value = []
+        if (!companyMetadata.value) {
+          companyMetadata.value = []
         }
-        companyMetaData.value.push({ ...newMetaData.value })
+        companyMetadata.value.push({ ...newMetaData.value })
 
         showMetaDataDialog.value = false
         newMetaData.value = {}
@@ -130,8 +128,8 @@ export default defineComponent({
     }
 
     const removeMetaData = (index: number) => {
-      if (companyMetaData.value) {
-        companyMetaData.value.splice(index, 1)
+      if (companyMetadata.value) {
+        companyMetadata.value.splice(index, 1)
         markAsModified()
         showSnackbar('Meta data removed successfully!', 'success')
       }
@@ -177,21 +175,18 @@ export default defineComponent({
           console.error(err)
         })
 
-        // Mock associated applications
-        associatedApplications.value = [
-          {
-            id: 1,
-            position: 'Senior Frontend Developer',
-            dateApplied: '2024-01-15',
-            status: 'Interview Scheduled',
-          },
-          {
-            id: 2,
-            position: 'Full Stack Engineer',
-            dateApplied: '2023-12-10',
-            status: 'Rejected',
-          },
-        ]
+        companyMetadataService().retrieve(companyId).then(data => {
+          companyMetadata.value = data
+        }).catch(err => {
+          console.error(err)
+        })
+
+        companyApplicationService().retrieve(companyId).then(res => {
+          associatedApplications.value = res.data
+        }).catch(err => {
+          console.error(err)
+        })
+
       } catch (error) {
         console.error('Failed to load company details:', error)
         showSnackbar('Failed to load company details. Please try again.', 'error')
@@ -207,7 +202,7 @@ export default defineComponent({
 
     return {
       company,
-      companyMetaData,
+      companyMetadata,
       associatedApplications,
       loading,
       saving,
@@ -232,6 +227,7 @@ export default defineComponent({
       viewApplication,
       showSnackbar,
       loadCompany,
+      defaultCompanyLogo,
     }
   }
 })
