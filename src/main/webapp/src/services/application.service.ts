@@ -2,45 +2,45 @@ import apiClient from './api'
 
 import buildPaginationQueryOpts from '../utils/pagination'
 
-import { type ICompany } from '../models'
+import { type IApplication } from '../models'
 import type { AxiosResponse } from 'axios'
 
-const COMPANY_API_URL = '/api/companies'
+const APPLICATION_API_URL = '/api/applications'
 
-export default class CompanyService {
+export default class ApplicationService {
 
-  retrieve(paginationQuery?: Record<string, unknown>): Promise<AxiosResponse<ICompany[]>> {
-    return new Promise<AxiosResponse<ICompany[]>>((resolve, reject) => {
+  retrieve(paginationQuery?: Record<string, unknown>): Promise<AxiosResponse<IApplication[]>> {
+    return new Promise<AxiosResponse<IApplication[]>>((resolve, reject) => {
       const query = buildPaginationQueryOpts(paginationQuery)
-      const url = query ? `${COMPANY_API_URL}?${query}` : COMPANY_API_URL
-      apiClient.get<ICompany[]>(url)
+      const url = query ? `${APPLICATION_API_URL}?${query}` : APPLICATION_API_URL
+      apiClient.get<IApplication[]>(url)
         .then(res => resolve(res))
         .catch((error: unknown) => reject(error instanceof Error ? error : new Error(String(error))))
     })
   }
 
-  find(id: string): Promise<ICompany> {
-    return new Promise<ICompany>((resolve, reject) => {
+  find(id: string): Promise<IApplication> {
+    return new Promise<IApplication>((resolve, reject) => {
       apiClient
-        .get(`${COMPANY_API_URL}/${id}`)
+        .get(`${APPLICATION_API_URL}/${id}`)
         .then(res => { resolve(res.data) })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     });
   }
 
-  create(entity: ICompany): Promise<ICompany> {
-    return new Promise<ICompany>((resolve, reject) => {
+  create(entity: IApplication): Promise<IApplication> {
+    return new Promise<IApplication>((resolve, reject) => {
       apiClient
-        .post(COMPANY_API_URL, entity)
+        .post(APPLICATION_API_URL, entity)
         .then(res => { resolve(res.data) })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
   }
 
-  update(entity: ICompany): Promise<ICompany> {
-    return new Promise<ICompany>((resolve, reject) => {
+  update(entity: IApplication): Promise<IApplication> {
+    return new Promise<IApplication>((resolve, reject) => {
       apiClient
-        .put(COMPANY_API_URL, entity)
+        .put(APPLICATION_API_URL, entity)
         .then(res => { resolve(res.data) })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
@@ -49,7 +49,7 @@ export default class CompanyService {
   delete(id: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
-        .delete(`${COMPANY_API_URL}/${id}`)
+        .delete(`${APPLICATION_API_URL}/${id}`)
         .then(() => { resolve() })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
