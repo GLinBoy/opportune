@@ -7,9 +7,12 @@
         <router-view />
       </v-container>
     </v-main>
+
+    <GoToTopButton />
   </v-layout>
 </template>
 
 <script setup lang="ts">
 import AppBar from '@/components/app-bar/AppBar.vue'
+import GoToTopButton from '@/components/GoToTopButton.vue'
 </script>
