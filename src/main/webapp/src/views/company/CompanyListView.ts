@@ -1,30 +1,46 @@
-import { ref, onMounted, defineComponent, inject, type Ref, watch } from 'vue'
+import { ref, onMounted, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { type ICompany } from '../../models'
+import { getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon } from '../../models'
 import CompanyService from '../../services/company.service'
+import CompanyForm from '../../components/CompanyForm.vue'
+import { type IDataTableOptions, type ISortBy } from '../../models'
+
+import defaultCompanyLogo from '@/assets/images/office-building.png'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyListView',
+  components: {
+    CompanyForm
+  },
+  methods: {
+    getCompanyStatusDisplay,
+    getCompanyStatusColor,
+    getCompanyStatusIcon
+  },
   setup() {
     const companyService = inject('companyService', () => new CompanyService())
     const router = useRouter()
 
-    const itemsPerPage = ref(20)
-    const queryCount: Ref<number> = ref(0)
+    const itemsPerPage: Ref<number> = ref(10)
     const page: Ref<number> = ref(1)
-    const propOrder = ref('name')
-    const reverse = ref(false)
+    const sortBy: Ref<Array<ISortBy>> = ref([])
     const totalItems = ref(0)
     const currentSearch: Ref<string> = ref('')
+    const addNewCompanyDialog = ref(false)
+    const newCompany: Ref<ICompany> = ref({})
+    const isCreating = ref(false)
 
     const headers = ref([
-      { title: 'Company', key: 'name' },
-      { title: 'Industry', key: 'industry' },
-      { title: 'Location', key: 'location' },
-      { title: 'Status', key: 'status' },
-      { title: 'Description', key: 'description' },
+      { title: 'Company', key: 'name', sortable: true },
+      { title: 'Industry', key: 'industry', sortable: true },
+      { title: 'Location', key: 'location', sortable: true },
+      { title: 'Status', key: 'status', sortable: true },
+      { title: 'Description', key: 'description', sortable: true },
     ])
+
+    const itemsPerPageOptions = [10, 25, 50, 100]
 
     const companies: Ref<ICompany[]> = ref([])
 
@@ -34,20 +50,15 @@ export default defineComponent({
       page.value = 1
     }
 
-    const sort = (): Array<any> => {
-      const result = [`${propOrder.value},${reverse.value ? 'desc' : 'asc'}`]
-      if (propOrder.value !== 'id') {
-        result.push('id')
+    const sort = (): Array<string> => {
+      if (sortBy.value.length > 0) {
+        return sortBy.value.map(s => `${s.key},${s.order}`)
       }
-      return result
+      return ['name,asc']
     }
 
     const search = (): string => {
-      let result = ''
-      if (currentSearch.value) {
-        result = `receiver==*${currentSearch.value}* or subject==*${currentSearch.value}* or content==*${currentSearch.value}* or createdBy==*${currentSearch.value}*`
-      }
-      return result
+      return ''
     }
 
     const retrieveCompanies = async () => {
@@ -61,18 +72,19 @@ export default defineComponent({
         }
         const res = await companyService().retrieve(paginationQuery)
         totalItems.value = Number(res.headers['x-total-count'])
-        queryCount.value = totalItems.value
         companies.value = res.data
       } catch (err) {
-        // TODO: Toast error
-        console.error(err)
+        console.error('Failed to retrieve companies:', err)
       } finally {
         isFetching.value = false
       }
     }
 
-    const handleSyncList = () => {
-      retrieveCompanies()
+    const handleUpdateOptions = async (options: IDataTableOptions): Promise<void> => {
+      page.value = options.page
+      itemsPerPage.value = options.itemsPerPage
+      sortBy.value = options.sortBy
+      await retrieveCompanies()
     }
 
     const goToCompanyDetail = (event: Event | null, { item }: { item: ICompany }) => {
@@ -83,54 +95,64 @@ export default defineComponent({
       goToCompanyDetail(event, { item })
     }
 
-    onMounted(async () => {
-      await retrieveCompanies()
-    })
-
-    const changeOrder = (newOrder: string) => {
-      if (propOrder.value === newOrder) {
-        reverse.value = !reverse.value
-      } else {
-        reverse.value = false
-      }
-      propOrder.value = newOrder
-    }
-
-    watch([propOrder, reverse], async () => {
-      if (page.value === 1) {
-        // first page, retrieve new data
-        await retrieveCompanies()
-      } else {
-        // reset the pagination
-        clear()
-      }
-    })
-
-    watch(page, async () => {
-      await retrieveCompanies()
-    })
-
     const handleSearch = () => {
       retrieveCompanies()
     }
 
+    const addNewCompany = () => {
+      newCompany.value = {}
+      addNewCompanyDialog.value = true
+    }
+
+    const resetForm = () => {
+      newCompany.value = {}
+    }
+
+    const closeDialog = () => {
+      addNewCompanyDialog.value = false
+      newCompany.value = {}
+    }
+
+    const createCompany = async () => {
+      isCreating.value = true
+      try {
+        const createdCompany = await companyService().create(newCompany.value)
+        addNewCompanyDialog.value = false
+        newCompany.value = {}
+        // Refresh the list to include the new company
+        await retrieveCompanies()
+        // Redirect to the new company's detail page
+        router.push(`/companies/${createdCompany.id}`)
+      } catch (err) {
+        console.error('Failed to create company:', err)
+      } finally {
+        isCreating.value = false
+      }
+    }
+
     return {
       companies,
-      handleSyncList,
       isFetching,
       retrieveCompanies,
       clear,
       itemsPerPage,
-      queryCount,
       page,
-      propOrder,
-      reverse,
+      sortBy,
       totalItems,
-      changeOrder,
       currentSearch,
       handleSearch,
       headers,
       handleRowClick,
+      addNewCompanyDialog,
+      addNewCompany,
+      newCompany,
+      isCreating,
+      resetForm,
+      closeDialog,
+      createCompany,
+      itemsPerPageOptions,
+      handleUpdateOptions,
+      defaultCompanyLogo,
     }
   }
 })

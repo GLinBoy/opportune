@@ -26,3 +26,18 @@
   background-color: white;
   padding: 2px;
 }
+
+/* Primary header background */
+:deep(.primary-header .v-data-table__thead) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+}
+
+:deep(.primary-header .v-data-table__thead .v-data-table__th) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+:deep(.primary-header .v-data-table__thead .v-data-table__th .v-data-table-header__content) {
+  color: rgb(var(--v-theme-on-primary)) !important;
+  font-weight: 600;
+}
