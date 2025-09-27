@@ -40,7 +40,7 @@ export default defineComponent({
     const showMetaDataDialog = ref(false)
     const metaDataFormValid = ref(false)
     const savingMetaData = ref(false)
-    const newMetaData = ref<ICompanyMetadata>({ metaName: '', metaValue: '' })
+    const newMetaData = ref<ICompanyMetadata>({ companyId: '', metaName: '', metaValue: '' })
 
     // Snackbar
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
@@ -114,7 +114,12 @@ export default defineComponent({
         if (!companyMetadata.value) {
           companyMetadata.value = []
         }
-        companyMetadata.value.push({ ...newMetaData.value })
+        newMetaData.value.companyId = company.value?.id || ''
+        await companyMetadataService()
+          .create(company.value?.id || '', newMetaData.value)
+          .then(data => {
+            companyMetadata.value.push(data)
+          })
 
         showMetaDataDialog.value = false
         newMetaData.value = {}
