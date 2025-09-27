@@ -133,9 +133,8 @@ export default defineComponent({
       }
     }
 
-    const removeMetaData = (id: string) => {
-      if (companyMetadata.value) {
-
+    const removeMetaData = (id: string | undefined) => {
+      if (companyMetadata.value && id) {
         companyMetadataService().delete(company.value?.id || '', id)
           .then(() => {
             const index = companyMetadata.value.findIndex(item => item.id === id)
@@ -149,6 +148,8 @@ export default defineComponent({
             console.error('Failed to delete meta data:', err)
             showSnackbar('Failed to delete meta data. Please try again.', 'error')
           })
+      } else {
+        showSnackbar('Meta data item not found.', 'error')
       }
     }
 
