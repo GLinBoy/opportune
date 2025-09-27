@@ -82,8 +82,9 @@ export default defineComponent({
 
       saving.value = true
       try {
-        // Mock API call - replace with actual API implementation
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await companyService().update(company.value).then(data => {
+          company.value = data
+        })
 
         hasModifications.value = false
         showSnackbar('Company saved successfully!', 'success')
