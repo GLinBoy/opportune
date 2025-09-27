@@ -175,19 +175,21 @@ export default defineComponent({
         // Mock loading time - replace with actual API implementation
         await new Promise((resolve) => setTimeout(resolve, 500))
 
-        companyService().find(companyId).then(data => {
+        await companyService().find(companyId).then(data => {
           company.value = data
         }).catch(err => {
           console.error(err)
         })
 
-        companyMetadataService().retrieve(companyId).then(data => {
+        // TODO Load 100 metadata items, implement pagination if needed
+        await companyMetadataService().retrieve(companyId).then(data => {
           companyMetadata.value = data
         }).catch(err => {
           console.error(err)
         })
 
-        companyApplicationService().retrieve(companyId).then(res => {
+        // TODO Load 3-5 applications, implement pagination if needed
+        await companyApplicationService().retrieve(companyId).then(res => {
           associatedApplications.value = res.data
         }).catch(err => {
           console.error(err)
