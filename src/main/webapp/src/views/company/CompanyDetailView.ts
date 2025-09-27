@@ -192,8 +192,12 @@ export default defineComponent({
           console.error(err)
         })
 
-        // TODO Load 100 metadata items, implement pagination if needed
-        await companyMetadataService().retrieve(companyId).then(data => {
+        const metadataPaginationQuery = {
+          page: 0,
+          size: 100,
+          sort: `metaName,asc`
+        }
+        await companyMetadataService().retrieve(companyId, metadataPaginationQuery).then(data => {
           companyMetadata.value = data
         }).catch(err => {
           console.error(err)
