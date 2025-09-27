@@ -62,18 +62,19 @@
       <v-card class="mb-6">
         <v-card-title class="d-flex align-center justify-space-between">
           <div class="d-flex align-center">
-            <v-icon icon="mdi-database" class="mr-2" />
+            <v-icon icon="mdi-tag-multiple" class="mr-2" />
             Meta Data
           </div>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            prepend-icon="mdi-plus"
-            size="small"
-            @click="showAddMetaDataDialog"
-          >
-            Add Meta Data
-          </v-btn>
+          <v-tooltip text="Add new meta data" location="bottom">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="primary"
+                icon="mdi-tag-plus"
+                size="small"
+                @click="showAddMetaDataDialog" />
+            </template>
+          </v-tooltip>
         </v-card-title>
         <v-card-text>
           <v-data-table
@@ -102,7 +103,7 @@
             </template>
           </v-data-table>
           <div v-else class="text-center py-8 text-medium-emphasis">
-            <v-icon icon="mdi-information" size="48" class="mb-2" />
+            <v-icon icon="mdi-tag-hidden" size="48" class="mb-2" />
             <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
           </div>
         </v-card-text>
