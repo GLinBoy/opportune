@@ -3,12 +3,14 @@
 A short list of tasks to track feature work and refactors.
 
 - [ ] Move all common properties from profile files into `src/main/resources/config/application.yml` — consolidate
-  duplicated keys from `application-dev.yml`, `application-prod.yml`, etc.; keep only environment-specific overrides in
-  profile files.
+      duplicated keys from `application-dev.yml`, `application-prod.yml`, etc.; keep only environment-specific overrides in
+      profile files.
 
 - [ ] Add Terms of Service (ToS) document to the project and expose it in Swagger UI (OpenAPI) —
-  provide a static ToS file or an endpoint, and configure the OpenAPI "termsOfService" URL or Swagger UI link so the
-  ToS is discoverable from the API docs.
+      provide a static ToS file or an endpoint, and configure the OpenAPI "termsOfService" URL or Swagger UI link so the
+      ToS is discoverable from the API docs.
+
+- [ ] When user selects an item (company/application) from the page list, put it in store state (or sort of pass it to the detail page) and then web app doesn't need to fetch it again (or it can fetch it and update it afterward) — optimize data flow by caching selected items in the frontend state management to reduce redundant API calls.
 
 Notes:
 

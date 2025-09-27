@@ -1,5 +1,5 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { type ICompany, type ICompanyMetadata } from '../../models'
 import { type IApplication } from '../../models/application.model'
 import CompanyService from '../../services/company.service'
@@ -22,44 +22,44 @@ export default defineComponent({
     CompanyForm
   },
   setup() {
+    // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
     const companyMetadataService = inject('companyMetadataService', () => new CompanyMetadataService())
     const companyApplicationService = inject('companyApplicationService', () => new CompanyApplicationService())
     const route = useRoute()
-    const router = useRouter()
 
-    // Reactive data
+    // Main data state
     const company = ref<ICompany | null>(null)
     const companyMetadata = ref<ICompanyMetadata[]>([])
     const associatedApplications = ref<IApplication[]>([])
+
+    // Loading states
     const loading = ref(false)
     const saving = ref(false)
-    const hasModifications = ref(false)
+    const savingMetaData = ref(false)
 
-    // Meta Data Dialog
+    // Dialog state
     const showMetaDataDialog = ref(false)
     const metaDataFormValid = ref(false)
-    const savingMetaData = ref(false)
     const newMetaData = ref<ICompanyMetadata>({ companyId: '', metaName: '', metaValue: '' })
 
-    // Snackbar
+    // Snackbar state
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
 
-    // Breadcrumbs
+    // Computed properties
     const breadcrumbs = computed(() => [
       { title: 'Dashboard', to: '/', disabled: false },
       { title: 'Companies', to: '/companies', disabled: false },
       { title: company.value?.name || 'Company Details', to: '', disabled: true },
     ])
 
-    // Table headers for meta data
+    // Configuration
     const metaDataHeaders = [
       { title: 'Key', value: 'metaName', sortable: false },
       { title: 'Value', value: 'metaValue', sortable: false },
       { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
     ]
 
-    // Table headers for applications
     const applicationHeaders = [
       { title: 'Title', value: 'title', sortable: true },
       { title: 'Applied at', value: 'appliedAt', sortable: true },
@@ -67,117 +67,20 @@ export default defineComponent({
       { title: 'Actions', value: 'actions', sortable: true, width: '80px' },
     ]
 
-    // Validation rules
     const rules = {
       required: (value: string) => !!value || 'This field is required',
     }
 
-    // Methods
-    const markAsModified = () => {
-      hasModifications.value = true
-    }
-
-    const saveCompany = async () => {
-      if (!company.value) return
-
-      saving.value = true
-      try {
-        await companyService().update(company.value).then(data => {
-          company.value = data
-        })
-
-        hasModifications.value = false
-        showSnackbar('Company saved successfully!', 'success')
-      } catch (error) {
-        console.error('Failed to save company:', error)
-        showSnackbar('Failed to save company. Please try again.', 'error')
-      } finally {
-        saving.value = false
-      }
-    }
-
-    const showAddMetaDataDialog = () => {
-      newMetaData.value = {}
-      showMetaDataDialog.value = true
-    }
-
-    const cancelAddMetaData = () => {
-      showMetaDataDialog.value = false
-      newMetaData.value = {}
-    }
-
-    const saveMetaData = async () => {
-      if (!metaDataFormValid.value) return
-
-      savingMetaData.value = true
-      try {
-        if (!companyMetadata.value) {
-          companyMetadata.value = []
-        }
-        newMetaData.value.companyId = company.value?.id || ''
-        await companyMetadataService()
-          .create(company.value?.id || '', newMetaData.value)
-          .then(data => {
-            companyMetadata.value.push(data)
-          })
-
-        showMetaDataDialog.value = false
-        newMetaData.value = {}
-        markAsModified()
-        showSnackbar('Meta data added successfully!', 'success')
-      } catch (error) {
-        console.error('Failed to add meta data:', error)
-        showSnackbar('Failed to add meta data. Please try again.', 'error')
-      } finally {
-        savingMetaData.value = false
-      }
-    }
-
-    const removeMetaData = (id: string | undefined) => {
-      if (companyMetadata.value && id) {
-        companyMetadataService().delete(company.value?.id || '', id)
-          .then(() => {
-            const index = companyMetadata.value.findIndex(item => item.id === id)
-            if (index !== -1) {
-              companyMetadata.value.splice(index, 1)
-              markAsModified()
-              showSnackbar('Meta data removed successfully!', 'success')
-            }
-          })
-          .catch(err => {
-            console.error('Failed to delete meta data:', err)
-            showSnackbar('Failed to delete meta data. Please try again.', 'error')
-          })
-      } else {
-        showSnackbar('Meta data item not found.', 'error')
-      }
-    }
-
-    const getStatusColor = (status: string): string => {
-      const statusColors: Record<string, string> = {
-        Applied: 'primary',
-        'Phone Screen': 'info',
-        'Interview Scheduled': 'warning',
-        'Interview Completed': 'orange',
-        'Offer Received': 'success',
-        Rejected: 'error',
-        Withdrawn: 'grey',
-      }
-      return statusColors[status] || 'default'
-    }
-
-    const formatDate = (dateString: string): string => {
-      return new Date(dateString).toLocaleDateString()
-    }
-
-    const viewApplication = (applicationId: number) => {
-      router.push(`/applications/${applicationId}`)
-    }
-
+    // Utility functions
     const showSnackbar = (message: string, color: string) => {
       snackbar.value = { show: true, message, color }
     }
 
+    const markAsModified = () => {
+      // Mark as modified for change tracking
+    }
+
+    // Data fetching
     const loadCompany = async () => {
       const companyId = route.params.id as string
       if (!companyId) return
@@ -223,39 +126,121 @@ export default defineComponent({
       }
     }
 
+    // Main actions
+    const saveCompany = async () => {
+      if (!company.value) return
+
+      saving.value = true
+      try {
+        await companyService().update(company.value).then(data => {
+          company.value = data
+        })
+
+        showSnackbar('Company saved successfully!', 'success')
+      } catch (error) {
+        console.error('Failed to save company:', error)
+        showSnackbar('Failed to save company. Please try again.', 'error')
+      } finally {
+        saving.value = false
+      }
+    }
+
+    // Dialog handlers
+    const showAddMetaDataDialog = () => {
+      newMetaData.value = {}
+      showMetaDataDialog.value = true
+    }
+
+    const cancelAddMetaData = () => {
+      showMetaDataDialog.value = false
+      newMetaData.value = {}
+    }
+
+    const saveMetaData = async () => {
+      if (!metaDataFormValid.value) return
+
+      savingMetaData.value = true
+      try {
+        if (!companyMetadata.value) {
+          companyMetadata.value = []
+        }
+        newMetaData.value.companyId = company.value?.id || ''
+        await companyMetadataService()
+          .create(company.value?.id || '', newMetaData.value)
+          .then(data => {
+            companyMetadata.value.push(data)
+          })
+
+        showMetaDataDialog.value = false
+        newMetaData.value = {}
+        showSnackbar('Meta data added successfully!', 'success')
+      } catch (error) {
+        console.error('Failed to add meta data:', error)
+        showSnackbar('Failed to add meta data. Please try again.', 'error')
+      } finally {
+        savingMetaData.value = false
+      }
+    }
+
+    const removeMetaData = (id: string | undefined) => {
+      if (companyMetadata.value && id) {
+        companyMetadataService().delete(company.value?.id || '', id)
+          .then(() => {
+            const index = companyMetadata.value.findIndex(item => item.id === id)
+            if (index !== -1) {
+              companyMetadata.value.splice(index, 1)
+              showSnackbar('Meta data removed successfully!', 'success')
+            }
+          })
+          .catch(err => {
+            console.error('Failed to delete meta data:', err)
+            showSnackbar('Failed to delete meta data. Please try again.', 'error')
+          })
+      } else {
+        showSnackbar('Meta data item not found.', 'error')
+      }
+    }
+
     // Lifecycle
     onMounted(() => {
       loadCompany()
     })
 
     return {
+      // Main data
       company,
       companyMetadata,
       associatedApplications,
+
+      // Loading states
       loading,
       saving,
-      hasModifications,
-      showMetaDataDialog,
-      metaDataFormValid,
       savingMetaData,
-      newMetaData,
+
+      // UI state
       snackbar,
       breadcrumbs,
+
+      // Configuration
       metaDataHeaders,
       applicationHeaders,
       rules,
+      defaultCompanyLogo,
+
+      // Dialog state
+      showMetaDataDialog,
+      metaDataFormValid,
+      newMetaData,
+
+      // Actions
       markAsModified,
       saveCompany,
+
+      // Dialog actions
       showAddMetaDataDialog,
       cancelAddMetaData,
       saveMetaData,
       removeMetaData,
-      getStatusColor,
-      formatDate,
-      viewApplication,
-      showSnackbar,
-      loadCompany,
-      defaultCompanyLogo,
     }
   }
 })

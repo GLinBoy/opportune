@@ -1,10 +1,8 @@
-import { ref, onMounted, defineComponent, inject, type Ref } from 'vue'
+import { ref, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type ICompany } from '../../models'
-import { getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon } from '../../models'
+import { type ICompany, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import CompanyService from '../../services/company.service'
 import CompanyForm from '../../components/CompanyForm.vue'
-import { type IDataTableOptions, type ISortBy } from '../../models'
 
 import defaultCompanyLogo from '@/assets/images/office-building.png'
 
@@ -20,18 +18,24 @@ export default defineComponent({
     getCompanyStatusIcon
   },
   setup() {
+    // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
     const router = useRouter()
 
-    const itemsPerPage: Ref<number> = ref(10)
-    const page: Ref<number> = ref(1)
-    const sortBy: Ref<Array<ISortBy>> = ref([])
+    // Data table state
+    const companies: Ref<ICompany[]> = ref([])
+    const isFetching = ref(false)
     const totalItems = ref(0)
-    const currentSearch: Ref<string> = ref('')
+    const page: Ref<number> = ref(1)
+    const itemsPerPage: Ref<number> = ref(10)
+    const sortBy: Ref<Array<ISortBy>> = ref([])
+
+    // Dialog state
     const addNewCompanyDialog = ref(false)
     const newCompany: Ref<ICompany> = ref({})
     const isCreating = ref(false)
 
+    // Configuration
     const headers = ref([
       { title: 'Company', key: 'name', sortable: true },
       { title: 'Industry', key: 'industry', sortable: true },
@@ -42,14 +46,7 @@ export default defineComponent({
 
     const itemsPerPageOptions = [10, 25, 50, 100]
 
-    const companies: Ref<ICompany[]> = ref([])
-
-    const isFetching = ref(false)
-
-    const clear = () => {
-      page.value = 1
-    }
-
+    // Utility functions
     const sort = (): Array<string> => {
       if (sortBy.value.length > 0) {
         return sortBy.value.map(s => `${s.key},${s.order}`)
@@ -61,6 +58,7 @@ export default defineComponent({
       return ''
     }
 
+    // Data fetching
     const retrieveCompanies = async () => {
       isFetching.value = true
       try {
@@ -80,15 +78,12 @@ export default defineComponent({
       }
     }
 
+    // Event handlers - Data table
     const handleUpdateOptions = async (options: IDataTableOptions): Promise<void> => {
       page.value = options.page
       itemsPerPage.value = options.itemsPerPage
       sortBy.value = options.sortBy
       await retrieveCompanies()
-    }
-
-    const goToCompanyDetail = (event: Event | null, { item }: { item: ICompany }) => {
-      router.push(`/companies/${item.id}`)
     }
 
     const handleRowClick = (event: Event, { item }: { item: ICompany }) => {
@@ -99,13 +94,15 @@ export default defineComponent({
       retrieveCompanies()
     }
 
+    // Navigation
+    const goToCompanyDetail = (event: Event | null, { item }: { item: ICompany }) => {
+      router.push(`/companies/${item.id}`)
+    }
+
+    // Dialog handlers
     const addNewCompany = () => {
       newCompany.value = {}
       addNewCompanyDialog.value = true
-    }
-
-    const resetForm = () => {
-      newCompany.value = {}
     }
 
     const closeDialog = () => {
@@ -131,28 +128,34 @@ export default defineComponent({
     }
 
     return {
+      // Data
       companies,
-      isFetching,
-      retrieveCompanies,
-      clear,
-      itemsPerPage,
-      page,
-      sortBy,
       totalItems,
-      currentSearch,
-      handleSearch,
+      isFetching,
+
+      // Table configuration
       headers,
+      itemsPerPageOptions,
+      defaultCompanyLogo,
+
+      // Table state
+      page,
+      itemsPerPage,
+
+      // Event handlers
+      handleUpdateOptions,
       handleRowClick,
+      handleSearch,
+
+      // Dialog state
       addNewCompanyDialog,
-      addNewCompany,
       newCompany,
       isCreating,
-      resetForm,
+
+      // Dialog actions
+      addNewCompany,
       closeDialog,
       createCompany,
-      itemsPerPageOptions,
-      handleUpdateOptions,
-      defaultCompanyLogo,
     }
   }
 })
