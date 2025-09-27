@@ -203,8 +203,12 @@ export default defineComponent({
           console.error(err)
         })
 
-        // TODO Load 3-5 applications, implement pagination if needed
-        await companyApplicationService().retrieve(companyId).then(res => {
+        const applicationPaginationQuery = {
+          page: 0,
+          size: 3,
+          sort: `appliedAt,asc`
+        }
+        await companyApplicationService().retrieve(companyId, applicationPaginationQuery).then(res => {
           associatedApplications.value = res.data
         }).catch(err => {
           console.error(err)
