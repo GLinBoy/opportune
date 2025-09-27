@@ -133,11 +133,22 @@ export default defineComponent({
       }
     }
 
-    const removeMetaData = (index: number) => {
+    const removeMetaData = (id: string) => {
       if (companyMetadata.value) {
-        companyMetadata.value.splice(index, 1)
-        markAsModified()
-        showSnackbar('Meta data removed successfully!', 'success')
+
+        companyMetadataService().delete(company.value?.id || '', id)
+          .then(() => {
+            const index = companyMetadata.value.findIndex(item => item.id === id)
+            if (index !== -1) {
+              companyMetadata.value.splice(index, 1)
+              markAsModified()
+              showSnackbar('Meta data removed successfully!', 'success')
+            }
+          })
+          .catch(err => {
+            console.error('Failed to delete meta data:', err)
+            showSnackbar('Failed to delete meta data. Please try again.', 'error')
+          })
       }
     }
 

@@ -92,13 +92,13 @@
                 {{ item.metaValue }}
               </div>
             </template>
-            <template v-slot:[`item.actions`]="{ index }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-btn
                 color="error"
                 variant="text"
                 icon="mdi-delete"
                 size="small"
-                @click="removeMetaData(index)"
+                @click="removeMetaData(item.id)"
               />
             </template>
           </v-data-table>
