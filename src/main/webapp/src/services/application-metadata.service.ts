@@ -3,7 +3,7 @@ import apiClient from './api'
 import buildPaginationQueryOpts from '../utils/pagination'
 import { type IApplicationMetaData } from '../models'
 
-const APPLICATION_METADATA_API_URL = '/applications/{application_id}/metadata'
+const APPLICATION_METADATA_API_URL = '/api/applications/{application_id}/metadata'
 
 export default class ApplicationMetaDataService {
   retrieve(applicationId: string, paginationQuery?: Record<string, unknown>): Promise<IApplicationMetaData[]> {
