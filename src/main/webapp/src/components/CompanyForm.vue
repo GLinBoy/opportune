@@ -63,6 +63,16 @@
             @update:model-value="updateField('foundedYear', $event)"
           />
         </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            :model-value="modelValue.status || 'INTERESTED'"
+            label="Status"
+            :items="statusOptions"
+            variant="outlined"
+            prepend-inner-icon="mdi-flag"
+            @update:model-value="updateField('status', $event)"
+          />
+        </v-col>
         <v-col cols="12">
           <v-textarea
             :model-value="modelValue.description"
@@ -91,7 +101,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { type ICompany } from '../models'
+import { type ICompany, CompanyStatus, getCompanyStatusDisplay } from '../models'
 
 export default defineComponent({
   name: 'CompanyForm',
@@ -102,6 +112,14 @@ export default defineComponent({
     }
   },
   emits: ['update:modelValue', 'change'],
+  computed: {
+    statusOptions() {
+      return Object.values(CompanyStatus).map(status => ({
+        title: getCompanyStatusDisplay(status),
+        value: status
+      }))
+    }
+  },
   methods: {
     updateField(field: keyof ICompany, value: string | undefined) {
       const updatedCompany = {
