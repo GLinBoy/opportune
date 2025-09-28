@@ -1,14 +1,18 @@
 import apiClient from './api'
 
 import { type IApplicationAttachment } from '../models'
+import buildPaginationQueryOpts from '../utils/pagination'
 
-const APPLICATION_ATTACHMENT_API_URL = '/applications/{application_id}/attachments'
+const APPLICATION_ATTACHMENT_API_URL = '/api/applications/{application_id}/attachments'
 
 export default class ApplicationAttachmentService {
-  retrieve(applicationId: string): Promise<IApplicationAttachment[]> {
+
+  retrieve(applicationId: string, paginationQuery?: Record<string, unknown>): Promise<IApplicationAttachment[]> {
     return new Promise<IApplicationAttachment[]>((resolve, reject) => {
       const url = APPLICATION_ATTACHMENT_API_URL.replace('{application_id}', applicationId)
-      apiClient.get<IApplicationAttachment[]>(url)
+      const query = buildPaginationQueryOpts(paginationQuery)
+      const fullUrl = query ? `${url}?${query}` : url
+      apiClient.get<IApplicationAttachment[]>(fullUrl)
         .then(res => resolve(res.data))
         .catch((err: unknown) => reject(err instanceof Error ? err : new Error(String(err))))
     })
