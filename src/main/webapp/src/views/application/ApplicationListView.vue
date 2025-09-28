@@ -6,27 +6,24 @@
         <h1 class="text-h4 font-weight-bold">Applications</h1>
         <p class="text-subtitle-1 text-medium-emphasis">Manage your job applications</p>
       </div>
-      <div class="d-flex align-center" style="gap: 16px">
+      <div class="d-flex align-self-center" style="gap: 16px">
         <v-text-field
-          v-model="searchQuery"
           label="Search applications..."
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
           style="min-width: 300px"
           clearable
-          @input="handleSearch"
         />
-        <v-tooltip text="Add new application">
+        <v-tooltip text="Add new application" location="bottom">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
               color="primary"
-              prepend-icon="mdi-plus"
+              icon="mdi-plus-box"
+              size="small"
               @click="addNewApplication"
-            >
-              Add
-            </v-btn>
+            />
           </template>
         </v-tooltip>
       </div>
@@ -34,61 +31,64 @@
 
     <!-- Data Table -->
     <v-card>
-      <v-data-table
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="currentPage"
+      <v-data-table-server
+        striped="odd"
+        :show-current-page="true"
+        :items-per-page="itemsPerPage"
+        :page="page"
         :headers="headers"
-        :items="filteredApplications"
-        :loading="loading"
-        item-value="id"
-        class="elevation-1"
+        :items="applications"
+        :items-length="totalItems"
+        :loading="isFetching"
+        :items-per-page-options="itemsPerPageOptions"
+        @update:options="handleUpdateOptions"
+        class="elevation-1 primary-header"
         @click:row="handleRowClick"
       >
-        <!-- Status Column with Editable Select -->
-        <template #[`item.status`]="{ item }">
-          <v-select
-            v-model="item.status"
-            :items="statusOptions"
-            variant="outlined"
-            density="compact"
-            hide-details
-            @update:model-value="updateApplicationStatus(item.id, $event)"
-            @click.stop
-          >
-            <template #selection="{ item: statusItem }">
-              <v-chip :color="getStatusColor(statusItem.value)" size="small" variant="flat">
-                {{ statusItem.title }}
-              </v-chip>
-            </template>
-            <template #item="{ props, item: statusItem }">
-              <v-list-item v-bind="props">
-                <template #prepend>
-                  <v-chip :color="getStatusColor(statusItem.value)" size="x-small" variant="flat" />
-                </template>
-              </v-list-item>
-            </template>
-          </v-select>
+
+        <!-- Title Column -->
+        <template v-slot:[`item.title`]="{ item }">
+          <v-container fluid class="pa-0">
+            <v-row no-gutters align="center">
+              <v-col>
+                <span class="font-weight-bold">{{ item.title }}</span>
+              </v-col>
+              <v-col cols="auto" v-if="item.note">
+                <v-tooltip :text="item.note" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      class="ms-1"
+                      color="primary"
+                      size="small"
+                      icon="mdi-information-outline"
+                      v-bind="props"
+                    />
+                  </template>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-container>
         </template>
 
         <!-- Date Applied Column -->
-        <template #[`item.dateApplied`]="{ item }">
-          {{ formatDate(item.dateApplied) }}
+        <template #[`item.appliedAt`]="{ item }">
+          {{ item.appliedAt ? formatDate(item.appliedAt) : '-' }}
         </template>
 
-        <!-- Footer with pagination info -->
-        <template #bottom>
-          <div class="text-center pt-2">
-            <v-pagination v-model="currentPage" :length="pageCount" :total-visible="7" />
-            <div class="text-caption text-medium-emphasis mt-2">
-              Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} applications
-            </div>
-          </div>
+        <!-- Status Column -->
+        <template v-slot:[`item.status`]="{ value }">
+          <v-chip
+            :border="`${getApplicationStatusColor(value)} thin opacity-25`"
+            :color="getApplicationStatusColor(value)"
+            :text="getApplicationStatusDisplay(value)"
+            size="x-small"
+            :prepend-icon="getApplicationStatusIcon(value)" />
         </template>
-      </v-data-table>
+      </v-data-table-server>
     </v-card>
 
     <!-- Loading overlay -->
-    <v-overlay v-model="loading" class="align-center justify-center">
+    <v-overlay v-model="isFetching" class="align-center justify-center">
       <v-progress-circular color="primary" indeterminate size="64" />
     </v-overlay>
 
