@@ -16,11 +16,11 @@
       <!-- Page Header -->
       <div class="d-flex justify-space-between align-center mb-6">
         <div>
-          <h1 class="text-h4 font-weight-bold">{{ application.position }}</h1>
-          <p class="text-subtitle-1 text-medium-emphasis">{{ application.company }}</p>
-          <div v-if="application.jobUrl" class="mt-1">
+          <h1 class="text-h4 font-weight-bold">{{ application.title }}</h1>
+          <p class="text-subtitle-1 text-medium-emphasis">{{ application.companyId }}</p>
+          <div v-if="application.url" class="mt-1">
             <v-btn
-              :href="application.jobUrl"
+              :href="application.url"
               target="_blank"
               variant="text"
               prepend-icon="mdi-open-in-new"
@@ -81,8 +81,8 @@
           <v-row>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.position"
-                label="Position"
+                v-model="application.title"
+                label="Title"
                 variant="outlined"
                 prepend-inner-icon="mdi-account-tie"
                 @input="markAsModified"
@@ -90,7 +90,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.company"
+                v-model="application.companyId"
                 label="Company"
                 variant="outlined"
                 prepend-inner-icon="mdi-domain"
@@ -99,7 +99,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.dateApplied"
+                v-model="application.appliedAt"
                 label="Date Applied"
                 type="date"
                 variant="outlined"
@@ -110,11 +110,9 @@
             <v-col cols="12" md="6">
               <v-select
                 v-model="application.status"
-                :items="statusOptions"
                 label="Status"
                 variant="outlined"
                 prepend-inner-icon="mdi-flag"
-                @update:model-value="updateStatus"
               >
                 <template #selection="{ item }">
                   <v-chip :color="getStatusColor(item.value)" size="small" variant="flat">
@@ -125,7 +123,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.jobUrl"
+                v-model="application.url"
                 label="Job URL"
                 variant="outlined"
                 prepend-inner-icon="mdi-link"
@@ -143,8 +141,8 @@
             </v-col>
             <v-col cols="12">
               <v-textarea
-                v-model="application.notes"
-                label="Notes"
+                v-model="application.note"
+                label="Note"
                 variant="outlined"
                 rows="3"
                 prepend-inner-icon="mdi-note-text"
@@ -172,7 +170,7 @@
           <v-tabs-window-item value="job-description">
             <v-card-text>
               <v-textarea
-                v-model="aiContent.jobDescription"
+                v-model="application.description"
                 label="AI Job Description Analysis"
                 variant="outlined"
                 rows="6"
@@ -184,7 +182,7 @@
           <v-tabs-window-item value="cover-letter">
             <v-card-text>
               <v-textarea
-                v-model="aiContent.coverLetter"
+                v-model="application.coverLetter"
                 label="AI Generated Cover Letter"
                 variant="outlined"
                 rows="8"
@@ -196,7 +194,7 @@
           <v-tabs-window-item value="resume-enhancer">
             <v-card-text>
               <v-textarea
-                v-model="aiContent.resumeEnhancer"
+                v-model="application.resumeInsights"
                 label="Resume Enhancement Suggestions"
                 variant="outlined"
                 rows="6"
@@ -208,7 +206,6 @@
           <v-tabs-window-item value="interview-details">
             <v-card-text>
               <v-textarea
-                v-model="aiContent.interviewDetails"
                 label="Interview Preparation Details"
                 variant="outlined"
                 rows="6"
@@ -238,18 +235,18 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
-            v-if="application.metaData && application.metaData.length > 0"
+            v-if="applicationMetaData && applicationMetaData.length > 0"
             :headers="metaDataHeaders"
-            :items="application.metaData"
+            :items="applicationMetaData"
             hide-default-footer
             density="compact"
           >
             <template v-slot:[`item.key`]="{ item }">
-              <span class="font-weight-medium">{{ item.key }}</span>
+              <span class="font-weight-medium">{{ item.metaName }}</span>
             </template>
             <template v-slot:[`item.value`]="{ item }">
               <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
-                {{ item.value }}
+                {{ item.metaValue }}
               </div>
             </template>
             <template v-slot:[`item.actions`]="{ index }">
@@ -278,15 +275,15 @@
         <v-card-text>
           <v-timeline side="end" density="compact">
             <v-timeline-item
-              v-for="event in application.timeline"
+              v-for="event in applicationTimelines"
               :key="event.id"
               :dot-color="getStatusColor(event.status)"
               size="small"
             >
               <template #opposite>
                 <div class="text-caption text-medium-emphasis text-right">
-                  <div class="font-weight-medium">{{ formatDate(event.date) }}</div>
-                  <div v-if="event.time" class="mt-1">{{ event.time }}</div>
+                  <div class="font-weight-medium">{{ formatDate(event.occurredAt) }}</div>
+                  <div v-if="event.occurredAt" class="mt-1">{{ event.occurredAt }}</div>
                 </div>
               </template>
               <div>
@@ -329,7 +326,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="newMetaData.key"
+                  v-model="newMetaData.metaName"
                   label="Key"
                   variant="outlined"
                   prepend-inner-icon="mdi-key"
@@ -339,7 +336,7 @@
               </v-col>
               <v-col cols="12">
                 <v-textarea
-                  v-model="newMetaData.value"
+                  v-model="newMetaData.metaValue"
                   label="Value"
                   variant="outlined"
                   prepend-inner-icon="mdi-text"
