@@ -8,6 +8,7 @@ import ApplicationList from '@/views/application/ApplicationListView.vue';
 import ApplicationDetail from '@/views/application/ApplicationDetailView.vue';
 import CompanyList from '@/views/company/CompanyListView.vue';
 import CompanyDetail from '@/views/company/CompanyDetailView.vue';
+import ProfileView from '@/views/profile/ProfileView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 
 const router = createRouter({
@@ -60,6 +61,18 @@ const router = createRouter({
           path: ':id',
           name: 'companies-detail',
           component: CompanyDetail,
+        },
+      ],
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: DefaultLayout,
+      children: [
+        {
+          path: '',
+          name: 'profile-settings',
+          component: ProfileView,
         },
       ],
     },
