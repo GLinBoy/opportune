@@ -13,7 +13,12 @@
             <h3>{{ fullname }}</h3>
             <p class="text-caption mt-1">{{ userEmail }}</p>
             <v-divider class="my-3"></v-divider>
-            <v-btn color="primary" variant="text" prepend-icon="mdi-card-account-details-outline">
+            <v-btn
+              color="primary"
+              variant="text"
+              prepend-icon="mdi-card-account-details-outline"
+              @click="goToProfile"
+            >
               Profile
             </v-btn>
             <v-divider class="my-3"></v-divider>
@@ -30,11 +35,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import CryptoJS from 'crypto-js'
+
+const router = useRouter()
 
 const userEmail = ref('john.doe@example.com')
-const gravatarImage = ref(
-  'https://www.gravatar.com/avatar/00000000000000000000000000000000?s=32&d=mp&f=y'
-)
 const fullname = ref('John Doe')
+
+const gravatarImage = computed(() => {
+  const trimmedEmail = userEmail.value.trim().toLowerCase()
+  const hash = CryptoJS.MD5(trimmedEmail).toString()
+  return `https://www.gravatar.com/avatar/${hash}?s=48&d=mp&r=g`
+})
+
+const goToProfile = () => {
+  router.push('/profile')
+}
 </script>
