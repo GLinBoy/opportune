@@ -43,7 +43,7 @@ dependencies {
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.12")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
@@ -72,7 +72,7 @@ tasks.withType<Test> {
 
 // Node.js configuration
 node {
-	version = "22.18.0"
+	version = "22.20.0"
 	download = true
 	workDir = file("${project.projectDir}/.gradle/nodejs")
 	npmWorkDir = file("${project.projectDir}/.gradle/npm")
