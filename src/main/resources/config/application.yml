@@ -10,6 +10,7 @@ spring:
 
 server:
   shutdown: graceful
+  include-stacktrace: never
 
 springdoc:
   swagger-ui:
