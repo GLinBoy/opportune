@@ -28,4 +28,12 @@ data class ApplicationTimeline(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null
-) : BaseEntity()
+) : BaseEntity() {
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is ApplicationTimeline) return false
+		return id != null && id == other.id
+	}
+
+	override fun hashCode(): Int = id?.hashCode() ?: 0
+}

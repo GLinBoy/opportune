@@ -23,5 +23,12 @@ data class InterviewNote(
 
 	@OneToMany(mappedBy = "interviewNote", cascade = [CascadeType.ALL], orphanRemoval = true)
 	val attachments: List<InterviewAttachment> = emptyList()
-) : BaseEntity()
+) : BaseEntity() {
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is InterviewNote) return false
+		return id != null && id == other.id
+	}
 
+	override fun hashCode(): Int = id?.hashCode() ?: 0
+}

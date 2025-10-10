@@ -52,5 +52,13 @@ data class Profile(
 	val applications: Set<Application> = emptySet(),
 
 	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-val companies: Set<Company> = emptySet(),
-) : BaseEntity()
+	val companies: Set<Company> = emptySet(),
+) : BaseEntity() {
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is Profile) return false
+		return id != null && id == other.id
+	}
+
+	override fun hashCode(): Int = id?.hashCode() ?: 0
+}

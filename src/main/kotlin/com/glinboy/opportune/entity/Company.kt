@@ -52,4 +52,12 @@ data class Company(
 
 	@OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val metaData: Set<CompanyMetaData> = emptySet()
-) : BaseEntity()
+) : BaseEntity() {
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is Company) return false
+		return id != null && id == other.id
+	}
+
+	override fun hashCode(): Int = id?.hashCode() ?: 0
+}
