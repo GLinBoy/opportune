@@ -56,3 +56,24 @@ export interface IApplicationProjection {
   companyId?: string
   companyName?: string
 }
+
+export interface IApplicationDetails {
+  id?: string
+  url?: string
+  title?: string
+  location?: string
+  appliedAt?: Date
+  salary?: string
+  note?: string
+  rawContent?: string
+  description?: string
+  coverLetter?: string
+  resumeInsights?: string
+  status?: keyof typeof ApplicationStatus | null
+  company?: ICompany | null
+  timeline?: IApplicationTimeline[] | null
+  interviewNotes?: IInterviewNote[] | null
+  metadata?: IApplicationMetaData[] | null
+  resume?: IApplicationResume | null
+  attachments?: IApplicationAttachment[] | null
+}
