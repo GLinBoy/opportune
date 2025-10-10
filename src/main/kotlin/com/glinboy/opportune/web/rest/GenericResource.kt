@@ -23,7 +23,7 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 
 	@GetMapping
 	@PageableAsQueryParam
-	fun getAll(
+	open fun getAll(
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<D>> {
@@ -35,13 +35,13 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	}
 
 	@GetMapping("/{id}")
-	fun getById(@PathVariable id: ID): ResponseEntity<D> {
+	open fun getById(@PathVariable id: ID): ResponseEntity<D> {
 		val entity = service.getById(id)
 		return ResponseEntity.ok().body(entity)
 	}
 
 	@PostMapping
-	fun save(
+	open fun save(
 		@Valid @RequestBody entity: D,
 		request: HttpServletRequest
 	): ResponseEntity<D> {
@@ -53,7 +53,7 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	}
 
 	@PutMapping
-	fun update(@Valid @RequestBody entity: D): ResponseEntity<D> {
+	open fun update(@Valid @RequestBody entity: D): ResponseEntity<D> {
 		if (entity.id == null) {
 			throw ResponseStatusException(
 				HttpStatus.BAD_REQUEST, "ID must not be null"
@@ -64,7 +64,7 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	}
 
 	@DeleteMapping("/{id}")
-	fun deleteById(@PathVariable id: ID): ResponseEntity<Void> {
+	open fun deleteById(@PathVariable id: ID): ResponseEntity<Void> {
 		service.delete(id)
 		return ResponseEntity.noContent().build()
 	}
