@@ -38,6 +38,15 @@ export default class ApplicationService {
     });
   }
 
+  getApplicationsDetails(id: string): Promise<IApplicationDetails> {
+    return new Promise<IApplicationDetails>((resolve, reject) => {
+      apiClient
+        .get(`${APPLICATION_API_URL}/${id}/details`)
+        .then(res => { resolve(res.data) })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    });
+  }
+
   create(entity: IApplication): Promise<IApplication> {
     return new Promise<IApplication>((resolve, reject) => {
       apiClient
