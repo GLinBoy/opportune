@@ -2,7 +2,7 @@ import apiClient from './api'
 
 import buildPaginationQueryOpts from '../utils/pagination'
 
-import { type IApplication } from '../models'
+import type { IApplication, IApplicationDetails, IApplicationProjection } from '../models'
 import type { AxiosResponse } from 'axios'
 
 const APPLICATION_API_URL = '/api/applications'
@@ -13,6 +13,16 @@ export default class ApplicationService {
     return new Promise<AxiosResponse<IApplication[]>>((resolve, reject) => {
       const query = buildPaginationQueryOpts(paginationQuery)
       const url = query ? `${APPLICATION_API_URL}?${query}` : APPLICATION_API_URL
+      apiClient.get<IApplication[]>(url)
+        .then(res => resolve(res))
+        .catch((error: unknown) => reject(error instanceof Error ? error : new Error(String(error))))
+    })
+  }
+
+  retrieveList(paginationQuery?: Record<string, unknown>): Promise<AxiosResponse<IApplicationProjection[]>> {
+    return new Promise<AxiosResponse<IApplicationProjection[]>>((resolve, reject) => {
+      const query = buildPaginationQueryOpts(paginationQuery)
+      const url = query ? `${APPLICATION_API_URL}/list?${query}` : `${APPLICATION_API_URL}/list`
       apiClient.get<IApplication[]>(url)
         .then(res => resolve(res))
         .catch((error: unknown) => reject(error instanceof Error ? error : new Error(String(error))))
