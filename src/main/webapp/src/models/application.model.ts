@@ -1,4 +1,10 @@
 import { type ApplicationStatus } from "./enumerations/application-status.model";
+import { type ICompany } from "./company.model";
+import { type IApplicationResume } from "./application-resume.model";
+import { type IApplicationTimeline } from "./application-timeline.model";
+import { type IInterviewNote } from "./interview-note.model";
+import { type IApplicationMetaData } from "./application-meta-data.model";
+import { type IApplicationAttachment } from "./application-attachment.model";
 
 export interface IApplication {
   id?: string
@@ -36,4 +42,17 @@ export class Application implements IApplication {
     public profileId?: string,
     public resumeId?: string
   ) { }
+}
+
+export interface IApplicationProjection {
+  id?: string
+  url?: string
+  title?: string
+  location?: string
+  appliedAt?: Date
+  salary?: string
+  note?: string
+  status?: keyof typeof ApplicationStatus | null
+  companyId?: string
+  companyName?: string
 }
