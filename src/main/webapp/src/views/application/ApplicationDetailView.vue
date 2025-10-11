@@ -17,9 +17,11 @@
       <div class="d-flex justify-space-between align-center mb-6">
         <div>
           <h1 class="text-h4 font-weight-bold">{{ application.title }}</h1>
-          <p class="text-subtitle-1 text-medium-emphasis">{{ application.companyId }}</p>
-          <div v-if="application.url" class="mt-1">
+          <div class="d-flex align-center text-subtitle-1 text-medium-emphasis">
+            <span>{{ application?.company?.name }}</span>
+            <span v-if="application.url" class="mx-2">•</span>
             <v-btn
+              v-if="application.url"
               :href="application.url"
               target="_blank"
               variant="text"
@@ -29,11 +31,26 @@
               class="pa-0"
               style="text-transform: none; justify-content: flex-start"
             >
-              View Job Description
+              Go to the Job Description
             </v-btn>
+          </div>
+          <div class="d-flex align-center text-subtitle-2 text-medium-emphasis">
+            <span class="mr-2">Applied on: </span>
+            <span class="font-weight-bold" v-if="application.appliedAt">{{formatDate(application.appliedAt) }}</span>
+            <span class="font-weight-bold" v-else>( You haven't applied yet. )</span>
           </div>
         </div>
         <div class="d-flex align-center" style="gap: 12px">
+          <v-tooltip text="Applied for this job" v-if="!application.appliedAt">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="secondary"
+                icon="mdi-send-check"
+                @click="appliedJob"
+              />
+            </template>
+          </v-tooltip>
           <v-tooltip text="Upload resume for this application">
             <template #activator="{ props }">
               <v-btn
@@ -90,7 +107,6 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.companyId"
                 label="Company"
                 variant="outlined"
                 prepend-inner-icon="mdi-domain"
@@ -99,11 +115,10 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                v-model="application.appliedAt"
-                label="Date Applied"
-                type="date"
+                v-model="application.location"
+                label="Location"
                 variant="outlined"
-                prepend-inner-icon="mdi-calendar"
+                prepend-inner-icon="mdi-map-marker"
                 @input="markAsModified"
               />
             </v-col>
@@ -120,24 +135,6 @@
                   </v-chip>
                 </template>
               </v-select>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="application.url"
-                label="Job URL"
-                variant="outlined"
-                prepend-inner-icon="mdi-link"
-                @input="markAsModified"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="application.location"
-                label="Location"
-                variant="outlined"
-                prepend-inner-icon="mdi-map-marker"
-                @input="markAsModified"
-              />
             </v-col>
             <v-col cols="12">
               <v-textarea
@@ -235,9 +232,9 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
-            v-if="applicationMetaData && applicationMetaData.length > 0"
+            v-if="application.metadata && application.metadata.length > 0"
             :headers="metaDataHeaders"
-            :items="applicationMetaData"
+            :items="application.metadata"
             hide-default-footer
             density="compact"
           >
@@ -275,7 +272,7 @@
         <v-card-text>
           <v-timeline side="end" density="compact">
             <v-timeline-item
-              v-for="event in applicationTimelines"
+              v-for="event in application.timeline"
               :key="event.id"
               :dot-color="getStatusColor(event.status)"
               size="small"
