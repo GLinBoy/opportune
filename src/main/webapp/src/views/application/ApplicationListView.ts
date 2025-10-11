@@ -1,6 +1,6 @@
 import { ref, onMounted, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type IApplication, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
+import { type IApplication, type IApplicationProjection, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import ApplicationService from '../../services/application.service'
 
 export interface Snackbar {
@@ -30,7 +30,7 @@ export default defineComponent({
     const router = useRouter()
 
     // Reactive data
-    const applications = ref<IApplication[]>([])
+    const applications = ref<IApplicationProjection[]>([])
     const isFetching = ref(false)
     const totalItems = ref(0)
     const page: Ref<number> = ref(1)
@@ -40,7 +40,7 @@ export default defineComponent({
     // Table headers
     const headers = [
       { title: 'Title', key: 'title', sortable: true },
-      { title: 'Company', key: 'companyId', sortable: true },
+      { title: 'Company', key: 'companyName', sortable: true },
       { title: 'Date Applied', key: 'appliedAt', sortable: true },
       { title: 'Status', key: 'status', sortable: true, width: '200px' },
     ]
@@ -62,7 +62,7 @@ export default defineComponent({
     const retrieveApplications = async () => {
       isFetching.value = true
       try {
-        const response = await applicationService().retrieve({
+        const response = await applicationService().retrieveList({
           page: page.value - 1,
           size: itemsPerPage.value,
           sort: sort(),
