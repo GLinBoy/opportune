@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type IInterviewNote } from '../../models'
-import { ApplicationStatus } from '../../models/enumerations/application-status.model'
+import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
 import { ApplicationService } from '../../services'
 
 export interface Snackbar {
@@ -14,6 +14,14 @@ export interface Snackbar {
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ApplicationDetailView',
+  computed: {
+    statusOptions() {
+      return Object.values(ApplicationStatus).map(status => ({
+        title: getApplicationStatusDisplay(status),
+        value: status
+      }))
+    }
+  },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
     const route = useRoute()
