@@ -1,8 +1,8 @@
-import { ref, computed, onMounted, defineComponent, inject } from 'vue'
+import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { ApplicationResume, IApplication, IApplicationAttachment, IApplicationMetaData, IApplicationTimeline, IInterviewNote } from '../../models'
+import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type IInterviewNote } from '../../models'
 import { ApplicationStatus } from '../../models/enumerations/application-status.model'
-import { ApplicationAttachmentService, ApplicationMetaDataService, ApplicationResumeService, ApplicationService, ApplicationTimelineService, InterviewNoteService } from '../../services'
+import { ApplicationService } from '../../services'
 
 export interface Snackbar {
   show: boolean
@@ -16,20 +16,10 @@ export default defineComponent({
   name: 'ApplicationDetailView',
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
-    const applicationMetaDataService = inject('applicationMetaDataService', () => new ApplicationMetaDataService())
-    const applicationAttachmentService = inject('applicationAttachmentService', () => new ApplicationAttachmentService())
-    const applicationResumeService = inject('applicationResumeService', () => new ApplicationResumeService())
-    const applicationTimelineService = inject('applicationTimelineService', () => new ApplicationTimelineService())
-    const interviewNoteService = inject('interviewNoteService', () => new InterviewNoteService())
     const route = useRoute()
 
     // Main data state
-    const application = ref<IApplication | null>(null)
-    const applicationMetaData = ref<IApplicationMetaData[]>([])
-    const applicationAttachments = ref<IApplicationAttachment[]>([])
-    const applicationResume = ref<ApplicationResume | null>(null)
-    const applicationTimelines = ref<IApplicationTimeline[]>([])
-    const interviewNotes = ref<IInterviewNote[]>([])
+    const application = ref<IApplicationDetails | null>(null)
 
     // Loading states
     const loading = ref(false)
@@ -289,62 +279,8 @@ export default defineComponent({
       try {
         loading.value = true
 
-        // Replace with actual API call when backend is ready
-        // const response = await fetchApplicationById(applicationId.value)
-        // application.value = response.data
-
-        // Simulate API call delay
-        await applicationService().find(applicationId.value)
-          .then(data => {
-            application.value = data
-          })
-
-        const metadataPaginationQuery = {
-          page: 0,
-          size: 100,
-          sort: `metaName,asc`
-        }
-        await applicationMetaDataService().retrieve(applicationId.value, metadataPaginationQuery)
-          .then(data => {
-            applicationMetaData.value = data
-          })
-
-        const attachmentPaginationQuery = {
-          page: 0,
-          size: 100,
-          sort: `name,asc`
-        }
-        await applicationAttachmentService().retrieve(applicationId.value, attachmentPaginationQuery)
-          .then(data => {
-            applicationAttachments.value = data
-          })
-
-        if (application.value?.resumeId) {
-          await applicationResumeService().find(applicationId.value, application.value?.resumeId)
-            .then(data => {
-              applicationResume.value = data
-            })
-        }
-
-        const timelinePaginationQuery = {
-          page: 0,
-          size: 100,
-          sort: `occurredAt,asc`
-        }
-        await applicationTimelineService().retrieve(applicationId.value, timelinePaginationQuery)
-          .then(response => {
-            applicationTimelines.value = response.data
-          })
-
-        const interviewNotePaginationQuery = {
-          page: 0,
-          size: 100,
-          sort: `date,asc`
-        }
-        await interviewNoteService().retrieve(applicationId.value, interviewNotePaginationQuery)
-          .then(response => {
-            interviewNotes.value = response.data
-          })
+        await applicationService().getApplicationsDetails(applicationId.value)
+          .then(data => { application.value = data })
 
       } catch (error) {
         console.error('Failed to load application:', error)
