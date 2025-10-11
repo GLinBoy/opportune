@@ -317,11 +317,6 @@ export default defineComponent({
     return {
       // Main data
       application,
-      applicationMetaData,
-      applicationAttachments,
-      applicationResume,
-      applicationTimelines,
-      interviewNotes,
 
       // Loading states
       loading,
@@ -362,6 +357,7 @@ export default defineComponent({
       uploadResume,
       showRawContent,
       deleteApplication,
+      appliedJob,
 
       // AI methods
       regenerateJobDescription,
