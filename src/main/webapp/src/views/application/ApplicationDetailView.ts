@@ -165,6 +165,13 @@ export default defineComponent({
       }
     }
 
+    const appliedJob = () => {
+      application.value!.appliedAt = new Date()
+      application.value!.status = ApplicationStatus.APPLIED
+      markAsModified()
+      saveApplication()
+    }
+
     const showRawContent = () => {
       // Function to show raw content fetched from job posting URL
       console.log('Show raw content clicked for application:', application.value?.id)
