@@ -126,15 +126,11 @@
               <v-select
                 v-model="application.status"
                 label="Status"
+                :items="statusOptions"
                 variant="outlined"
                 prepend-inner-icon="mdi-flag"
-              >
-                <template #selection="{ item }">
-                  <v-chip :color="getStatusColor(item.value)" size="small" variant="flat">
-                    {{ item.title }}
-                  </v-chip>
-                </template>
-              </v-select>
+                @input="markAsModified"
+              />
             </v-col>
             <v-col cols="12">
               <v-textarea
