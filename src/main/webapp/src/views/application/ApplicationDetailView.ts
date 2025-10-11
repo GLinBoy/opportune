@@ -108,19 +108,6 @@ export default defineComponent({
     }
 
     const saveApplication = async () => {
-      if (!application.value || !applicationForm.value) return
-
-      // Validate form
-      const { valid } = await applicationForm.value.validate()
-      if (!valid) {
-        snackbar.value = {
-          show: true,
-          message: 'Please fix the validation errors before saving.',
-          color: 'error',
-        }
-        return
-      }
-
       try {
         saving.value = true
 
@@ -129,6 +116,25 @@ export default defineComponent({
 
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        // TODO save the application using applicationService
+        const updateApplication: IApplication = new Application()
+        updateApplication.id = application.value?.id
+        updateApplication.url = application.value?.url
+        updateApplication.title = application.value?.title
+        updateApplication.location = application.value?.location
+        updateApplication.appliedAt = application.value?.appliedAt
+        updateApplication.salary = application.value?.salary
+        updateApplication.note = application.value?.note
+        updateApplication.rawContent = application.value?.rawContent
+        updateApplication.description = application.value?.description
+        updateApplication.coverLetter = application.value?.coverLetter
+        updateApplication.resumeInsights = application.value?.resumeInsights
+        updateApplication.status = application.value?.status
+        updateApplication.companyId = application.value?.company?.id
+        updateApplication.resumeId = application.value?.resume?.id
+
+        await applicationService().update(updateApplication)
 
         hasModifications.value = false
 
