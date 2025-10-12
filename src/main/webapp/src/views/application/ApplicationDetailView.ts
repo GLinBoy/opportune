@@ -2,7 +2,7 @@ import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type ICompany, type IInterviewNote } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
-import { ApplicationService } from '../../services'
+import { ApplicationService, CompanyService } from '../../services'
 
 export interface Snackbar {
   show: boolean
@@ -24,6 +24,7 @@ export default defineComponent({
   },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
+    const companyService = inject('companyService', () => new CompanyService())
     const route = useRoute()
 
     // Main data state
@@ -35,6 +36,7 @@ export default defineComponent({
     const saving = ref(false)
     const savingMetaData = ref(false)
     const isCompanyEditing = ref(false)
+    const isCompanyLoading = ref(false)
 
     // Form state
     const formValid = ref(false)
@@ -313,6 +315,32 @@ export default defineComponent({
       }
     }
 
+    const sort = (): Array<string> => {
+      return ['name,asc']
+    }
+
+    const search = (): string => {
+      return ''
+    }
+
+    const loadCompanies = async () => {
+      try {
+        isCompanyLoading.value = true
+        const paginationQuery = {
+          page: 0,
+          size: 5,
+          sort: sort(),
+          query: search(),
+        }
+        const res = await companyService().retrieve(paginationQuery)
+        companies.value = [application.value!.company!, ...res.data.filter(c => c.id !== application.value?.company?.id)]
+      } catch (err) {
+        console.error('Failed to retrieve companies:', err)
+      } finally {
+        isCompanyLoading.value = false
+      }
+    }
+
     // Lifecycle
     onMounted(() => {
       loadApplication()
@@ -329,6 +357,7 @@ export default defineComponent({
       saving,
       savingMetaData,
       isCompanyEditing,
+      isCompanyLoading,
 
       // Form state
       formValid,
