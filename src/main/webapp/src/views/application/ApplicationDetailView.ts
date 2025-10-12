@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type IInterviewNote } from '../../models'
+import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type ICompany, type IInterviewNote } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
 import { ApplicationService } from '../../services'
 
@@ -28,11 +28,13 @@ export default defineComponent({
 
     // Main data state
     const application = ref<IApplicationDetails | null>(null)
+    const companies = ref<ICompany[]>([])
 
     // Loading states
     const loading = ref(false)
     const saving = ref(false)
     const savingMetaData = ref(false)
+    const isCompanyEditing = ref(false)
 
     // Form state
     const formValid = ref(false)
@@ -118,14 +120,6 @@ export default defineComponent({
     const saveApplication = async () => {
       try {
         saving.value = true
-
-        // Replace with actual API call when backend is ready
-        // await saveApplicationAPI(application.value)
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // TODO save the application using applicationService
         const updateApplication: IApplication = new Application()
         updateApplication.id = application.value?.id
         updateApplication.url = application.value?.url
@@ -301,7 +295,10 @@ export default defineComponent({
         loading.value = true
 
         await applicationService().getApplicationsDetails(applicationId.value)
-          .then(data => { application.value = data })
+          .then(data => {
+            application.value = data
+            companies.value.push(data.company!)
+          })
 
       } catch (error) {
         console.error('Failed to load application:', error)
@@ -325,11 +322,13 @@ export default defineComponent({
     return {
       // Main data
       application,
+      companies,
 
       // Loading states
       loading,
       saving,
       savingMetaData,
+      isCompanyEditing,
 
       // Form state
       formValid,
