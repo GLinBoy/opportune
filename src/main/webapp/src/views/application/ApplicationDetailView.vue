@@ -106,12 +106,28 @@
               />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field
+              <v-autocomplete
+                v-model="application.company"
+                :items="companies"
+                item-title="name"
+                item-value="id"
                 label="Company"
                 variant="outlined"
+                :readonly="!isCompanyEditing"
                 prepend-inner-icon="mdi-domain"
                 @input="markAsModified"
-              />
+              >
+                <template v-slot:append>
+                  <v-slide-x-reverse-transition mode="out-in">
+                    <v-icon
+                      :key="`icon-${isCompanyEditing}`"
+                      :color="isCompanyEditing ? 'success' : 'info'"
+                      :icon="isCompanyEditing ? 'mdi-briefcase-check-outline' : 'mdi-briefcase-edit-outline'"
+                      @click="isCompanyEditing = !isCompanyEditing"
+                    ></v-icon>
+                  </v-slide-x-reverse-transition>
+                </template>
+              </v-autocomplete>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
