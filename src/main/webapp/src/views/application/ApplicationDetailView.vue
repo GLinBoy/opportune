@@ -113,6 +113,7 @@
                 item-value="id"
                 label="Company"
                 variant="outlined"
+                :loading="isCompanyLoading"
                 :readonly="!isCompanyEditing"
                 prepend-inner-icon="mdi-domain"
                 @input="markAsModified"
