@@ -61,20 +61,9 @@ export default defineComponent({
     const applicationId = computed(() => route.params.id as string)
 
     const breadcrumbs = computed(() => [
-      {
-        title: 'Dashboard',
-        disabled: false,
-        href: '/dashboard',
-      },
-      {
-        title: 'Applications',
-        disabled: false,
-        href: '/applications',
-      },
-      {
-        title: application.value?.title || 'Application Detail',
-        disabled: true,
-      },
+      { title: 'Dashboard', to: '/', disabled: false },
+      { title: 'Applications', to: '/applications', disabled: false },
+      { title: application.value?.title || 'Application Detail', to: '', disabled: true }
     ])
 
     // Configuration
