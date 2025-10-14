@@ -3,7 +3,8 @@ package com.glinboy.opportune.service
 import com.glinboy.opportune.dto.BaseDTO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.Optional
+import org.springframework.data.jpa.domain.Specification
+import java.util.*
 
 interface GenericService<ID, D : BaseDTO> {
 	fun save(t: D): D
@@ -15,6 +16,8 @@ interface GenericService<ID, D : BaseDTO> {
 	fun getById(id: ID): D
 
 	fun findAll(pageable: Pageable): Page<D>
+
+	fun findAll(specification: Specification<Any> , pageable: Pageable): Page<D>
 
 	fun update(t: D): D
 
