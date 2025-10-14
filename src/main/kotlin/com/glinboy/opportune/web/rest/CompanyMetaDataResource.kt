@@ -30,7 +30,7 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 		request: HttpServletRequest
 	): ResponseEntity<List<CompanyMetaDataDTO>> {
 		val page: Page<CompanyMetaDataDTO> = companyMetaDataService.findAll(companyId, pageable)
-		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}
@@ -88,4 +88,3 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 		return ResponseEntity.noContent().build()
 	}
 }
-

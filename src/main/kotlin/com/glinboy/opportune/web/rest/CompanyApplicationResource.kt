@@ -29,7 +29,7 @@ class CompanyApplicationResource(private val applicationService: ApplicationServ
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationDTO>> {
 		val page: Page<ApplicationDTO> = applicationService.getCompanyApplications(companyId, pageable)
-		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}

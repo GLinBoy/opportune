@@ -32,7 +32,7 @@ open class ApplicationResource(applicationService: ApplicationService) :
 	): ResponseEntity<List<ApplicationProjection>> {
 		val page: Page<ApplicationProjection> = service.findAllApplications(pageable)
 		val headers: HttpHeaders =
-			PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}

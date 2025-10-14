@@ -30,7 +30,7 @@ class ApplicationMetaDataResource(private val applicationMetaDataService: Applic
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationMetaDataDTO>> {
 		val page: Page<ApplicationMetaDataDTO> = applicationMetaDataService.findAll(applicationId, pageable)
-		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}

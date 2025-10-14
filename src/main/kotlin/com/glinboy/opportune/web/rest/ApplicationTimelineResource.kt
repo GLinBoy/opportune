@@ -30,7 +30,7 @@ class ApplicationTimelineResource(private val applicationTimelineService: Applic
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationTimelineDTO>> {
 		val page: Page<ApplicationTimelineDTO> = applicationTimelineService.findAll(applicationId, pageable)
-		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}

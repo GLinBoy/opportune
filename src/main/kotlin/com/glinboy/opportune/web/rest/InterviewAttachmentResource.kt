@@ -29,7 +29,7 @@ class InterviewAttachmentResource(private val interviewAttachmentService: Interv
 	): ResponseEntity<List<InterviewAttachmentDTO>> {
 		val page = interviewAttachmentService.findByApplicationIdAndInterviewNoteId(applicationId, interviewNoteId, pageable)
 		val headers: HttpHeaders =
-			PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}

@@ -29,7 +29,7 @@ class ApplicationAttachmentResource(private val applicationAttachmentService: Ap
 	): ResponseEntity<List<ApplicationAttachmentDTO>> {
 		val page = applicationAttachmentService.findByApplicationId(applicationId, pageable)
 		val headers: HttpHeaders =
-			PaginationUtil.generatePaginationHttpHeaders(page, request.requestURI)
+			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
 	}
