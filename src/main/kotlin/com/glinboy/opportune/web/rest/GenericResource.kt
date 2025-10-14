@@ -6,6 +6,9 @@ import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
+import org.apache.commons.lang3.StringUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,6 +23,8 @@ import java.net.URI
 abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	protected val service: S
 ) {
+
+	protected val log: Logger = LoggerFactory.getLogger(this::class.java)
 
 	@GetMapping
 	@PageableAsQueryParam
