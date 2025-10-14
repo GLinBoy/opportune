@@ -13,7 +13,7 @@ import java.util.*
 class ApplicationResumeServiceImpl(
 	applicationResumeRepository: ApplicationResumeRepository,
 	mapper: ApplicationResumeMapper
-) : GenericServiceImpl<UUID, ApplicationResumeDTO, ApplicationResume, ApplicationResumeRepository,
+) : GenericServiceImpl<UUID, ApplicationResume, ApplicationResumeDTO, ApplicationResumeRepository,
 	ApplicationResumeMapper>(applicationResumeRepository, mapper), ApplicationResumeService {
 
 	override fun findByApplicationId(applicationId: UUID): Optional<ApplicationResumeDTO> =

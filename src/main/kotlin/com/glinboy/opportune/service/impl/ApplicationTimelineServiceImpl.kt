@@ -15,7 +15,7 @@ import java.util.*
 class ApplicationTimelineServiceImpl(
 	applicationTimelineRepository: ApplicationTimelineRepository,
 	mapper: ApplicationTimelineMapper
-) : GenericServiceImpl<UUID, ApplicationTimelineDTO, ApplicationTimeline, ApplicationTimelineRepository,
+) : GenericServiceImpl<UUID, ApplicationTimeline, ApplicationTimelineDTO, ApplicationTimelineRepository,
 	ApplicationTimelineMapper>(applicationTimelineRepository, mapper), ApplicationTimelineService {
 
 	override fun findAll(applicationId: UUID, pageable: Pageable): Page<ApplicationTimelineDTO> =

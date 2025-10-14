@@ -11,7 +11,7 @@ import java.util.*
 
 @Service
 class ProfileResumeServiceImpl(profileResumeRepository: ProfileResumeRepository, mapper: ProfileResumeMapper) :
-	GenericServiceImpl<UUID, ProfileResumeDTO, ProfileResume, ProfileResumeRepository,
+	GenericServiceImpl<UUID, ProfileResume, ProfileResumeDTO, ProfileResumeRepository,
 		ProfileResumeMapper>(profileResumeRepository, mapper), ProfileResumeService {
 
 	override fun findByProfileId(profileId: UUID): Optional<ProfileResumeDTO> =

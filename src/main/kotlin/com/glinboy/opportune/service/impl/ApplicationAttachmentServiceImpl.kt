@@ -15,7 +15,7 @@ import java.util.*
 class ApplicationAttachmentServiceImpl(
 	applicationAttachmentRepository: ApplicationAttachmentRepository,
 	mapper: ApplicationAttachmentMapper
-) : GenericServiceImpl<UUID, ApplicationAttachmentDTO, ApplicationAttachment, ApplicationAttachmentRepository,
+) : GenericServiceImpl<UUID, ApplicationAttachment, ApplicationAttachmentDTO, ApplicationAttachmentRepository,
 	ApplicationAttachmentMapper>(applicationAttachmentRepository, mapper), ApplicationAttachmentService {
 
 	override fun findByApplicationIdAndId(applicationId: UUID, id: UUID): Optional<ApplicationAttachmentDTO> =

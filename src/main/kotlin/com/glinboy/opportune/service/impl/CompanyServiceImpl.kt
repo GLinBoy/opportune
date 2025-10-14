@@ -10,6 +10,6 @@ import java.util.*
 
 @Service
 class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMapper) :
-	GenericServiceImpl<UUID, CompanyDTO, Company, CompanyRepository, CompanyMapper>(companyRepository, mapper),
+	GenericServiceImpl<UUID, Company, CompanyDTO, CompanyRepository, CompanyMapper>(companyRepository, mapper),
 	CompanyService {
 }

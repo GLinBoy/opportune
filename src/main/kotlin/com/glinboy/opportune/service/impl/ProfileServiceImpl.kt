@@ -10,7 +10,7 @@ import java.util.*
 
 @Service
 class ProfileServiceImpl(profileRepository: ProfileRepository, mapper: ProfileMapper) :
-	GenericServiceImpl<UUID, ProfileDTO, Profile, ProfileRepository,
+	GenericServiceImpl<UUID, Profile, ProfileDTO, ProfileRepository,
 		ProfileMapper>(profileRepository, mapper), ProfileService {
 
 	private val currentUserID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001")

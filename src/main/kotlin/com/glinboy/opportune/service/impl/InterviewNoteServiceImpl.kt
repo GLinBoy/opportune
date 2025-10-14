@@ -13,7 +13,7 @@ import java.util.*
 
 @Service
 class InterviewNoteServiceImpl(interviewNoteRepository: InterviewNoteRepository, mapper: InterviewNoteMapper) :
-	GenericServiceImpl<UUID, InterviewNoteDTO, InterviewNote, InterviewNoteRepository,
+	GenericServiceImpl<UUID, InterviewNote, InterviewNoteDTO, InterviewNoteRepository,
 		InterviewNoteMapper>(interviewNoteRepository, mapper), InterviewNoteService {
 
 	override fun findAll(applicationId: UUID, pageable: Pageable): Page<InterviewNoteDTO> =

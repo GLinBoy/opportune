@@ -13,7 +13,7 @@ import java.util.*
 
 @Service
 class CompanyMetaDataServiceImpl(companyMetaDataRepository: CompanyMetaDataRepository, mapper: CompanyMetaDataMapper) :
-	GenericServiceImpl<UUID, CompanyMetaDataDTO, CompanyMetaData, CompanyMetaDataRepository,
+	GenericServiceImpl<UUID, CompanyMetaData, CompanyMetaDataDTO, CompanyMetaDataRepository,
 		CompanyMetaDataMapper>(companyMetaDataRepository, mapper), CompanyMetaDataService {
 
 	override fun findAll(companyId: UUID, pageable: Pageable): Page<CompanyMetaDataDTO> =

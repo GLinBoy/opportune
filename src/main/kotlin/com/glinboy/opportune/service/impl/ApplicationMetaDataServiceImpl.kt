@@ -16,7 +16,7 @@ class ApplicationMetaDataServiceImpl(
 	applicationMetaDataRepository: ApplicationMetaDataRepository,
 	mapper: ApplicationMetaDataMapper
 ) :
-	GenericServiceImpl<UUID, ApplicationMetaDataDTO, ApplicationMetaData, ApplicationMetaDataRepository, ApplicationMetaDataMapper>(
+	GenericServiceImpl<UUID, ApplicationMetaData, ApplicationMetaDataDTO, ApplicationMetaDataRepository, ApplicationMetaDataMapper>(
 		applicationMetaDataRepository, mapper
 	), ApplicationMetaDataService {
 

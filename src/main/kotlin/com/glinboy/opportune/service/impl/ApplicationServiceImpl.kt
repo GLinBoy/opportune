@@ -18,7 +18,7 @@ class ApplicationServiceImpl(
 	applicationRepository: ApplicationRepository,
 	mapper: ApplicationMapper,
 	private val applicationDetailsMapper: ApplicationDetailsMapper
-) : GenericServiceImpl<UUID, ApplicationDTO, Application, ApplicationRepository,
+) : GenericServiceImpl<UUID, Application, ApplicationDTO, ApplicationRepository,
 	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 
 	override fun getCompanyApplications(companyId: UUID, pageable: Pageable): Page<ApplicationDTO> =

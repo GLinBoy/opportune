@@ -15,7 +15,7 @@ import java.util.*
 class InterviewAttachmentServiceImpl(
 	interviewAttachmentRepository: InterviewAttachmentRepository,
 	mapper: InterviewAttachmentMapper
-) : GenericServiceImpl<UUID, InterviewAttachmentDTO, InterviewAttachment, InterviewAttachmentRepository,
+) : GenericServiceImpl<UUID, InterviewAttachment, InterviewAttachmentDTO, InterviewAttachmentRepository,
 	InterviewAttachmentMapper>(interviewAttachmentRepository, mapper), InterviewAttachmentService {
 
 	override fun findByApplicationIdANdInterviewNoteIdAndId(applicationId: UUID, interviewNoteId: UUID, id: UUID): Optional<InterviewAttachmentDTO> =
