@@ -17,7 +17,7 @@ abstract class GenericServiceImpl<ID : Any, D : BaseDTO, E : BaseEntity,
 	protected val mapper: M,
 ) : GenericService<ID, D> {
 
-	private val log: Logger = LoggerFactory.getLogger(this::class.java)
+	protected val log: Logger = LoggerFactory.getLogger(this::class.java)
 
 	override fun save(t: D): D {
 		val entity: E = mapper.createEntity(t)
