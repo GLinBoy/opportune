@@ -8,14 +8,17 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.*
 
-abstract class GenericServiceImpl<ID : Any, D : BaseDTO, E : BaseEntity,
-	S : JpaRepository<E, ID>, M : GenericMapper<D, E>>(
+abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
+	S, M : GenericMapper<D, E>>(
 	protected val repository: S,
 	protected val mapper: M,
-) : GenericService<ID, D> {
+) : GenericService<ID, D>
+	where S : JpaRepository<E, ID>, S : JpaSpecificationExecutor<E> {
 
 	protected val log: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -43,6 +46,11 @@ abstract class GenericServiceImpl<ID : Any, D : BaseDTO, E : BaseEntity,
 
 	override fun findAll(pageable: Pageable): Page<D> {
 		return repository.findAll(pageable)
+			.map { mapper.toDto(it) }
+	}
+
+	override fun findAll(specification: Specification<Any>, pageable: Pageable): Page<D> {
+		return repository.findAll(specification as Specification<E>, pageable)
 			.map { mapper.toDto(it) }
 	}
 
