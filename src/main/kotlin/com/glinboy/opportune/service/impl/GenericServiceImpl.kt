@@ -14,11 +14,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.*
 
 abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
-	S, M : GenericMapper<D, E>>(
-	protected val repository: S,
-	protected val mapper: M,
+	R, M : GenericMapper<D, E>>(
+	protected open val repository: R,
+	protected open val mapper: M,
 ) : GenericService<ID, D>
-	where S : JpaRepository<E, ID>, S : JpaSpecificationExecutor<E> {
+	where R : JpaRepository<E, ID>, R : JpaSpecificationExecutor<E> {
 
 	protected val log: Logger = LoggerFactory.getLogger(this::class.java)
 
