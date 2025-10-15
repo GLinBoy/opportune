@@ -5,6 +5,7 @@ import com.glinboy.opportune.entity.ProfileResume
 import com.glinboy.opportune.mapper.ProfileResumeMapper
 import com.glinboy.opportune.repository.ProfileResumeRepository
 import com.glinboy.opportune.service.ProfileResumeService
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -15,11 +16,22 @@ class ProfileResumeServiceImpl(profileResumeRepository: ProfileResumeRepository,
 		ProfileResumeMapper>(profileResumeRepository, mapper), ProfileResumeService {
 
 	override fun findByProfileId(profileId: UUID): Optional<ProfileResumeDTO> =
-		repository.findByProfileId(profileId).map { mapper.toDto(it) }
+		repository.findOne(
+			Specification.allOf<ProfileResume>()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("profile").get<UUID>("id"), profileId)
+				}
+		).map(mapper::toDto)
 
 	@Transactional
-	override fun deleteByProfileId(profileId: UUID) =
-		repository.deleteByProfileId(profileId)
+	override fun deleteByProfileId(profileId: UUID) {
+		repository.delete(
+			Specification.allOf<ProfileResume>()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("profile").get<UUID>("id"), profileId)
+				}
+		)
+	}
 
 }
 
