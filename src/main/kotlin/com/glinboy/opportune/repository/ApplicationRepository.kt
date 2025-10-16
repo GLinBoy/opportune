@@ -12,7 +12,6 @@ import java.util.*
 
 @Repository
 interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecificationExecutor<Application> {
-	fun findAllByCompanyId(companyId: UUID, pageable: Pageable): Page<Application>
 
 	@Query("SELECT a.id AS id, " +
 		" a.url AS url, " +
