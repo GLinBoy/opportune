@@ -7,6 +7,7 @@ import com.glinboy.opportune.repository.InterviewAttachmentRepository
 import com.glinboy.opportune.service.InterviewAttachmentService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -18,20 +19,44 @@ class InterviewAttachmentServiceImpl(
 ) : GenericServiceImpl<UUID, InterviewAttachment, InterviewAttachmentDTO, InterviewAttachmentRepository,
 	InterviewAttachmentMapper>(interviewAttachmentRepository, mapper), InterviewAttachmentService {
 
-	override fun findByApplicationIdANdInterviewNoteIdAndId(applicationId: UUID, interviewNoteId: UUID, id: UUID): Optional<InterviewAttachmentDTO> =
-		repository.findByInterviewNoteIdAndId(interviewNoteId, id)
-			.map(mapper::toDto)
-			.let { return it }
+	override fun findByApplicationIdANdInterviewNoteIdAndId(applicationId: UUID, interviewNoteId: UUID, id: UUID):
+		Optional<InterviewAttachmentDTO> = repository.findOne(
+		Specification.allOf<InterviewAttachment>()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("id"), id)
+			})
+		.map(mapper::toDto)
 
-	override fun findByApplicationIdAndInterviewNoteId(applicationId: UUID, interviewNoteId: UUID, pageable: Pageable): Page<InterviewAttachmentDTO> {
-		repository.findAllByInterviewNoteId(interviewNoteId, pageable)
-			.map(mapper::toDto)
-			.let { return it }
-	}
+	override fun findByApplicationIdAndInterviewNoteId(applicationId: UUID, interviewNoteId: UUID, pageable: Pageable):
+		Page<InterviewAttachmentDTO> = repository.findAll(
+		Specification.allOf<InterviewAttachment>()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+			}, pageable
+	).map(mapper::toDto)
 
 	@Transactional
-	override fun deleteByApplicationIdAndInterviewNoteIdAndId(applicationId: UUID, interviewNoteId: UUID, id: UUID) =
-		repository.deleteByInterviewNoteIdAndId(interviewNoteId, id)
-
-
+	override fun deleteByApplicationIdAndInterviewNoteIdAndId(applicationId: UUID, interviewNoteId: UUID, id: UUID) {
+		repository.delete(
+			Specification.allOf<InterviewAttachment>()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("id"), id)
+				}
+		)
+	}
 }
