@@ -33,10 +33,10 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	@PageableAsQueryParam
 	open fun getAll(
 		@Parameter(hidden = true) pageable: Pageable,
-		@RequestParam(value = "search", required = false, defaultValue = "") search: String,
+		@RequestParam(value = "query", required = false, defaultValue = "") query: String,
 		request: HttpServletRequest
 	): ResponseEntity<List<D>> {
-		val specification = Optional.of<String>(search)
+		val specification = Optional.of<String>(query)
 			.filter { StringUtils.isNotBlank(it) }
 			.map { toSpecification<Any>(it) }
 			.orElseGet { Specification.allOf() }
