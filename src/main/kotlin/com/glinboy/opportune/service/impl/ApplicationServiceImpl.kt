@@ -10,6 +10,7 @@ import com.glinboy.opportune.repository.ApplicationRepository
 import com.glinboy.opportune.service.ApplicationService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -22,13 +23,18 @@ class ApplicationServiceImpl(
 	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 
 	override fun getCompanyApplications(companyId: UUID, pageable: Pageable): Page<ApplicationDTO> =
-		repository.findAllByCompanyId(companyId, pageable).let {
-			return it.map(mapper::toDto)
-		}
+		repository.findAll(
+			Specification.allOf<Application>()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("company").get<UUID>("id"), companyId)
+				}, pageable
+		)
+			.map(mapper::toDto)
 
 	override fun findAllApplications(pageable: Pageable): Page<ApplicationProjection> =
 		repository.findAllApplications(pageable)
 
-	override fun getApplicationDetails(id: UUID): Optional<ApplicationDetailsDTO> = repository.findApplicationDetailsById(id)
-		.map { applicationDetailsMapper.toDto(it) }
+	override fun getApplicationDetails(id: UUID): Optional<ApplicationDetailsDTO> =
+		repository.findApplicationDetailsById(id)
+			.map { applicationDetailsMapper.toDto(it) }
 }
