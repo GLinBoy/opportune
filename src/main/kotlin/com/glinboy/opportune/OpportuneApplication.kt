@@ -7,9 +7,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.core.env.Environment
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import java.net.InetAddress
 import java.net.UnknownHostException
 
+@EnableJpaAuditing
 @SpringBootApplication
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(ApplicationProperties::class)
