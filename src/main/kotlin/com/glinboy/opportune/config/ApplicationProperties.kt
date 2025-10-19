@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 class ApplicationProperties {
 	var info: Info = Info()
+	var security: Security = Security()
 
 	data class Info(
 		var name: String? = null,
@@ -20,5 +21,20 @@ class ApplicationProperties {
 	data class Server(
 		var url: String? = null,
 		var description: String? = null
+	)
+
+	data class Security(
+		var contentSecurityPolicy: String? = null,
+		var authentication: Authentication = Authentication()
+	)
+
+	data class Authentication(
+		var jwt: Jwt = Jwt()
+	)
+
+	data class Jwt(
+		var base64Secret: String? = null,
+		var tokenValidityInSeconds: Long? = null,
+		var tokenValidityInSecondsForRememberMe: Long? = null
 	)
 }
