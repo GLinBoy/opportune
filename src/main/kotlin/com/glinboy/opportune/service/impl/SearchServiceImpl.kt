@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class SearchServiceImpl(private val jdbcTemplate: JdbcTemplate) : SearchService {
