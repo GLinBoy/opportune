@@ -7,6 +7,15 @@ INSERT INTO profile (id, email, forename, surname, password, job_title, location
 ('550e8400-e29b-41d4-a716-446655440003', 'mike.wilson@example.com', 'Mike', 'Wilson', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'DevOps Engineer', 'Austin, TX', null, false, '2024-08-28 09:45:00', 'PENDING_VERIFICATION', 'BASIC'),
 ('550e8400-e29b-41d4-a716-446655440004', 'sarah.johnson@example.com', 'Sarah', 'Johnson', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'Product Manager', 'Seattle, WA', null, true, '2024-09-03 16:20:00', 'ACTIVE', 'PREMIUM');
 
+-- Insert fake profile roles
+INSERT INTO profile_role (profile_id, role) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'ROLE_USER'), -- John Doe
+('550e8400-e29b-41d4-a716-446655440001', 'ROLE_ADMIN'), -- John Doe
+('550e8400-e29b-41d4-a716-446655440002', 'ROLE_USER'), -- Jane Smith
+('550e8400-e29b-41d4-a716-446655440003', 'ROLE_USER'), -- Mike Wilson
+('550e8400-e29b-41d4-a716-446655440004', 'ROLE_USER'), -- Sarah Johnson
+('550e8400-e29b-41d4-a716-446655440004', 'ROLE_ADMIN'); -- Sarah Johnson
+
 -- Insert fake companies
 INSERT INTO company (id, name, industry, website, company_size, location, founded_year, description, note, logo, status) VALUES
 ('660e8400-e29b-41d4-a716-446655440001', 'TechCorp Solutions', 'Technology', 'https://techcorp.com', '501-1000', 'San Francisco, CA', '2010', 'A leading technology company focused on innovative software solutions for enterprise clients.', 'Great company culture and benefits', null, 'INTERESTED'),
