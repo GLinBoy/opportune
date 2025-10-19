@@ -11,7 +11,16 @@ CREATE TABLE profile (
     email_verification BOOLEAN,
     last_login TIMESTAMP,
     status VARCHAR(50) CHECK (status IN ('ACTIVE', 'SUSPENDED', 'PENDING_VERIFICATION')),
-    subscription VARCHAR(255)
+    subscription VARCHAR(255),
+    CONSTRAINT uk_profile_email UNIQUE (email)
+);
+
+-- Create profile_role table for storing user roles
+CREATE TABLE profile_role (
+    profile_id UUID NOT NULL,
+    role VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_profile_role_profile FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE,
+    PRIMARY KEY (profile_id, role)
 );
 
 -- Create Company table
@@ -138,6 +147,7 @@ CREATE TABLE application_meta_data (
 -- Create indexes for better performance
 CREATE INDEX idx_profile_email ON profile(email);
 CREATE INDEX idx_profile_status ON profile(status);
+CREATE INDEX idx_profile_role_profile_id ON profile_role(profile_id);
 CREATE INDEX idx_company_name ON company(name);
 CREATE INDEX idx_company_status ON company(status);
 CREATE INDEX idx_company_industry ON company(industry);
