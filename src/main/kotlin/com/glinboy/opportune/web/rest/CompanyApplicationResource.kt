@@ -1,9 +1,11 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.service.ApplicationService
 import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Page
@@ -19,6 +21,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/companies")
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class CompanyApplicationResource(private val applicationService: ApplicationService) {
 
 	@PageableAsQueryParam

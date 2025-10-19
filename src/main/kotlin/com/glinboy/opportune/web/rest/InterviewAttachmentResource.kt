@@ -1,9 +1,11 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.InterviewAttachmentDTO
 import com.glinboy.opportune.service.InterviewAttachmentService
 import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Pageable
@@ -17,6 +19,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/applications")
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class InterviewAttachmentResource(private val interviewAttachmentService: InterviewAttachmentService) {
 
 	@PageableAsQueryParam

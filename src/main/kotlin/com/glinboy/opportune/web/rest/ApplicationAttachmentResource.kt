@@ -1,9 +1,11 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.ApplicationAttachmentDTO
 import com.glinboy.opportune.service.ApplicationAttachmentService
 import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Pageable
@@ -18,6 +20,7 @@ import java.util.*
 // FIXME this should handle multiple attachments per application
 @RestController
 @RequestMapping("/api/applications")
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class ApplicationAttachmentResource(private val applicationAttachmentService: ApplicationAttachmentService) {
 
 	@PageableAsQueryParam

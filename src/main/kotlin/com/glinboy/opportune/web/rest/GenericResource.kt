@@ -1,10 +1,12 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.BaseDTO
 import com.glinboy.opportune.service.GenericService
 import com.glinboy.opportune.util.PaginationUtil
 import io.github.perplexhub.rsql.RSQLJPASupport.toSpecification
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.apache.commons.lang3.StringUtils
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 import java.util.*
 
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 	protected val service: S
 ) {

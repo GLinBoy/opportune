@@ -1,9 +1,11 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.ApplicationMetaDataDTO
 import com.glinboy.opportune.service.ApplicationMetaDataService
 import com.glinboy.opportune.util.PaginationUtil
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springdoc.core.converters.models.PageableAsQueryParam
@@ -20,6 +22,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/applications")
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class ApplicationMetaDataResource(private val applicationMetaDataService: ApplicationMetaDataService) {
 
 	@PageableAsQueryParam

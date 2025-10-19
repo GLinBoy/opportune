@@ -1,7 +1,9 @@
 package com.glinboy.opportune.web.rest
 
+import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.ProfileResumeDTO
 import com.glinboy.opportune.service.ProfileResumeService
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -12,6 +14,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/profiles")
+@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class ProfileResumeResource(private val profileResumeService: ProfileResumeService) {
 
 	@GetMapping("/{profile_id}/resumes", "/{profile_id}/resumes/{id}")
