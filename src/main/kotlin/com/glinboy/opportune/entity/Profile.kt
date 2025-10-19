@@ -1,6 +1,7 @@
 package com.glinboy.opportune.entity
 
 import com.glinboy.opportune.enums.AccountStatus
+import com.glinboy.opportune.enums.Role
 import jakarta.persistence.*
 import java.time.Instant
 import java.util.*
@@ -11,7 +12,7 @@ data class Profile(
 
 	override val id: UUID? = null,
 
-	@Column(name = "email")
+	@Column(name = "email", unique = true, nullable = false)
 	val email: String? = null,
 
 	@Column(name = "forename")
@@ -20,7 +21,7 @@ data class Profile(
 	@Column(name = "surname")
 	val surname: String? = null,
 
-	@Column(name = "password")
+	@Column(name = "password", nullable = false)
 	val password: String? = null,
 
 	@Column(name = "job_title")
@@ -44,6 +45,12 @@ data class Profile(
 
 	@Column(name = "subscription")
 	val subscription: String? = null,
+
+	@Enumerated(EnumType.STRING)
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Column(name = "role", nullable = false)
+	@CollectionTable(name = "profile_role", joinColumns = [JoinColumn(name = "profile_id")])
+	val roles: Set<Role> = emptySet(),
 
 	@OneToOne(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val resume: ProfileResume? = null,

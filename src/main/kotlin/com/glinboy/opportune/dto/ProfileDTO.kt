@@ -1,6 +1,7 @@
 package com.glinboy.opportune.dto
 
 import com.glinboy.opportune.enums.AccountStatus
+import com.glinboy.opportune.enums.Role
 import java.time.Instant
 import java.util.*
 
@@ -17,6 +18,6 @@ data class ProfileDTO(
 	val lastLogin: Instant? = null,
 	val status: AccountStatus? = null,
 	val subscription: String? = null,
+	val roles: Set<Role> = emptySet(),
 	val resumeId: UUID? = null
 ) : BaseDTO()
-
