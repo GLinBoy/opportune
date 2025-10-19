@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile>
+interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile> {
+		fun findOneByEmailIgnoreCase(email: String): Optional<Profile>
+}
 
