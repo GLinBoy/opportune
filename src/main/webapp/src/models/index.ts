@@ -10,6 +10,8 @@ export * from './application-attachment.model'
 export * from './interview-note.model'
 export * from './interview-attachment.model'
 export * from './data-table-options.model'
+export * from './auth.models'
+export * from './search.model'
 
 export * from './enumerations/application-status.model'
 export * from './enumerations/company-status.model'

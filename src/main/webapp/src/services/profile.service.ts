@@ -64,4 +64,31 @@ export default class ProfileService {
     })
   }
 
+  changePassword(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      apiClient
+        .put(`${PROFILE_API_URL}/password/change`)
+        .then(() => { resolve() })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
+
+  confirmEmail(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      apiClient
+        .put(`${PROFILE_API_URL}/email/confirm`)
+        .then(() => { resolve() })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
+
+  verifyEmail(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      apiClient
+        .post(`${PROFILE_API_URL}/email/verify`)
+        .then(() => { resolve() })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
+
 }
