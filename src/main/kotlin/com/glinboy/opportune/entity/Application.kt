@@ -10,6 +10,11 @@ import java.util.*
 data class Application(
 
 	override val id: UUID? = null,
+	override val createdBy: String? = null,
+	override val createdDate: Instant? = null,
+	override val lastModifiedBy: String? = null,
+	override val lastModifiedDate: Instant? = null,
+	override val version: Long? = null,
 
 	@Column(name = "url")
 	val url: String? = null,
@@ -72,7 +77,7 @@ data class Application(
 
 	@OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 	val attachments: Set<ApplicationAttachment> = emptySet()
-) : BaseEntity() {
+) : AuditableEntity() {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is Application) return false
