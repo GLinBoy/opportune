@@ -26,7 +26,9 @@
               Control Panel
             </v-btn>
             <v-divider class="my-3"></v-divider>
-            <v-btn color="primary" variant="text" prepend-icon="mdi-logout"> Logout </v-btn>
+            <v-btn color="primary" variant="text" prepend-icon="mdi-logout" @click="handleLogout">
+              Logout
+            </v-btn>
           </div>
         </v-card-text>
       </v-card>
@@ -35,22 +37,68 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../../stores/auth.store'
+import ProfileService from '../../services/profile.service'
+import type { IProfile } from '../../models'
 import CryptoJS from 'crypto-js'
 
 const router = useRouter()
+const authStore = useAuthStore()
+const profileService = new ProfileService()
 
-const userEmail = ref('john.doe@example.com')
-const fullname = ref('John Doe')
+const profile = ref<IProfile | null>(null)
+const isLoading = ref(false)
+
+const userEmail = computed(() => profile.value?.email || '')
+const fullname = computed(() => {
+  if (!profile.value) return 'Loading...'
+  const forename = profile.value.forename || ''
+  const surname = profile.value.surname || ''
+  return `${forename} ${surname}`.trim() || 'User'
+})
 
 const gravatarImage = computed(() => {
+  if (!userEmail.value) return 'https://www.gravatar.com/avatar/?s=48&d=mp&r=g'
   const trimmedEmail = userEmail.value.trim().toLowerCase()
   const hash = CryptoJS.MD5(trimmedEmail).toString()
   return `https://www.gravatar.com/avatar/${hash}?s=48&d=mp&r=g`
 })
 
+const loadProfile = async () => {
+  try {
+    isLoading.value = true
+    const data = await profileService.getCurrentProfile()
+    profile.value = data
+  } catch (error) {
+    console.error('Failed to load profile:', error)
+    // If profile load fails, user might not be authenticated
+    // Could optionally logout here
+  } finally {
+    isLoading.value = false
+  }
+}
+
 const goToProfile = () => {
   router.push('/profile')
 }
+
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    // Redirect to login page
+    router.push('/auth/login')
+  } catch (error) {
+    console.error('Logout error:', error)
+    // Even if API call fails, clear local auth and redirect
+    authStore.clearAuth()
+    router.push('/auth/login')
+  }
+}
+
+// Load profile on component mount
+onMounted(() => {
+  loadProfile()
+})
 </script>
