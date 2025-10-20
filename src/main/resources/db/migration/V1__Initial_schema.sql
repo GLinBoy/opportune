@@ -37,6 +37,11 @@ CREATE TABLE company (
     logo VARCHAR(255),
     status VARCHAR(50) CHECK (status IN ('INTERESTED', 'NOT_INTERESTED', 'BLOCKED')),
     profile_id UUID,
+    created_by VARCHAR(255) NOT NULL,
+    created_date TIMESTAMP NOT NULL,
+    last_modified_by VARCHAR(255) NOT NULL,
+    last_modified_date TIMESTAMP NOT NULL,
+    version BIGINT NOT NULL,
     CONSTRAINT fk_company_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
 
@@ -56,6 +61,11 @@ CREATE TABLE application (
     status VARCHAR(50) CHECK (status IN ('INITIATED', 'APPLIED', 'IN_PROGRESS', 'REJECTED', 'OFFER_RECEIVED', 'ACCEPTED', 'DECLINED')),
     company_id UUID,
     profile_id UUID,
+    created_by VARCHAR(255) NOT NULL,
+    created_date TIMESTAMP NOT NULL,
+    last_modified_by VARCHAR(255) NOT NULL,
+    last_modified_date TIMESTAMP NOT NULL,
+    version BIGINT NOT NULL,
     CONSTRAINT fk_application_company FOREIGN KEY (company_id) REFERENCES company(id),
     CONSTRAINT fk_application_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
