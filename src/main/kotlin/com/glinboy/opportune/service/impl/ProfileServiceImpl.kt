@@ -9,6 +9,7 @@ import com.glinboy.opportune.enums.AccountStatus
 import com.glinboy.opportune.enums.Role
 import com.glinboy.opportune.mapper.ProfileMapper
 import com.glinboy.opportune.repository.ProfileRepository
+import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.security.jwt.JwtService
 import com.glinboy.opportune.service.ProfileService
 import org.springframework.security.core.context.SecurityContextHolder
@@ -31,7 +32,7 @@ class ProfileServiceImpl(
 
 	override fun getCurrentProfile(): Optional<ProfileDTO> =
 		repository
-			.findById(UUID.fromString((SecurityContextHolder.getContext().authentication.principal as Jwt).subject))
+			.findById(SecurityUtils.getCurrentUserLogin().let(UUID::fromString))
 			.map(mapper::toDto)
 
 	override fun loadUserByUsername(username: String): UserDetails? =

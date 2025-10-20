@@ -1,5 +1,6 @@
 package com.glinboy.opportune.security.jwt
 
+import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
@@ -21,7 +22,7 @@ class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
 
 	private fun extractAuthorities(jwt: Jwt): Collection<GrantedAuthority> {
 		// Extract roles from custom "roles" claim
-		val roles = jwt.getClaimAsStringList("roles") ?: emptyList()
+		val roles = jwt.getClaimAsStringList(SecurityUtils.AUTHORITIES_CLAIM) ?: emptyList()
 		val customAuthorities = roles.map { SimpleGrantedAuthority(it) }
 
 		// Also include any default authorities (from scope/scp claims)

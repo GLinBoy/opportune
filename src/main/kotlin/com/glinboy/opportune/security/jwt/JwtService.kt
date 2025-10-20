@@ -3,6 +3,7 @@ package com.glinboy.opportune.security.jwt
 import com.glinboy.opportune.config.ApplicationProperties
 import com.glinboy.opportune.dto.AccessTokenResponseDTO
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.JwsHeader
@@ -34,25 +35,25 @@ class JwtService(
 			.expiresAt(now.plus(validityInSeconds, ChronoUnit.SECONDS))
 			.issuedAt(now)
 			.id(UUID.randomUUID().toString())
-			.issuer("opportune")
-			.audience(listOf("opportune-client"))
+			.issuer(properties.info.name)
+			.audience(listOf("${properties.info.name}-client"))
 			.subject(profile.id.toString())
-			.claim("typ", "Bearer")
-			.claim("azp", "opportune")
-			.claim("session_state", UUID.randomUUID().toString())
-			.claim("name", "${profile.forename.orEmpty()} ${profile.surname.orEmpty()}".trim())
-			.claim("forename", profile.forename)
-			.claim("surname", profile.surname)
-			.claim("email", profile.email)
-			.claim("roles", authorities)
-			.claim("email_verified", profile.emailVerification ?: false)
+			.claim(SecurityUtils.TYPE_CLAIM, SecurityUtils.TOKEN_TYPE_BEARER)
+			.claim(SecurityUtils.CLIENT_ID_CLAIM, properties.info.name)
+			.claim(SecurityUtils.SESSION_STATE_CLAIM, UUID.randomUUID().toString())
+			.claim(SecurityUtils.NAME_CLAIM, "${profile.forename.orEmpty()} ${profile.surname.orEmpty()}".trim())
+			.claim(SecurityUtils.FORENAME_CLAIM, profile.forename)
+			.claim(SecurityUtils.SURNAME_CLAIM, profile.surname)
+			.claim(SecurityUtils.EMAIL_CLAIM, profile.email)
+			.claim(SecurityUtils.AUTHORITIES_CLAIM, authorities)
+			.claim(SecurityUtils.EMAIL_VERIFIED_CLAIM, profile.emailVerification ?: false)
 		val jwsHeader: JwsHeader = JwsHeader.with(MacAlgorithm.HS512).build()
 		return AccessTokenResponseDTO(
-			accessToken = jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, builder.build())).getTokenValue(),
+			accessToken = jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, builder.build())).tokenValue,
 			expiresIn = validityInSeconds,
 			refreshToken = "refresh_token_example",
 			refreshExpiresIn = 2_592_000L,
-			tokenType = "Bearer"
+			tokenType = SecurityUtils.TOKEN_TYPE_BEARER
 		)
 	}
 }

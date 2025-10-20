@@ -1,5 +1,6 @@
 package com.glinboy.opportune.config
 
+import com.glinboy.opportune.security.SecurityUtils
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.OpenAPI
@@ -42,7 +43,7 @@ class OpenApiConfiguration {
 					SecurityScheme()
 						.name(BEARER_AUTHENTICATION_NAME)
 						.type(SecurityScheme.Type.HTTP)
-						.scheme("Bearer")
+						.scheme(SecurityUtils.TOKEN_TYPE_BEARER)
 						.bearerFormat("JWT")
 				)
 		)
