@@ -2,6 +2,7 @@ package com.glinboy.opportune.entity
 
 import com.glinboy.opportune.enums.CompanyStatus
 import jakarta.persistence.*
+import java.time.Instant
 import java.util.*
 
 @Entity
@@ -9,6 +10,11 @@ import java.util.*
 data class Company(
 
 	override val id: UUID? = null,
+	override val createdBy: String? = null,
+	override val createdDate: Instant? = null,
+	override val lastModifiedBy: String? = null,
+	override val lastModifiedDate: Instant? = null,
+	override val version: Long? = null,
 
 	@Column(name = "name")
 	val name: String? = null,
@@ -52,7 +58,7 @@ data class Company(
 
 	@OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val metaData: Set<CompanyMetaData> = emptySet()
-) : BaseEntity() {
+) : AuditableEntity() {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is Company) return false
