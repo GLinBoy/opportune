@@ -9,28 +9,29 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.Instant
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-abstract class Auditable: BaseEntity() {
+abstract class AuditableEntity: BaseEntity() {
 
 	@CreatedBy
 	@Column(name = "CREATED_BY", updatable = false, nullable = false)
-	val createdBy: String? = null
+	open val createdBy: String? = null
 
 	@CreatedDate
 	@Column(name = "CREATED_DATE", updatable = false, nullable = false)
-	val createdDate: Long? = null
+	open val createdDate: Instant? = null
 
 	@LastModifiedBy
 	@Column(name = "LAST_MODIFIED_BY", nullable = false)
-	val lastModifiedBy: String? = null
+	open val lastModifiedBy: String? = null
 
 	@LastModifiedDate
 	@Column(name = "LAST_MODIFIED_DATE", nullable = false)
-	val lastModifiedDate: Long? = null
+	open val lastModifiedDate: Instant? = null
 
 	@Version
 	@Column(name = "VERSION", nullable = false)
-	val version: Long? = null
+	open val version: Long? = null
 }
