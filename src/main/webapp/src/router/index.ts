@@ -10,6 +10,10 @@ import CompanyList from '@/views/company/CompanyListView.vue';
 import CompanyDetail from '@/views/company/CompanyDetailView.vue';
 import ProfileView from '@/views/profile/ProfileView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
+import LoginView from '@/views/auth/LoginView.vue';
+import RegisterView from '@/views/auth/RegisterView.vue';
+import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue';
+import UnauthorizedView from '@/views/auth/UnauthorizedView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +21,32 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/dashboard',
+    },
+    {
+      path: '/auth',
+      component: BlankLayout,
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: LoginView,
+        },
+        {
+          path: 'register',
+          name: 'register',
+          component: RegisterView,
+        },
+        {
+          path: 'forgot-password',
+          name: 'forgot-password',
+          component: ForgotPasswordView,
+        },
+        {
+          path: 'unauthorized',
+          name: 'unauthorized',
+          component: UnauthorizedView,
+        },
+      ],
     },
     {
       path: '/dashboard',
@@ -93,6 +123,31 @@ const router = createRouter({
       redirect: '/404',
     },
   ],
+})
+
+// Navigation guard to protect routes
+router.beforeEach((to, from, next) => {
+  const accessToken = localStorage.getItem('accessToken')
+  const expiresAt = localStorage.getItem('expiresAt')
+
+  // Check if token exists and is not expired
+  const isAuthenticated = accessToken && expiresAt && Date.now() < Number(expiresAt)
+
+  // Public routes that don't require authentication
+  const publicRoutes = ['login', 'register', 'forgot-password', 'not-found']
+
+  // Check if the route requires authentication
+  const requiresAuth = !publicRoutes.includes(to.name as string)
+
+  if (requiresAuth && !isAuthenticated) {
+    // Redirect to login if not authenticated
+    next({ name: 'login', query: { redirect: to.fullPath } })
+  } else if (to.name === 'login' && isAuthenticated) {
+    // Redirect to dashboard if already authenticated and trying to access login
+    next({ name: 'dashboard-home' })
+  } else {
+    next()
+  }
 })
 
 export default router
