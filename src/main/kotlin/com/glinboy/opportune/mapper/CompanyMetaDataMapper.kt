@@ -21,7 +21,9 @@ class CompanyMetaDataMapper : GenericMapper<CompanyMetaDataDTO, CompanyMetaData>
 			id = entity.id,
 			metaName = dto.metaName,
 			metaValue = dto.metaValue,
-			company = entity.company ?: dto.companyId?.let { Company(id = it) }
+			company = entity.company ?: dto.companyId?.let { Company(id = it) },
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -30,7 +32,9 @@ class CompanyMetaDataMapper : GenericMapper<CompanyMetaDataDTO, CompanyMetaData>
 			id = entity.id,
 			metaName = entity.metaName,
 			metaValue = entity.metaValue,
-			companyId = entity.company?.id
+			companyId = entity.company?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }

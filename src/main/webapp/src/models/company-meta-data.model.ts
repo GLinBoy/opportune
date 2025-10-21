@@ -3,6 +3,8 @@ export interface ICompanyMetadata {
   metaName?: string
   metaValue?: string
   companyId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class CompanyMetadata implements ICompanyMetadata {
@@ -10,6 +12,8 @@ export class CompanyMetadata implements ICompanyMetadata {
     public id?: string,
     public metaName?: string,
     public metaValue?: string,
-    public companyId?: string
+    public companyId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
