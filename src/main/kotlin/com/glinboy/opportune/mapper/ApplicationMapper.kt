@@ -49,7 +49,9 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			interviewNotes = entity.interviewNotes,
 			metadata = entity.metadata,
 			resume = entity.resume,
-			attachments = entity.attachments
+			attachments = entity.attachments,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate,
 		)
 	}
 
@@ -69,7 +71,9 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			status = entity.status,
 			companyId = entity.company?.id,
 			profileId = entity.profile?.id,
-			resumeId = entity.resume?.id
+			resumeId = entity.resume?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate,
 		)
 	}
 }

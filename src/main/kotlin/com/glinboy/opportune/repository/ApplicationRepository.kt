@@ -22,6 +22,8 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" a.note AS note, " +
 		" a.status AS status, " +
 		" a.company.id AS companyId, " +
+		" a.company.createdDate as createdDate, " +
+		" a.company.lastModifiedDate as lastModifiedDate, " +
 		" c.name AS companyName " +
 		" FROM Application a " +
 		" LEFT JOIN a.company c")

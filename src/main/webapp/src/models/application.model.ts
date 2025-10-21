@@ -22,6 +22,8 @@ export interface IApplication {
   companyId?: string
   profileId?: string
   resumeId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class Application implements IApplication {
@@ -40,7 +42,9 @@ export class Application implements IApplication {
     public status?: keyof typeof ApplicationStatus | null,
     public companyId?: string,
     public profileId?: string,
-    public resumeId?: string
+    public resumeId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
 
@@ -55,6 +59,8 @@ export interface IApplicationProjection {
   status?: keyof typeof ApplicationStatus | null
   companyId?: string
   companyName?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export interface IApplicationDetails {
@@ -76,4 +82,6 @@ export interface IApplicationDetails {
   metadata?: IApplicationMetaData[] | null
   resume?: IApplicationResume | null
   attachments?: IApplicationAttachment[] | null
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
