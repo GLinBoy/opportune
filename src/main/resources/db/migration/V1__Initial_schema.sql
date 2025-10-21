@@ -12,6 +12,8 @@ CREATE TABLE profile (
     last_login TIMESTAMP,
     status VARCHAR(50) CHECK (status IN ('ACTIVE', 'SUSPENDED', 'PENDING_VERIFICATION')),
     subscription VARCHAR(255),
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT uk_profile_email UNIQUE (email)
 );
 
@@ -37,11 +39,8 @@ CREATE TABLE company (
     logo VARCHAR(255),
     status VARCHAR(50) CHECK (status IN ('INTERESTED', 'NOT_INTERESTED', 'BLOCKED')),
     profile_id UUID,
-    created_by VARCHAR(255) NOT NULL,
-    created_date TIMESTAMP NOT NULL,
-    last_modified_by VARCHAR(255) NOT NULL,
-    last_modified_date TIMESTAMP NOT NULL,
-    version BIGINT NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_company_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
 
@@ -61,11 +60,8 @@ CREATE TABLE application (
     status VARCHAR(50) CHECK (status IN ('INITIATED', 'APPLIED', 'IN_PROGRESS', 'REJECTED', 'OFFER_RECEIVED', 'ACCEPTED', 'DECLINED')),
     company_id UUID,
     profile_id UUID,
-    created_by VARCHAR(255) NOT NULL,
-    created_date TIMESTAMP NOT NULL,
-    last_modified_by VARCHAR(255) NOT NULL,
-    last_modified_date TIMESTAMP NOT NULL,
-    version BIGINT NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_application_company FOREIGN KEY (company_id) REFERENCES company(id),
     CONSTRAINT fk_application_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
@@ -78,6 +74,8 @@ CREATE TABLE application_timeline (
     status VARCHAR(50) CHECK (status IN ('INITIATED', 'APPLIED', 'IN_PROGRESS', 'REJECTED', 'OFFER_RECEIVED', 'ACCEPTED', 'DECLINED')),
     occurred_at TIMESTAMP,
     application_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_application_timeline_application FOREIGN KEY (application_id) REFERENCES application(id)
 );
 
@@ -87,6 +85,8 @@ CREATE TABLE interview_note (
     date TIMESTAMP,
     notes TEXT,
     application_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_interview_note_application FOREIGN KEY (application_id) REFERENCES application(id)
 );
 
@@ -98,6 +98,8 @@ CREATE TABLE profile_resume (
     content_type VARCHAR(255),
     content_length BIGINT,
     profile_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_profile_resume_profile FOREIGN KEY (profile_id) REFERENCES profile(id),
     CONSTRAINT uk_profile_resume_profile UNIQUE (profile_id)
 );
@@ -110,6 +112,8 @@ CREATE TABLE application_resume (
     content_type VARCHAR(255),
     content_length BIGINT,
     application_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_application_resume_application FOREIGN KEY (application_id) REFERENCES application(id),
     CONSTRAINT uk_application_resume_application UNIQUE (application_id)
 );
@@ -122,6 +126,8 @@ CREATE TABLE application_attachment (
     content_type VARCHAR(255),
     content_length BIGINT,
     application_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_application_attachment_application FOREIGN KEY (application_id) REFERENCES application(id)
 );
 
@@ -133,6 +139,8 @@ CREATE TABLE interview_attachment (
     content_type VARCHAR(255),
     content_length BIGINT,
     interview_note_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_interview_attachment_interview_note FOREIGN KEY (interview_note_id) REFERENCES interview_note(id)
 );
 
@@ -142,6 +150,8 @@ CREATE TABLE company_meta_data (
     company_id UUID NOT NULL,
     meta_name VARCHAR(255) NOT NULL,
     meta_value TEXT,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_company_meta_data_company FOREIGN KEY (company_id) REFERENCES company(id)
 );
 
@@ -151,6 +161,8 @@ CREATE TABLE application_meta_data (
     application_id UUID NOT NULL,
     meta_name VARCHAR(255) NOT NULL,
     meta_value TEXT,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_application_meta_data_application FOREIGN KEY (application_id) REFERENCES application(id)
 );
 
