@@ -13,6 +13,8 @@ export interface ICompany {
   logo?: string
   status?: keyof typeof CompanyStatus | null
   profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class Company implements ICompany {
@@ -28,6 +30,9 @@ export class Company implements ICompany {
     public note?: string,
     public logo?: string,
     public status?: keyof typeof CompanyStatus | null,
-    public profileId?: string
+    public profileId?: string,
+    public resumeId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }

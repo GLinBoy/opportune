@@ -40,6 +40,8 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			applications = entity.applications,
 			metaData = entity.metaData,
 			profile = entity.profile,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate,
 		)
 	}
 
@@ -57,6 +59,8 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			logo = entity.logo,
 			status = entity.status,
 			profileId = entity.profile?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate =  entity.lastModifiedDate,
 		)
 	}
 }

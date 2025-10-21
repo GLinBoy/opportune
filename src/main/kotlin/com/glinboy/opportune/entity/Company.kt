@@ -10,11 +10,8 @@ import java.util.*
 data class Company(
 
 	override val id: UUID? = null,
-	override val createdBy: String? = null,
-	override val createdDate: Instant? = null,
-	override val lastModifiedBy: String? = null,
+	override val createdDate: Instant = Instant.now(),
 	override val lastModifiedDate: Instant? = null,
-	override val version: Long? = null,
 
 	@Column(name = "name")
 	val name: String? = null,
