@@ -11,6 +11,8 @@ import java.util.*
 data class Profile(
 
 	override val id: UUID? = null,
+	override val createdDate: Instant = Instant.now(),
+	override val lastModifiedDate: Instant? = null,
 
 	@Column(name = "email", unique = true, nullable = false)
 	val email: String? = null,
@@ -60,7 +62,7 @@ data class Profile(
 
 	@OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
 	val companies: Set<Company> = emptySet(),
-) : BaseEntity() {
+) : AuditableEntity() {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is Profile) return false

@@ -42,7 +42,9 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 			subscription = dto.subscription,
 			roles = entity.roles,
 			resume = entity.resume ?: dto.resumeId?.let { ProfileResume(id = it) },
-			applications = entity.applications
+			applications = entity.applications,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -60,7 +62,9 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 			status = entity.status,
 			subscription = entity.subscription,
 			roles = entity.roles,
-			resumeId = entity.resume?.id
+			resumeId = entity.resume?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }

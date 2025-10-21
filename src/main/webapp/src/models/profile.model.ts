@@ -14,6 +14,8 @@ export interface IProfile {
   status?: keyof typeof ProfileStatus | null
   subscription?: string
   resumeId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class Profile implements IProfile {
@@ -30,6 +32,8 @@ export class Profile implements IProfile {
     public lastLogin?: Date,
     public status?: keyof typeof ProfileStatus | null,
     public subscription?: string,
-    public resumeId?: string
+    public resumeId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }

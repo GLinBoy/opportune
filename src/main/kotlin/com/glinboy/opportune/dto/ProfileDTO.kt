@@ -7,6 +7,8 @@ import java.util.*
 
 data class ProfileDTO(
 	override val id: UUID? = null,
+	override val createdDate: Instant? = null,
+	override val lastModifiedDate: Instant? = null,
 	val email: String? = null,
 	val forename: String? = null,
 	val surname: String? = null,
@@ -20,4 +22,4 @@ data class ProfileDTO(
 	val subscription: String? = null,
 	val roles: Set<Role> = emptySet(),
 	val resumeId: UUID? = null
-) : BaseDTO()
+) : AuditableDTO()
