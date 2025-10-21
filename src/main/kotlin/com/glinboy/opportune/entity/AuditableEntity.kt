@@ -1,37 +1,15 @@
 package com.glinboy.opportune.entity
 
 import jakarta.persistence.Column
-import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.Version
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedBy
-import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.Instant
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener::class)
 abstract class AuditableEntity: BaseEntity() {
 
-	@CreatedBy
-	@Column(name = "CREATED_BY", updatable = false, nullable = false)
-	open val createdBy: String? = null
-
-	@CreatedDate
 	@Column(name = "CREATED_DATE", updatable = false, nullable = false)
-	open val createdDate: Instant? = null
+	open val createdDate: Instant = Instant.now()
 
-	@LastModifiedBy
-	@Column(name = "LAST_MODIFIED_BY", nullable = false)
-	open val lastModifiedBy: String? = null
-
-	@LastModifiedDate
 	@Column(name = "LAST_MODIFIED_DATE", nullable = false)
 	open val lastModifiedDate: Instant? = null
-
-	@Version
-	@Column(name = "VERSION", nullable = false)
-	open val version: Long? = null
 }
