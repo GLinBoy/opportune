@@ -5,6 +5,8 @@ export interface IProfileResume {
   contentType?: string
   contentLength?: number
   profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class ProfileResume implements IProfileResume {
@@ -14,6 +16,8 @@ export class ProfileResume implements IProfileResume {
     public path?: string,
     public contentType?: string,
     public contentLength?: number,
-    public profileId?: string
+    public profileId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }

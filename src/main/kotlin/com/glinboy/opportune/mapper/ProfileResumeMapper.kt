@@ -26,6 +26,8 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
 			profile = entity.profile ?: dto.profileId?.let { Profile(id = it) },
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -36,7 +38,9 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			path = entity.path,
 			contentType = entity.contentType,
 			contentLength = entity.contentLength,
-			profileId = entity.profile?.id
+			profileId = entity.profile?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }
