@@ -21,7 +21,9 @@ class ApplicationMetaDataMapper : GenericMapper<ApplicationMetaDataDTO, Applicat
 			id = entity.id,
 			metaName = dto.metaName,
 			metaValue = dto.metaValue,
-			application = entity.application ?: dto.applicationId?.let { Application(id = it) }
+			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -30,7 +32,9 @@ class ApplicationMetaDataMapper : GenericMapper<ApplicationMetaDataDTO, Applicat
 			id = entity.id,
 			metaName = entity.metaName,
 			metaValue = entity.metaValue,
-			applicationId = entity.application?.id
+			applicationId = entity.application?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }
