@@ -1,6 +1,7 @@
 package com.glinboy.opportune.entity
 
 import jakarta.persistence.*
+import java.time.Instant
 import java.util.*
 
 @Entity
@@ -9,6 +10,8 @@ import java.util.*
 abstract class MetaData(
 
 	override val id: UUID? = null,
+	override val createdDate: Instant = Instant.now(),
+	override val lastModifiedDate: Instant? = null,
 
 	@Column(name = "meta_name")
 	val metaName: String? = null,
@@ -16,4 +19,4 @@ abstract class MetaData(
 	@Lob
 	@Column(name = "meta_value")
 	val metaValue: String? = null
-) : BaseEntity()
+) : AuditableEntity()
