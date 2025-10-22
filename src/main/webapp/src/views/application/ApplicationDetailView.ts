@@ -305,7 +305,7 @@ export default defineComponent({
     }
 
     const sort = (): Array<string> => {
-      return ['name,asc']
+      return ['createdDate,asc']
     }
 
     const search = (): string => {
