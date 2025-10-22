@@ -9,6 +9,8 @@ import java.util.*
 data class InterviewNote(
 
 	override val id: UUID? = null,
+	override val createdDate: Instant = Instant.now(),
+	override val lastModifiedDate: Instant? = null,
 
 	@Column(name = "date")
 	val date: Instant? = null,
@@ -23,7 +25,7 @@ data class InterviewNote(
 
 	@OneToMany(mappedBy = "interviewNote", cascade = [CascadeType.ALL], orphanRemoval = true)
 	val attachments: List<InterviewAttachment> = emptyList()
-) : BaseEntity() {
+) : AuditableEntity() {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is InterviewNote) return false

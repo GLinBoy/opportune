@@ -22,7 +22,9 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 			date = dto.date,
 			notes = dto.notes,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
-			attachments = entity.attachments
+			attachments = entity.attachments,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -31,7 +33,9 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 			id = entity.id,
 			date = entity.date,
 			notes = entity.notes,
-			applicationId = entity.application?.id
+			applicationId = entity.application?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }

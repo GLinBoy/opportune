@@ -3,6 +3,8 @@ export interface IInterviewNote {
   date?: Date
   notes?: string
   applicationId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class InterviewNote implements IInterviewNote {
@@ -10,6 +12,8 @@ export class InterviewNote implements IInterviewNote {
     public id?: string,
     public date?: Date,
     public notes?: string,
-    public applicationId?: string
+    public applicationId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
