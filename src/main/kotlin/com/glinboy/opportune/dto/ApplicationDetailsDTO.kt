@@ -6,6 +6,8 @@ import java.util.*
 
 data class ApplicationDetailsDTO(
 	override val id: UUID? = null,
+	override val createdDate: Instant? = null,
+	override val lastModifiedDate: Instant? = null,
 	val url: String? = null,
 	val title: String? = null,
 	val location: String? = null,
@@ -23,4 +25,4 @@ data class ApplicationDetailsDTO(
 	val metadata: Set<ApplicationMetaDataDTO>? = null,
 	val resume: ApplicationResumeDTO? = null,
 	val attachments: Set<ApplicationAttachmentDTO>? = null,
-) : BaseDTO()
+) : AuditableDTO()
