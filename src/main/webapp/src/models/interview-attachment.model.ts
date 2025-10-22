@@ -5,6 +5,8 @@ export interface IInterviewAttachment {
   contentType?: string
   contentLength?: number
   interviewNoteId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class InterviewAttachment implements IInterviewAttachment {
@@ -14,6 +16,8 @@ export class InterviewAttachment implements IInterviewAttachment {
     public path?: string,
     public contentType?: string,
     public contentLength?: number,
-    public interviewNoteId?: string
+    public interviewNoteId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
