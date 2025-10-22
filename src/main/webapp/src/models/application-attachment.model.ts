@@ -5,6 +5,8 @@ export interface IApplicationAttachment {
   contentType?: string
   contentLength?: number
   applicationId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class ApplicationAttachment implements IApplicationAttachment {
@@ -14,6 +16,8 @@ export class ApplicationAttachment implements IApplicationAttachment {
     public path?: string,
     public contentType?: string,
     public contentLength?: number,
-    public applicationId?: string
+    public applicationId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
