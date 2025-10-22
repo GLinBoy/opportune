@@ -7,6 +7,8 @@ export interface IApplicationTimeline {
   status?: keyof typeof ApplicationStatus | null
   occurredAt?: Date
   applicationId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class ApplicationTimeline implements IApplicationTimeline {
@@ -16,6 +18,8 @@ export class ApplicationTimeline implements IApplicationTimeline {
     public description?: string,
     public status?: keyof typeof ApplicationStatus | null,
     public occurredAt?: Date,
-    public applicationId?: string
+    public applicationId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }

@@ -10,6 +10,8 @@ import java.util.*
 data class ApplicationTimeline(
 
 	override val id: UUID? = null,
+	override val createdDate: Instant = Instant.now(),
+	override val lastModifiedDate: Instant? = null,
 
 	@Column(name = "title")
 	val title: String? = null,
@@ -28,7 +30,7 @@ data class ApplicationTimeline(
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_id")
 	val application: Application? = null
-) : BaseEntity() {
+) : AuditableEntity() {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is ApplicationTimeline) return false
