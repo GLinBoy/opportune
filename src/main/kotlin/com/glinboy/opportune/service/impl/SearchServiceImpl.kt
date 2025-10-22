@@ -32,7 +32,7 @@ class SearchServiceImpl(private val jdbcTemplate: JdbcTemplate) : SearchService 
 				UNION ALL
 				SELECT ID, TITLE AS NAME, STATUS, 'application' AS TYPE FROM APPLICATION WHERE TITLE iLIKE ?
 			) AS combined
-			ORDER BY NAME LIMIT ? OFFSET ?
+			ORDER BY LAST_MODIFIED_DATE, CREATED_DATE LIMIT ? OFFSET ?
 		""".trimIndent()
 		val total = jdbcTemplate.queryForObject(countQuery, Long::class.java, searchPattern, searchPattern) ?: 0L
 		val results = jdbcTemplate.query(resultQuery, { rs, _ ->
@@ -53,7 +53,7 @@ class SearchServiceImpl(private val jdbcTemplate: JdbcTemplate) : SearchService 
 				SELECT ID, NAME, STATUS, 'company' AS TYPE
 				FROM COMPANY
 				WHERE NAME iLIKE ?
-				ORDER BY NAME LIMIT ? OFFSET ?
+				ORDER BY LAST_MODIFIED_DATE, CREATED_DATE LIMIT ? OFFSET ?
 			""".trimIndent()
 		val total = jdbcTemplate.queryForObject(countQuery, Long::class.java, searchPattern) ?: 0L
 		val results = jdbcTemplate.query(resultQuery, { rs, _ ->
@@ -74,7 +74,7 @@ class SearchServiceImpl(private val jdbcTemplate: JdbcTemplate) : SearchService 
 				SELECT ID, TITLE, STATUS, 'application' AS TYPE
 				FROM APPLICATION
 				WHERE TITLE iLIKE ?
-				ORDER BY TITLE LIMIT ? OFFSET ?
+				ORDER BY LAST_MODIFIED_DATE, CREATED_DATE LIMIT ? OFFSET ?
 			""".trimIndent()
 		val total = jdbcTemplate.queryForObject(countQuery, Long::class.java, searchPattern) ?: 0L
 		val results = jdbcTemplate.query(resultQuery, { rs, _ ->
