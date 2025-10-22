@@ -51,7 +51,7 @@ export default defineComponent({
       if (sortBy.value.length > 0) {
         return sortBy.value.map(s => `${s.key},${s.order}`)
       }
-      return ['name,asc']
+      return ['createdDate,asc']
     }
 
     const search = (): string => {
