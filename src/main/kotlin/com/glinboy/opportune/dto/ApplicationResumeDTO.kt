@@ -1,5 +1,6 @@
 package com.glinboy.opportune.dto
 
+import java.time.Instant
 import java.util.*
 
 data class ApplicationResumeDTO(
@@ -8,5 +9,7 @@ data class ApplicationResumeDTO(
 	override val path: String? = null,
 	override val contentType: String? = null,
 	override val contentLength: Long? = null,
-	val applicationId: UUID? = null
+	val applicationId: UUID? = null,
+	override val createdDate: Instant? = null,
+	override val lastModifiedDate: Instant? = null
 ) : AttachmentDTO()

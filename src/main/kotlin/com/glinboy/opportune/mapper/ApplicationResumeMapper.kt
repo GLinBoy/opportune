@@ -26,6 +26,8 @@ class ApplicationResumeMapper : GenericMapper<ApplicationResumeDTO, ApplicationR
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 
@@ -36,7 +38,9 @@ class ApplicationResumeMapper : GenericMapper<ApplicationResumeDTO, ApplicationR
 			path = entity.path,
 			contentType = entity.contentType,
 			contentLength = entity.contentLength,
-			applicationId = entity.application?.id
+			applicationId = entity.application?.id,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate
 		)
 	}
 }

@@ -5,6 +5,8 @@ export interface IApplicationResume {
   contentType?: string
   contentLength?: number
   applicationId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
 
 export class ApplicationResume implements IApplicationResume {
@@ -14,6 +16,8 @@ export class ApplicationResume implements IApplicationResume {
     public path?: string,
     public contentType?: string,
     public contentLength?: number,
-    public applicationId?: string
+    public applicationId?: string,
+    public createdDate?: Date,
+    public lastModifiedDate?: Date
   ) { }
 }
