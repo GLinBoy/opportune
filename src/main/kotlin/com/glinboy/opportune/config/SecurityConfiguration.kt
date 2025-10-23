@@ -34,6 +34,7 @@ class SecurityConfiguration(
 		"/index.html",
 		"/favicon.ico",
 		"/assets/**",
+		"/error",
 		"/*.css",
 		"/*.js",
 		"/*.png",
@@ -93,12 +94,12 @@ class SecurityConfiguration(
 					authz.requestMatchers("/h2-console/**").permitAll()
 				}
 				authz
-					.requestMatchers(HttpMethod.POST, "api/register").permitAll()
-					.requestMatchers(HttpMethod.POST, "api/auth/login").permitAll()
-					.requestMatchers(HttpMethod.POST, "api/auth/logout").authenticated()
+					.requestMatchers(HttpMethod.POST, "/api/register").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
 					.requestMatchers(HttpMethod.PUT, "/api/auth/password/reset/finish").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/auth/password/reset/init").permitAll()
-					.requestMatchers(HttpMethod.POST, "api/auth/token/refresh").authenticated()
+					.requestMatchers(HttpMethod.POST, "/api/auth/token/refresh").authenticated()
 					.requestMatchers("/api/admin/**").hasAuthority(Role.ROLE_ADMIN.name)
 					.requestMatchers("/api/**").hasAuthority(Role.ROLE_USER.name)
 					.anyRequest().authenticated()
