@@ -12,10 +12,12 @@ import com.glinboy.opportune.repository.ProfileRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.security.jwt.JwtService
 import com.glinboy.opportune.service.ProfileService
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @Service
@@ -39,9 +41,9 @@ class ProfileServiceImpl(
 		.orElseThrow { UsernameNotFoundException("User not found") }
 
 	override fun register(profileDTO: ProfileDTO) {
-		repository.findOneByEmailIgnoreCase(profileDTO.email!!)
+		repository.findOneByEmailIgnoreCase(profileDTO.email!!.lowercase())
 			.ifPresentOrElse(
-				{ throw IllegalArgumentException("Email already in use") },
+				{ throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use") },
 				{
 					val profile = Profile(
 						id = null,
@@ -69,7 +71,7 @@ class ProfileServiceImpl(
 		return repository.findOneByEmailIgnoreCase(loginRequestDTO.email)
 			.filter { passwordEncoder.matches(loginRequestDTO.password, it.password) }
 			.map { jwtService.createToken(it, loginRequestDTO.rememberMe) }
-			.orElseThrow { IllegalArgumentException("Invalid email or password") }
+			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid email or password") }
 	}
 
 	// TODO: Implement sending verification email
