@@ -6,7 +6,7 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.25"
 	id("org.ec4j.editorconfig") version "0.1.0"
 	id("com.github.node-gradle.node") version "7.1.0"
-	id("com.github.ben-manes.versions") version "0.51.0"
+	id("com.github.ben-manes.versions") version "0.51.0" // THis is the latest version that supports Kotlin 1.x series, DO NOT UPGRADE
 }
 
 group = "com.glinboy"
@@ -47,7 +47,7 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
-	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:6.0.32")
+	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:6.0.33")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
@@ -77,7 +77,7 @@ tasks.withType<Test> {
 
 // Node.js configuration
 node {
-	version = "22.20.0"
+	version = "22.21.0"
 	download = true
 	workDir = file("${project.projectDir}/.gradle/nodejs")
 	npmWorkDir = file("${project.projectDir}/.gradle/npm")
