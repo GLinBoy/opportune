@@ -73,8 +73,9 @@ const loadProfile = async () => {
     profile.value = data
   } catch (error) {
     console.error('Failed to load profile:', error)
-    // If profile load fails, user might not be authenticated
-    // Could optionally logout here
+    // Clear auth tokens and redirect to login if profile cannot be loaded
+    authStore.clearAuth()
+    router.push('/auth/login')
   } finally {
     isLoading.value = false
   }
