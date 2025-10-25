@@ -100,6 +100,7 @@ class SecurityConfiguration(
 					.requestMatchers(HttpMethod.PUT, "/api/auth/password/reset/finish").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/auth/password/reset/init").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/auth/token/refresh").authenticated()
+					.requestMatchers(HttpMethod.PUT, "/api/profiles/email/confirm").permitAll()
 					.requestMatchers("/api/admin/**").hasAuthority(Role.ROLE_ADMIN.name)
 					.requestMatchers("/api/**").hasAuthority(Role.ROLE_USER.name)
 					.anyRequest().authenticated()
