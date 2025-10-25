@@ -73,10 +73,10 @@ export default class ProfileService {
     })
   }
 
-  confirmEmail(): Promise<void> {
+  confirmEmail(code: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
-        .put(`${PROFILE_API_URL}/email/confirm`)
+        .put(`${PROFILE_API_URL}/email/confirm?code=${encodeURIComponent(code)}`)
         .then(() => { resolve() })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
