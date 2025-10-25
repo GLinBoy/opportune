@@ -312,6 +312,10 @@ const handleAvatarUpload = async (files: File | File[]) => {
 
   const file = fileArray[0]
 
+  if (!file) {
+    return
+  }
+
   // Validate file type
   if (!file.type.startsWith('image/')) {
     alert('Please select an image file')
@@ -364,6 +368,10 @@ const handleResumeUpload = async (files: File | File[]) => {
   }
 
   const file = fileArray[0]
+
+  if (!file) {
+    return
+  }
 
   // Validate file type
   const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
