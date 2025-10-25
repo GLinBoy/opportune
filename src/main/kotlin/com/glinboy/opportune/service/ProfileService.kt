@@ -10,5 +10,6 @@ interface ProfileService : GenericService<UUID, ProfileDTO>, UserDetailsService 
 	fun getCurrentProfile(): Optional<ProfileDTO>
 	fun register(profileDTO: ProfileDTO)
 	fun login(loginRequestDTO: LoginRequestDTO): AccessTokenResponseDTO
+	fun confirmEmail(code: String)
 }
 

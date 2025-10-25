@@ -11,7 +11,11 @@ import com.glinboy.opportune.mapper.ProfileMapper
 import com.glinboy.opportune.repository.ProfileRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.security.jwt.JwtService
+import com.glinboy.opportune.service.MailService
 import com.glinboy.opportune.service.ProfileService
+import com.glinboy.opportune.service.VerificationCodeService
+import com.glinboy.opportune.util.UUIDBase64
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -25,7 +29,9 @@ class ProfileServiceImpl(
 	profileRepository: ProfileRepository,
 	mapper: ProfileMapper,
 	private val jwtService: JwtService,
-	private val passwordEncoder: PasswordEncoder
+	private val passwordEncoder: PasswordEncoder,
+	private val verificationCodeService: VerificationCodeService,
+	private val mailService: MailService
 ) :
 	GenericServiceImpl<UUID, Profile, ProfileDTO, ProfileRepository,
 		ProfileMapper>(profileRepository, mapper), ProfileService {
@@ -62,7 +68,7 @@ class ProfileServiceImpl(
 						resume = null
 					)
 					repository.save(profile)
-					sendVerificationEmail(profile.email!!)
+					sendVerificationEmail(mapper.toDto(profile))
 				})
 	}
 
@@ -74,8 +80,20 @@ class ProfileServiceImpl(
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid email or password") }
 	}
 
-	// TODO: Implement sending verification email
-	private fun sendVerificationEmail(email: String) = log.info("Sending verification email to $email")
+	private fun sendVerificationEmail(profileDTO: ProfileDTO) {
+		log.info("Sending verification email to ${profileDTO.email}")
+		verificationCodeService.createEmailVerificationKey(profileDTO.id!!).let {
+			mailService.sendActivationEmail(profileDTO, UUIDBase64.toBase64(it!!.id!!))
+		}
+	}
 
+	@Transactional
+	override fun confirmEmail(code: String) {
+		verificationCodeService.findByEmailVerification(UUIDBase64.fromBase64(code))
+			.map { vk ->
+				repository.updateEmailVerification(vk.profileId!!, true)
+				verificationCodeService.delete(vk.id!!)
+			}
+			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code not found") }
+	}
 }
-

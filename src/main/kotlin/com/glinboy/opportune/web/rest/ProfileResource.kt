@@ -26,16 +26,16 @@ class ProfileResource(profileService: ProfileService) :
 		return ResponseEntity.ok().build()
 	}
 
-	@PostMapping("/email/verify")
+	@PostMapping("/email/verify/request")
 	fun verifyEmail(): ResponseEntity<Void> {
 		// TODO: Implement resend activation email
 		return ResponseEntity.ok().build()
 	}
 
 	@PutMapping("/email/confirm")
-	fun confirmEmail(): ResponseEntity<Void> {
-		// TODO: Implement verify email
-		return ResponseEntity.ok().build()
+	fun confirmEmail(@RequestParam code: String): ResponseEntity<Void> {
+			service.confirmEmail(code)
+			return ResponseEntity.ok().build()
 	}
 }
 
