@@ -7,6 +7,7 @@ import com.glinboy.opportune.enums.VerificationCodeType
 import com.glinboy.opportune.mapper.VerificationCodeMapper
 import com.glinboy.opportune.repository.VerificationCodeRepository
 import com.glinboy.opportune.service.VerificationCodeService
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -27,6 +28,10 @@ class VerificationCodeServiceImpl(verificationCodeRepository: VerificationCodeRe
 		repository
 			.findByIdAndType(id, VerificationCodeType.EMAIL_VERIFICATION)
 			.map(mapper::toDto)
+
+	@Transactional
+	override fun deleteAllProfileEmailVerification(profileId: UUID) =
+		repository.deleteAllByProfileIdAndType(profileId, VerificationCodeType.EMAIL_VERIFICATION)
 
 }
 

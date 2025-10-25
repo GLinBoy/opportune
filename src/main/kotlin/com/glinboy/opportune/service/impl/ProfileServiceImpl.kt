@@ -92,7 +92,7 @@ class ProfileServiceImpl(
 		verificationCodeService.findByEmailVerification(UUIDBase64.fromBase64(code))
 			.map { vk ->
 				repository.updateEmailVerification(vk.profileId!!, true)
-				verificationCodeService.delete(vk.id!!)
+				verificationCodeService.deleteAllProfileEmailVerification(vk.profileId!!)
 			}
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code not found") }
 	}
