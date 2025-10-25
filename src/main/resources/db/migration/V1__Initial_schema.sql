@@ -25,6 +25,16 @@ CREATE TABLE profile_role (
     PRIMARY KEY (profile_id, role)
 );
 
+-- Create ValidationKey table
+CREATE TABLE verification_code (
+    id UUID NOT NULL PRIMARY KEY,
+    type VARCHAR(50),
+    profile_id UUID,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_verification_code_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
 -- Create Company table
 CREATE TABLE company (
     id UUID NOT NULL PRIMARY KEY,
@@ -170,6 +180,8 @@ CREATE TABLE application_meta_data (
 CREATE INDEX idx_profile_email ON profile(email);
 CREATE INDEX idx_profile_status ON profile(status);
 CREATE INDEX idx_profile_role_profile_id ON profile_role(profile_id);
+CREATE INDEX idx_verification_code_profile ON verification_code(profile_id);
+CREATE INDEX idx_verification_code_type ON verification_code(type);
 CREATE INDEX idx_company_name ON company(name);
 CREATE INDEX idx_company_status ON company(status);
 CREATE INDEX idx_company_industry ON company(industry);
