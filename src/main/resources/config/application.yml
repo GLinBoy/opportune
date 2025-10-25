@@ -24,7 +24,7 @@ application:
     version: ${version}
     description: ${description}
     license: Apache-2.0 license
-    website: \${application.info.github-url}
+    website: \${OPPORTUNE_WEB_ADDRESS:http://localhost:\${server.port}}
     github-url: https://github.com/GLinBoy/opportune
     license-url: https://github.com/GLinBoy/opportune/blob/main/LICENSE.md
     servers:
