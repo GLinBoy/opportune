@@ -37,6 +37,17 @@ spring:
       enabled: true
   thymeleaf:
     cache: false
+  mail:
+    host: \${OPPORTUNE_MAIL_HOST}
+    port: \${OPPORTUNE_MAIL_PORT}
+    username: \${OPPORTUNE_MAIL_USERNAME}
+    password: \${OPPORTUNE_MAIL_PASSWORD}
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: \${OPPORTUNE_MAIL_HOST}
 
 management:
   endpoints:
