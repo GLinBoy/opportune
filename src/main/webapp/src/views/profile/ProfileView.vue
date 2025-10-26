@@ -82,15 +82,6 @@
               Password & Security
             </v-card-title>
             <v-card-text>
-              <v-alert
-                color="info"
-                variant="tonal"
-                icon="mdi-information"
-                class="mb-4"
-              >
-                Password and 2FA management features are coming soon.
-              </v-alert>
-
               <v-row>
                 <v-col cols="12">
                   <v-card variant="outlined" class="mb-4">
@@ -99,31 +90,48 @@
                       Change Password
                     </v-card-title>
                     <v-card-text>
-                      <v-form>
+                      <v-form @submit.prevent="changePassword">
                         <v-text-field
+                          v-model="passwordForm.currentPassword"
                           label="Current Password"
-                          type="password"
+                          :type="showCurrentPassword ? 'text' : 'password'"
+                          :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                          @click:append-inner="showCurrentPassword = !showCurrentPassword"
                           variant="outlined"
-                          disabled
+                          @input="validatePasswordForm"
                           class="mb-3"
                         />
                         <v-text-field
+                          v-model="passwordForm.newPassword"
                           label="New Password"
-                          type="password"
+                          :type="showNewPassword ? 'text' : 'password'"
+                          :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                          @click:append-inner="showNewPassword = !showNewPassword"
                           variant="outlined"
-                          disabled
+                          @input="validatePasswordForm"
+                          hint="Password must be at least 8 characters"
+                          persistent-hint
                           class="mb-3"
                         />
                         <v-text-field
+                          v-model="passwordForm.confirmPassword"
                           label="Confirm New Password"
-                          type="password"
+                          :type="showConfirmPassword ? 'text' : 'password'"
+                          :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                          @click:append-inner="showConfirmPassword = !showConfirmPassword"
                           variant="outlined"
-                          disabled
+                          @input="validatePasswordForm"
                         />
                       </v-form>
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn color="primary" variant="flat" disabled>
+                      <v-btn
+                        color="primary"
+                        variant="flat"
+                        :disabled="!passwordFormValid"
+                        :loading="passwordChanging"
+                        @click="changePassword"
+                      >
                         Update Password
                       </v-btn>
                     </v-card-actions>
@@ -137,6 +145,14 @@
                       Two-Factor Authentication
                     </v-card-title>
                     <v-card-text>
+                      <v-alert
+                        color="info"
+                        variant="tonal"
+                        icon="mdi-information"
+                        class="mb-4"
+                      >
+                        Two-factor authentication (2FA) feature is coming soon.
+                      </v-alert>
                       <p class="text-body-2 mb-4">
                         Two-factor authentication (2FA) adds an extra layer of security to your account.
                       </p>

@@ -1,5 +1,5 @@
 import { ref, onMounted, defineComponent, inject } from 'vue'
-import { type IProfile } from '../../models'
+import { type IProfile, type IPasswordChangeRequest } from '../../models'
 import ProfileService from '../../services/profile.service'
 import ProfileForm from '../../components/ProfileForm.vue'
 
@@ -24,6 +24,18 @@ export default defineComponent({
     const loading = ref(false)
     const saving = ref(false)
     const hasChanges = ref(false)
+
+    // Password change state
+    const passwordForm = ref({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    })
+    const passwordFormValid = ref(false)
+    const passwordChanging = ref(false)
+    const showCurrentPassword = ref(false)
+    const showNewPassword = ref(false)
+    const showConfirmPassword = ref(false)
 
     // Tab navigation
     const activeTab = ref('info')
@@ -114,6 +126,61 @@ export default defineComponent({
       }
     }
 
+    // Password validation rules
+    const passwordRules = {
+      required: (v: string) => !!v || 'Password is required',
+      minLength: (v: string) => v.length >= 8 || 'Password must be at least 8 characters',
+      match: (v: string) => v === passwordForm.value.newPassword || 'Passwords do not match'
+    }
+
+    // Validate password form
+    const validatePasswordForm = () => {
+      const { currentPassword, newPassword, confirmPassword } = passwordForm.value
+      passwordFormValid.value =
+        !!currentPassword &&
+        !!newPassword &&
+        newPassword.length >= 8 &&
+        newPassword === confirmPassword
+    }
+
+    // Change password
+    const changePassword = async () => {
+      if (!passwordFormValid.value) {
+        showSnackbar('Please fill all password fields correctly', 'error')
+        return
+      }
+
+      passwordChanging.value = true
+      try {
+        const request: IPasswordChangeRequest = {
+          currentPassword: passwordForm.value.currentPassword,
+          newPassword: passwordForm.value.newPassword
+        }
+
+        await profileService().changePassword(request)
+
+        // Reset form
+        passwordForm.value = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        }
+        passwordFormValid.value = false
+
+        showSnackbar('Password changed successfully!', 'success')
+      } catch (error: unknown) {
+        console.error('Failed to change password:', error)
+        let message = 'Failed to change password. Please check your current password and try again.'
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { data?: { message?: string } } }
+          message = axiosError.response?.data?.message || message
+        }
+        showSnackbar(message, 'error')
+      } finally {
+        passwordChanging.value = false
+      }
+    }
+
     // Lifecycle
     onMounted(() => {
       loadProfile()
@@ -129,10 +196,20 @@ export default defineComponent({
       tabs,
       breadcrumbs,
       snackbar,
+      // Password change data
+      passwordForm,
+      passwordFormValid,
+      passwordChanging,
+      showCurrentPassword,
+      showNewPassword,
+      showConfirmPassword,
+      passwordRules,
       // Methods
       showSnackbar,
       markAsModified,
-      saveProfile
+      saveProfile,
+      validatePasswordForm,
+      changePassword
     }
   }
 })
