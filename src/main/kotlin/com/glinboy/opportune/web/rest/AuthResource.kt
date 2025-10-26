@@ -3,6 +3,8 @@ package com.glinboy.opportune.web.rest
 import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.AccessTokenResponseDTO
 import com.glinboy.opportune.dto.LoginRequestDTO
+import com.glinboy.opportune.dto.PasswordResetFinalizationRequestDTO
+import com.glinboy.opportune.dto.PasswordResetInitiationRequestDTO
 import com.glinboy.opportune.dto.ProfileDTO
 import com.glinboy.opportune.service.ProfileService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -51,16 +53,18 @@ class AuthResource(private val profileService: ProfileService) {
 	}
 
 	@PostMapping("/auth/password/reset/init")
-	fun forgetPassword(): ResponseEntity<Void> {
-		// TODO: Implement forget password - send email
-		log.debug("REST request to forget password")
+	fun forgetPassword(
+		@Valid @RequestBody passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO
+	): ResponseEntity<Void> {
+		profileService.initiatePasswordReset(passwordResetInitiationRequestDTO)
 		return ResponseEntity.ok().build()
 	}
 
 	@PutMapping("/auth/password/reset/finish")
-	fun resetPassword(): ResponseEntity<Void> {
-		// TODO: Implement reset password
-		log.debug("REST request to reset password")
+	fun resetPassword(
+		@Valid @RequestBody passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO
+	): ResponseEntity<Void> {
+		profileService.finalizePasswordReset(passwordResetFinalizationRequestDTO)
 		return ResponseEntity.ok().build()
 	}
 }
