@@ -1,7 +1,7 @@
 import apiClient from './api'
 
 import type { AxiosResponse } from 'axios'
-import type { IProfile, ILoginRequest, IAccessTokenResponse } from '../models'
+import type { IProfile, ILoginRequest, IAccessTokenResponse, IPasswordResetInitiationRequest, IPasswordResetFinalizationRequest } from '../models'
 
 const AUTH_API_URL = '/api/auth'
 
@@ -34,16 +34,16 @@ export default class AuthService {
     })
   }
 
-  forgetPassword(email: { email: string }): Promise<void> {
+  forgetPassword(payload: IPasswordResetInitiationRequest): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
-        .post(`${AUTH_API_URL}/password/reset/init`, email)
+        .post(`${AUTH_API_URL}/password/reset/init`, payload)
         .then(() => { resolve() })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
   }
 
-  resetPassword(payload: { key: string; newPassword: string }): Promise<void> {
+  resetPassword(payload: IPasswordResetFinalizationRequest): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
         .put(`${AUTH_API_URL}/password/reset/finish`, payload)

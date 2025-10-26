@@ -19,3 +19,25 @@ export interface IAccessTokenResponse {
   refreshExpiresIn: number
   tokenType: string
 }
+
+export interface IPasswordResetInitiationRequest {
+  email: string
+}
+
+export class PasswordResetInitiationRequest implements IPasswordResetInitiationRequest {
+  constructor(
+    public email: string
+  ) { }
+}
+
+export interface IPasswordResetFinalizationRequest {
+  code: string
+  newPassword: string
+}
+
+export class PasswordResetFinalizationRequest implements IPasswordResetFinalizationRequest {
+  constructor(
+    public code: string,
+    public newPassword: string
+  ) { }
+}
