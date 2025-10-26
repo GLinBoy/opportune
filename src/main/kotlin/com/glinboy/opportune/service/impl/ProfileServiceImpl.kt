@@ -2,6 +2,9 @@ package com.glinboy.opportune.service.impl
 
 import com.glinboy.opportune.dto.AccessTokenResponseDTO
 import com.glinboy.opportune.dto.LoginRequestDTO
+import com.glinboy.opportune.dto.PasswordResetFinalizationRequestDTO
+import com.glinboy.opportune.dto.PasswordResetInitiationRequestDTO
+import com.glinboy.opportune.dto.PasswordUpdateRequestDTO
 import com.glinboy.opportune.dto.ProfileDTO
 import com.glinboy.opportune.dto.UserSecurityDTO
 import com.glinboy.opportune.entity.Profile
@@ -82,7 +85,7 @@ class ProfileServiceImpl(
 
 	private fun sendVerificationEmail(profileDTO: ProfileDTO) {
 		log.info("Sending verification email to ${profileDTO.email}")
-		verificationCodeService.createEmailVerificationKey(profileDTO.id!!).let {
+		verificationCodeService.createEmailVerificationCode(profileDTO.id!!).let {
 			mailService.sendActivationEmail(profileDTO, UUIDBase64.toBase64(it!!.id!!))
 		}
 	}
@@ -95,5 +98,41 @@ class ProfileServiceImpl(
 				verificationCodeService.deleteAllProfileEmailVerification(vk.profileId!!)
 			}
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code not found") }
+	}
+
+	override fun initiatePasswordReset(passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO) {
+		repository.findOneByEmailIgnoreCase(passwordResetInitiationRequestDTO.email)
+			.map { profile ->
+				verificationCodeService.createPasswordResetCode(profile.id!!).let { vk ->
+					mailService.sendPasswordResetMail(mapper.toDto(profile),
+						UUIDBase64.toBase64(vk!!.id!!))
+				}
+			}
+	}
+
+	@Transactional
+	override fun finalizePasswordReset(passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO) {
+		verificationCodeService.findByPasswordReset(UUIDBase64.fromBase64(passwordResetFinalizationRequestDTO.code))
+			.map { vk ->
+				repository.findById(vk.profileId!!).map { profile ->
+					repository.updatePassword(profile.id!!,
+						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword))
+					verificationCodeService.deleteAllProfilePasswordReset(vk.profileId!!)
+				}
+			}
+	}
+
+	@Transactional
+	override fun changePassword(passwordUpdateRequestDTO: PasswordUpdateRequestDTO) {
+		val currentUserId = UUID.fromString(SecurityUtils.getCurrentUserLogin())
+		repository.findById(currentUserId)
+			.filter {
+				passwordEncoder.matches(passwordUpdateRequestDTO.currentPassword, it.password)
+			}
+			.map { profile ->
+				repository.updatePassword(profile.id!!,
+					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword))
+			}
+			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect") }
 	}
 }
