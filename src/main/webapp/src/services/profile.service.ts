@@ -2,7 +2,7 @@ import apiClient from './api'
 
 import buildPaginationQueryOpts from '../utils/pagination'
 
-import { type IProfile } from '../models'
+import { type IProfile, type IPasswordChangeRequest } from '../models'
 import type { AxiosResponse } from 'axios'
 
 const PROFILE_API_URL = '/api/profiles'
@@ -64,10 +64,10 @@ export default class ProfileService {
     })
   }
 
-  changePassword(): Promise<void> {
+  changePassword(request: IPasswordChangeRequest): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
-        .put(`${PROFILE_API_URL}/password/change`)
+        .put(`${PROFILE_API_URL}/password/change`, request)
         .then(() => { resolve() })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })

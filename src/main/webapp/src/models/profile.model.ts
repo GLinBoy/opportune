@@ -37,3 +37,15 @@ export class Profile implements IProfile {
     public lastModifiedDate?: Date
   ) { }
 }
+
+export interface IPasswordChangeRequest {
+  currentPassword: string
+  newPassword: string
+}
+
+export class PasswordChangeRequest implements IPasswordChangeRequest {
+  constructor(
+    public currentPassword: string,
+    public newPassword: string
+  ) { }
+}
