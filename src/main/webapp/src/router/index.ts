@@ -13,6 +13,7 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import RegisterView from '@/views/auth/RegisterView.vue';
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue';
+import ResetPasswordView from '@/views/auth/ResetPasswordView.vue';
 import UnauthorizedView from '@/views/auth/UnauthorizedView.vue';
 import EmailConfirmationView from '@/views/auth/EmailConfirmationView.vue';
 
@@ -58,6 +59,18 @@ const router = createRouter({
           path: '',
           name: 'email-confirmation-page',
           component: EmailConfirmationView,
+        },
+      ],
+    },
+    {
+      path: '/password-reset',
+      name: 'password-reset',
+      component: BlankLayout,
+      children: [
+        {
+          path: '',
+          name: 'password-reset-page',
+          component: ResetPasswordView,
         },
       ],
     },
@@ -147,7 +160,7 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = accessToken && expiresAt && Date.now() < Number(expiresAt)
 
   // Public routes that don't require authentication
-  const publicRoutes = ['login', 'register', 'forgot-password', 'not-found', 'email-confirmation', 'email-confirmation-page']
+  const publicRoutes = ['login', 'register', 'forgot-password', 'password-reset', 'password-reset-page', 'not-found', 'email-confirmation', 'email-confirmation-page']
 
   // Check if the route requires authentication
   const requiresAuth = !publicRoutes.includes(to.name as string)
