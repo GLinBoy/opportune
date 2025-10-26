@@ -1,9 +1,11 @@
 package com.glinboy.opportune.web.rest
 
 import com.glinboy.opportune.config.OpenApiConfiguration
+import com.glinboy.opportune.dto.PasswordUpdateRequestDTO
 import com.glinboy.opportune.dto.ProfileDTO
 import com.glinboy.opportune.service.ProfileService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -21,8 +23,10 @@ class ProfileResource(profileService: ProfileService) :
 			.orElse(ResponseEntity.notFound().build())
 
 	@PutMapping("/password/change")
-	fun changePassword(): ResponseEntity<Void> {
-		// TODO: Implement change password
+	fun changePassword(
+		@Valid @RequestBody passwordUpdateRequestDTO: PasswordUpdateRequestDTO
+	): ResponseEntity<Void> {
+		service.changePassword(passwordUpdateRequestDTO)
 		return ResponseEntity.ok().build()
 	}
 
