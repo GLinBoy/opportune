@@ -43,7 +43,7 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 			.filter { StringUtils.isNotBlank(it) }
 			.map { toSpecification<Any>(it) }
 			.orElseGet { Specification.allOf() }
-		val page: Page<D> = service.findAll(specification, pageable)
+		val page: Page<D> = service.findAllForCurrentUser(specification, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -51,7 +51,7 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 
 	@GetMapping("/{id}")
 	open fun getById(@PathVariable id: ID): ResponseEntity<D> {
-		val entity = service.getById(id)
+		val entity = service.getByIdForCurrentUser(id)
 		return ResponseEntity.ok().body(entity)
 	}
 
@@ -74,13 +74,13 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 				HttpStatus.BAD_REQUEST, "ID must not be null"
 			)
 		}
-		val updatedEntity = service.update(entity)
+		val updatedEntity = service.updateForCurrentUser(entity)
 		return ResponseEntity.ok().body(updatedEntity)
 	}
 
 	@DeleteMapping("/{id}")
 	open fun deleteById(@PathVariable id: ID): ResponseEntity<Void> {
-		service.delete(id)
+		service.deleteForCurrentUser(id)
 		return ResponseEntity.noContent().build()
 	}
 }
