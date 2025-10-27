@@ -3,7 +3,10 @@ package com.glinboy.opportune.service.impl
 import com.glinboy.opportune.dto.BaseDTO
 import com.glinboy.opportune.entity.BaseEntity
 import com.glinboy.opportune.mapper.GenericMapper
+import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.GenericService
+import jakarta.persistence.criteria.Path
+import jakarta.persistence.criteria.Root
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -21,6 +24,25 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 	where R : JpaRepository<E, ID>, R : JpaSpecificationExecutor<E> {
 
 	protected val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+	/**
+	 * Helper method to create a specification that filters entities by the current user's profile ID.
+	 *
+	 * @param profileIdPath A function that extracts the profile ID path from the entity root.
+	 * @return A Specification that filters by the current user's profile ID.
+	 */
+	protected fun createCurrentUserSpecification(
+		profileIdPath: (Root<E>) -> Path<UUID>
+	): Specification<E> {
+		return Specification<E> { root, _, criteriaBuilder ->
+			criteriaBuilder.equal(
+				profileIdPath(root),
+				SecurityUtils.getCurrentUserLogin().let(UUID::fromString)
+			)
+		}
+	}
+
+	abstract fun currentUserSpecification(): Specification<E>
 
 	override fun save(t: D): D {
 		val entity: E = mapper.createEntity(t)
@@ -74,7 +96,53 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 		return repository.existsById(id)
 	}
 
-	override fun count(): Long {
-		return repository.count()
+	override fun getByIdForCurrentUser(id: ID): D {
+		currentUserSpecification()
+			.and(Specification<E> { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<ID>("id"), id)
+			}
+		).let { specification ->
+			return repository.findOne(specification)
+				.map { mapper.toDto(it) }
+				.orElseThrow { NoSuchElementException("Entity with id $id not found") }
+		}
+	}
+
+	override fun findByIdForCurrentUser(id: ID): Optional<D> {
+		currentUserSpecification()
+			.and(Specification<E> { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<ID>("id"), id)
+			}
+		).let { specification ->
+			return repository.findOne(specification)
+				.map { mapper.toDto(it) }
+		}
+	}
+
+	override fun findAllForCurrentUser(pageable: Pageable): Page<D> =
+		repository.findAll(currentUserSpecification(), pageable)
+			.map { mapper.toDto(it) }
+
+	override fun findAllForCurrentUser(specification: Specification<Any>, pageable: Pageable): Page<D> {
+		val combinedSpecification = currentUserSpecification()
+			.and(specification as Specification<E>)
+		return repository.findAll(combinedSpecification, pageable)
+			.map { mapper.toDto(it) }
+	}
+
+	override fun updateForCurrentUser(t: D): D {
+		TODO("Not yet implemented")
+	}
+
+	override fun deleteForCurrentUser(id: ID) {
+		TODO("Not yet implemented")
+	}
+
+	override fun deleteAllByIdsForCurrentUser(ids: List<ID>) {
+		TODO("Not yet implemented")
+	}
+
+	override fun existsByIdForCurrentUser(id: ID): Boolean {
+		TODO("Not yet implemented")
 	}
 }
