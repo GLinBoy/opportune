@@ -11,21 +11,35 @@ interface GenericService<ID, D : BaseDTO> {
 
 	fun saveAll(entities: List<D>): List<D>
 
+	fun getById(id: ID): D
+
+	fun getByIdForCurrentUser(id: ID): D
+
 	fun findById(id: ID): Optional<D>
 
-	fun getById(id: ID): D
+	fun findByIdForCurrentUser(id: ID): Optional<D>
 
 	fun findAll(pageable: Pageable): Page<D>
 
-	fun findAll(specification: Specification<Any> , pageable: Pageable): Page<D>
+	fun findAllForCurrentUser(pageable: Pageable): Page<D>
+
+	fun findAll(specification: Specification<Any>, pageable: Pageable): Page<D>
+
+	fun findAllForCurrentUser(specification: Specification<Any>, pageable: Pageable): Page<D>
 
 	fun update(t: D): D
 
+	fun updateForCurrentUser(t: D): D
+
 	fun delete(id: ID): Unit
+
+	fun deleteForCurrentUser(id: ID): Unit
 
 	fun deleteAllByIds(ids: List<ID>): Unit
 
+	fun deleteAllByIdsForCurrentUser(ids: List<ID>): Unit
+
 	fun existsById(id: ID): Boolean
 
-	fun count(): Long
+	fun existsByIdForCurrentUser(id: ID): Boolean
 }
