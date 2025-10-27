@@ -1,12 +1,6 @@
 package com.glinboy.opportune.service.impl
 
-import com.glinboy.opportune.dto.AccessTokenResponseDTO
-import com.glinboy.opportune.dto.LoginRequestDTO
-import com.glinboy.opportune.dto.PasswordResetFinalizationRequestDTO
-import com.glinboy.opportune.dto.PasswordResetInitiationRequestDTO
-import com.glinboy.opportune.dto.PasswordUpdateRequestDTO
-import com.glinboy.opportune.dto.ProfileDTO
-import com.glinboy.opportune.dto.UserSecurityDTO
+import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.enums.AccountStatus
 import com.glinboy.opportune.enums.Role
@@ -19,6 +13,7 @@ import com.glinboy.opportune.service.ProfileService
 import com.glinboy.opportune.service.VerificationCodeService
 import com.glinboy.opportune.util.UUIDBase64
 import jakarta.transaction.Transactional
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -46,8 +41,8 @@ class ProfileServiceImpl(
 
 	override fun loadUserByUsername(username: String): UserDetails? =
 		repository.findById(UUID.fromString(username))
-		.map { UserSecurityDTO(it) }
-		.orElseThrow { UsernameNotFoundException("User not found") }
+			.map { UserSecurityDTO(it) }
+			.orElseThrow { UsernameNotFoundException("User not found") }
 
 	override fun register(profileDTO: ProfileDTO) {
 		repository.findOneByEmailIgnoreCase(profileDTO.email!!.lowercase())
@@ -80,7 +75,7 @@ class ProfileServiceImpl(
 		return repository.findOneByEmailIgnoreCase(loginRequestDTO.email)
 			.filter { passwordEncoder.matches(loginRequestDTO.password, it.password) }
 			.map { jwtService.createToken(it, loginRequestDTO.rememberMe) }
-			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid email or password") }
+			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password") }
 	}
 
 	private fun sendVerificationEmail(profileDTO: ProfileDTO) {
@@ -104,8 +99,10 @@ class ProfileServiceImpl(
 		repository.findOneByEmailIgnoreCase(passwordResetInitiationRequestDTO.email)
 			.map { profile ->
 				verificationCodeService.createPasswordResetCode(profile.id!!).let { vk ->
-					mailService.sendPasswordResetMail(mapper.toDto(profile),
-						UUIDBase64.toBase64(vk!!.id!!))
+					mailService.sendPasswordResetMail(
+						mapper.toDto(profile),
+						UUIDBase64.toBase64(vk!!.id!!)
+					)
 				}
 			}
 	}
@@ -115,8 +112,10 @@ class ProfileServiceImpl(
 		verificationCodeService.findByPasswordReset(UUIDBase64.fromBase64(passwordResetFinalizationRequestDTO.code))
 			.map { vk ->
 				repository.findById(vk.profileId!!).map { profile ->
-					repository.updatePassword(profile.id!!,
-						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword))
+					repository.updatePassword(
+						profile.id!!,
+						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)
+					)
 					verificationCodeService.deleteAllProfilePasswordReset(vk.profileId!!)
 				}
 			}
@@ -130,9 +129,14 @@ class ProfileServiceImpl(
 				passwordEncoder.matches(passwordUpdateRequestDTO.currentPassword, it.password)
 			}
 			.map { profile ->
-				repository.updatePassword(profile.id!!,
-					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword))
+				repository.updatePassword(
+					profile.id!!,
+					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword)
+				)
 			}
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect") }
 	}
+
+	override fun currentUserSpecification(): Specification<Profile> =
+		createCurrentUserSpecification { it.get("id") }
 }
