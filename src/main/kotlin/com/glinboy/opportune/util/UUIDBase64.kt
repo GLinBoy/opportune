@@ -2,8 +2,7 @@ package com.glinboy.opportune.util
 
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.util.Base64
-import java.util.UUID
+import java.util.*
 
 object UUIDBase64 {
 

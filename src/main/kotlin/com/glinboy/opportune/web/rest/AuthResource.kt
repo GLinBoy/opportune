@@ -1,11 +1,7 @@
 package com.glinboy.opportune.web.rest
 
 import com.glinboy.opportune.config.OpenApiConfiguration
-import com.glinboy.opportune.dto.AccessTokenResponseDTO
-import com.glinboy.opportune.dto.LoginRequestDTO
-import com.glinboy.opportune.dto.PasswordResetFinalizationRequestDTO
-import com.glinboy.opportune.dto.PasswordResetInitiationRequestDTO
-import com.glinboy.opportune.dto.ProfileDTO
+import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.service.ProfileService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletResponse

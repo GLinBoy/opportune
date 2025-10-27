@@ -1,11 +1,6 @@
 package com.glinboy.opportune.service
 
-import com.glinboy.opportune.dto.AccessTokenResponseDTO
-import com.glinboy.opportune.dto.LoginRequestDTO
-import com.glinboy.opportune.dto.PasswordResetFinalizationRequestDTO
-import com.glinboy.opportune.dto.PasswordResetInitiationRequestDTO
-import com.glinboy.opportune.dto.PasswordUpdateRequestDTO
-import com.glinboy.opportune.dto.ProfileDTO
+import com.glinboy.opportune.dto.*
 import org.springframework.security.core.userdetails.UserDetailsService
 import java.util.*
 
