@@ -22,8 +22,8 @@ class ProfileResumeResource(private val profileResumeService: ProfileResumeServi
 		@PathVariable("profile_id") profileId: UUID,
 		@PathVariable(name = "id") optionalId: Optional<UUID>
 	): ResponseEntity<ProfileResumeDTO> =
-		optionalId.map { profileResumeService.findById(it) }
-			.orElseGet { profileResumeService.findByProfileId(profileId) }
+		optionalId.map { profileResumeService.findByIdForCurrentUser(it) }
+			.orElseGet { profileResumeService.findByProfileIdForCurrentUser(profileId) }
 			.map { ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(it) }
 			.orElse(ResponseEntity.notFound().build())
 
@@ -31,7 +31,7 @@ class ProfileResumeResource(private val profileResumeService: ProfileResumeServi
 	fun deleteProfileResume(
 		@PathVariable("profile_id") profileId: UUID,
 		@PathVariable(name = "id") optionalId: Optional<UUID>
-	): ResponseEntity<Void> = optionalId.map { profileResumeService.delete(it) }
+	): ResponseEntity<Void> = optionalId.map { profileResumeService.deleteForCurrentUser(it) }
 		.orElseGet { profileResumeService.deleteByProfileId(profileId) }
 		.let { ResponseEntity.noContent().build<Void>() }
 

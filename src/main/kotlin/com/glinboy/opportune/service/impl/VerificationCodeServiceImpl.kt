@@ -8,6 +8,7 @@ import com.glinboy.opportune.mapper.VerificationCodeMapper
 import com.glinboy.opportune.repository.VerificationCodeRepository
 import com.glinboy.opportune.service.VerificationCodeService
 import jakarta.transaction.Transactional
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -50,6 +51,9 @@ class VerificationCodeServiceImpl(verificationCodeRepository: VerificationCodeRe
 	override fun deleteAllProfilePasswordReset(profileId: UUID) {
 		repository.deleteAllByProfileIdAndType(profileId, VerificationCodeType.PASSWORD_RESET)
 	}
+
+	override fun currentUserSpecification(): Specification<VerificationCode> =
+		createCurrentUserSpecification { it.get<Profile>("profile").get("id") }
 
 }
 

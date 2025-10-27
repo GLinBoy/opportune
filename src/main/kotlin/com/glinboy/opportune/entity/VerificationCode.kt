@@ -3,7 +3,7 @@ package com.glinboy.opportune.entity
 import com.glinboy.opportune.enums.VerificationCodeType
 import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "verification_code")

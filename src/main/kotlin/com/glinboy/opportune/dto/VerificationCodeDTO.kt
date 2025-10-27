@@ -2,7 +2,7 @@ package com.glinboy.opportune.dto
 
 import com.glinboy.opportune.enums.VerificationCodeType
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class VerificationCodeDTO(
 	override val id: UUID? = null,
