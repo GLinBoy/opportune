@@ -8,4 +8,7 @@ interface SearchService {
 	fun search(query: String, pageable: Pageable): Page<SearchResultDTO>
 	fun searchCompanies(query: String, pageable: Pageable): Page<SearchResultDTO>
 	fun searchApplications(query: String, pageable: Pageable): Page<SearchResultDTO>
+	fun searchForCurrentUser(query: String, pageable: Pageable): Page<SearchResultDTO>
+	fun searchCompaniesForCurrentUser(query: String, pageable: Pageable): Page<SearchResultDTO>
+	fun searchApplicationsForCurrentUser(query: String, pageable: Pageable): Page<SearchResultDTO>
 }

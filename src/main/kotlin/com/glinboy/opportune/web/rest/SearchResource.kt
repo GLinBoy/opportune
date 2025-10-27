@@ -35,7 +35,7 @@ class SearchResource(private val searchService: SearchService) {
 		request: HttpServletRequest
 	): ResponseEntity<List<SearchResultDTO>> {
 		val sanitizedQuery = sanitizeQuery(query)
-		val page = searchService.search(sanitizedQuery, pageable)
+		val page = searchService.searchForCurrentUser(sanitizedQuery, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -52,7 +52,7 @@ class SearchResource(private val searchService: SearchService) {
 		request: HttpServletRequest
 	): ResponseEntity<List<SearchResultDTO>> {
 		val sanitizedQuery = sanitizeQuery(query)
-		val page = searchService.searchCompanies(sanitizedQuery, pageable)
+		val page = searchService.searchCompaniesForCurrentUser(sanitizedQuery, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -69,7 +69,7 @@ class SearchResource(private val searchService: SearchService) {
 		request: HttpServletRequest
 	): ResponseEntity<List<SearchResultDTO>> {
 		val sanitizedQuery = sanitizeQuery(query)
-		val page = searchService.searchApplications(sanitizedQuery, pageable)
+		val page = searchService.searchApplicationsForCurrentUser(sanitizedQuery, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)

@@ -32,7 +32,7 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<CompanyMetaDataDTO>> {
-		val page: Page<CompanyMetaDataDTO> = companyMetaDataService.findAll(companyId, pageable)
+		val page: Page<CompanyMetaDataDTO> = companyMetaDataService.findAllForCurrentUser(companyId, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -42,7 +42,7 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 	fun getCompanyMetaData(
 		@PathVariable("company_id") companyId: UUID,
 		@PathVariable(name = "id") id: UUID
-	): ResponseEntity<CompanyMetaDataDTO> = companyMetaDataService.findById(companyId, id)
+	): ResponseEntity<CompanyMetaDataDTO> = companyMetaDataService.findByIdForCurrentUser(companyId, id)
 		.map { ResponseEntity.ok().body(it) }
 		.orElse(ResponseEntity.notFound().build())
 
@@ -79,7 +79,7 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 				HttpStatus.BAD_REQUEST, "Company ID in path must match company ID in body"
 			)
 		}
-		return ResponseEntity.ok().body(companyMetaDataService.update(companyMetaDataDTO))
+		return ResponseEntity.ok().body(companyMetaDataService.updateForCurrentUser(companyMetaDataDTO))
 	}
 
 	@DeleteMapping("/{company_id}/metadata/{id}")
@@ -87,7 +87,7 @@ class CompanyMetaDataResource(private val companyMetaDataService: CompanyMetaDat
 		@PathVariable("company_id") companyId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<Unit> {
-		companyMetaDataService.delete(companyId, id)
+		companyMetaDataService.deleteForCurrentUser(companyId, id)
 		return ResponseEntity.noContent().build()
 	}
 }
