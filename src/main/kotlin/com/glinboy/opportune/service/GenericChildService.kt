@@ -9,4 +9,8 @@ interface GenericChildService<ID, D : BaseDTO> : GenericService<ID, D> {
 	fun findById(parentID: ID, id: ID): Optional<D>
 	fun findAll(parentID: ID, pageable: Pageable): Page<D>
 	fun delete(parentID: ID, id: ID): Unit
+	fun findByIdForCurrentUser(parentID: ID, id: ID): Optional<D>
+	fun findAllForCurrentUser(parentID: ID, pageable: Pageable): Page<D>
+	fun deleteForCurrentUser(parentID: ID, id: ID): Unit
+
 }
