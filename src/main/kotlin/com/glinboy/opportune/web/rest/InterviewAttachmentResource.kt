@@ -30,7 +30,8 @@ class InterviewAttachmentResource(private val interviewAttachmentService: Interv
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<InterviewAttachmentDTO>> {
-		val page = interviewAttachmentService.findByApplicationIdAndInterviewNoteId(applicationId, interviewNoteId, pageable)
+		val page = interviewAttachmentService
+			.findByApplicationIdAndInterviewNoteIdForCurrentUser(applicationId, interviewNoteId, pageable)
 		val headers: HttpHeaders =
 			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
@@ -43,7 +44,8 @@ class InterviewAttachmentResource(private val interviewAttachmentService: Interv
 		@PathVariable("interview_note_id") interviewNoteId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<InterviewAttachmentDTO> =
-		interviewAttachmentService.findByApplicationIdANdInterviewNoteIdAndId(applicationId, interviewNoteId, id)
+		interviewAttachmentService
+			.findByApplicationIdANdInterviewNoteIdAndIdForCurrentUser(applicationId, interviewNoteId, id)
 			.map { ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(it) }
 			.orElse(ResponseEntity.notFound().build())
 
@@ -53,7 +55,8 @@ class InterviewAttachmentResource(private val interviewAttachmentService: Interv
 		@PathVariable("interview_note_id") interviewNoteId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<Void> {
-		interviewAttachmentService.deleteByApplicationIdAndInterviewNoteIdAndId(applicationId, interviewNoteId, id)
+		interviewAttachmentService
+			.deleteByApplicationIdAndInterviewNoteIdAndIdForCurrentUser(applicationId, interviewNoteId, id)
 		return ResponseEntity.noContent().build<Void>()
 	}
 

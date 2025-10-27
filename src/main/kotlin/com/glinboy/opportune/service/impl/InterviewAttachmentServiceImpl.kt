@@ -59,4 +59,56 @@ class InterviewAttachmentServiceImpl(
 				}
 		)
 	}
+
+	override fun currentUserSpecification(): Specification<InterviewAttachment> =
+		createCurrentUserSpecification { root ->
+			root.get<InterviewAttachment>("interviewNote").get<UUID>("application").get<UUID>("profile").get("id")
+		}
+
+	override fun findByApplicationIdANdInterviewNoteIdAndIdForCurrentUser(
+		applicationId: UUID,
+		interviewNoteId: UUID, id: UUID
+	): Optional<InterviewAttachmentDTO> = repository.findOne(
+		currentUserSpecification()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("id"), id)
+			})
+		.map(mapper::toDto)
+
+	override fun findByApplicationIdAndInterviewNoteIdForCurrentUser(
+		applicationId: UUID,
+		interviewNoteId: UUID, pageable: Pageable
+	): Page<InterviewAttachmentDTO> = repository.findAll(
+		currentUserSpecification()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+			}, pageable
+	).map(mapper::toDto)
+
+	override fun deleteByApplicationIdAndInterviewNoteIdAndIdForCurrentUser(
+		applicationId: UUID,
+		interviewNoteId: UUID, id: UUID
+	) {
+		repository.delete(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("id"), interviewNoteId)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("id"), id)
+				}
+		)
+	}
 }

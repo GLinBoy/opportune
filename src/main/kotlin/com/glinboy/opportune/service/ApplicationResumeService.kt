@@ -6,4 +6,6 @@ import java.util.*
 interface ApplicationResumeService : GenericService<UUID, ApplicationResumeDTO> {
 	fun findByApplicationId(applicationId: UUID): Optional<ApplicationResumeDTO>
 	fun deleteByApplicationId(applicationId: UUID): Unit
+	fun findByApplicationIdForCurrentUser(applicationId: UUID): Optional<ApplicationResumeDTO>
+	fun deleteByApplicationIdForCurrentUser(applicationId: UUID): Unit
 }

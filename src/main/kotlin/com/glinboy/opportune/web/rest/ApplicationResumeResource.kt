@@ -23,7 +23,7 @@ class ApplicationResumeResource(private val applicationResumeService: Applicatio
 		@PathVariable(name = "id") optionalId: Optional<UUID>
 	): ResponseEntity<ApplicationResumeDTO> =
 		optionalId.map { applicationResumeService.findById(it) }
-			.orElseGet { applicationResumeService.findByApplicationId(applicationId) }
+			.orElseGet { applicationResumeService.findByApplicationIdForCurrentUser(applicationId) }
 			.map { ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(it) }
 			.orElse(ResponseEntity.notFound().build())
 
@@ -31,7 +31,7 @@ class ApplicationResumeResource(private val applicationResumeService: Applicatio
 	fun deleteApplicationResume(
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") optionalId: Optional<UUID>
-	): ResponseEntity<Void> = optionalId.map { applicationResumeService.delete(it) }
+	): ResponseEntity<Void> = optionalId.map { applicationResumeService.deleteForCurrentUser(it) }
 		.orElseGet { applicationResumeService.deleteByApplicationId(applicationId) }
 		.let { ResponseEntity.noContent().build<Void>() }
 

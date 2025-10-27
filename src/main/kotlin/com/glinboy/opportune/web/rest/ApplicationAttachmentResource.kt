@@ -30,7 +30,7 @@ class ApplicationAttachmentResource(private val applicationAttachmentService: Ap
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationAttachmentDTO>> {
-		val page = applicationAttachmentService.findAll(applicationId, pageable)
+		val page = applicationAttachmentService.findAllForCurrentUser(applicationId, pageable)
 		val headers: HttpHeaders =
 			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
@@ -42,7 +42,7 @@ class ApplicationAttachmentResource(private val applicationAttachmentService: Ap
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<ApplicationAttachmentDTO> =
-		applicationAttachmentService.findById(applicationId, id)
+		applicationAttachmentService.findByIdForCurrentUser(applicationId, id)
 			.map { ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(it) }
 			.orElse(ResponseEntity.notFound().build())
 
@@ -51,7 +51,7 @@ class ApplicationAttachmentResource(private val applicationAttachmentService: Ap
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<Void> {
-		applicationAttachmentService.delete(applicationId, id)
+		applicationAttachmentService.deleteForCurrentUser(applicationId, id)
 		return ResponseEntity.noContent().build<Void>()
 	}
 

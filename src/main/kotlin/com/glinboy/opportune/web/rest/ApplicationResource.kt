@@ -30,7 +30,7 @@ open class ApplicationResource(applicationService: ApplicationService) :
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationProjection>> {
-		val page: Page<ApplicationProjection> = service.findAllApplications(pageable)
+		val page: Page<ApplicationProjection> = service.findAllApplicationsForCurrentUser(pageable)
 		val headers: HttpHeaders =
 			PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
@@ -39,7 +39,7 @@ open class ApplicationResource(applicationService: ApplicationService) :
 
 	@GetMapping("/{id}/details")
 	fun getApplicationsDetailsById(@PathVariable id: UUID): ResponseEntity<ApplicationDetailsDTO> {
-		return service.getApplicationDetails(id)
+		return service.getApplicationDetailsForCurrentUser(id)
 			.map { ResponseEntity.ok(it) }
 			.orElse(ResponseEntity.notFound().build())
 	}

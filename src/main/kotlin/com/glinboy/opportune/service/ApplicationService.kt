@@ -11,4 +11,7 @@ interface ApplicationService : GenericService<UUID, ApplicationDTO> {
 	fun getCompanyApplications(companyId: UUID, pageable: Pageable): Page<ApplicationDTO>
 	fun findAllApplications(pageable: Pageable): Page<ApplicationProjection>
 	fun getApplicationDetails(id: UUID): Optional<ApplicationDetailsDTO>
+	fun getCompanyApplicationsForCurrentUser(companyId: UUID, pageable: Pageable): Page<ApplicationDTO>
+	fun findAllApplicationsForCurrentUser(pageable: Pageable): Page<ApplicationProjection>
+	fun getApplicationDetailsForCurrentUser(id: UUID): Optional<ApplicationDetailsDTO>
 }

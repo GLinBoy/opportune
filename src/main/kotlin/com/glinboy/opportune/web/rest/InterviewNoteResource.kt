@@ -32,7 +32,7 @@ class InterviewNoteResource(private val interviewNoteService: InterviewNoteServi
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<InterviewNoteDTO>> {
-		val page: Page<InterviewNoteDTO> = interviewNoteService.findAll(applicationId, pageable)
+		val page: Page<InterviewNoteDTO> = interviewNoteService.findAllForCurrentUser(applicationId, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -42,7 +42,7 @@ class InterviewNoteResource(private val interviewNoteService: InterviewNoteServi
 	fun getInterviewNote(
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
-	): ResponseEntity<InterviewNoteDTO> = interviewNoteService.findById(applicationId, id)
+	): ResponseEntity<InterviewNoteDTO> = interviewNoteService.findByIdForCurrentUser(applicationId, id)
 		.map { ResponseEntity.ok().body(it) }
 		.orElse(ResponseEntity.notFound().build())
 
@@ -79,7 +79,7 @@ class InterviewNoteResource(private val interviewNoteService: InterviewNoteServi
 				HttpStatus.BAD_REQUEST, "Application ID in path must match application ID in body"
 			)
 		}
-		return ResponseEntity.ok().body(interviewNoteService.update(interviewNoteDTO))
+		return ResponseEntity.ok().body(interviewNoteService.updateForCurrentUser(interviewNoteDTO))
 	}
 
 	@DeleteMapping("/{application_id}/interview-notes/{id}")
@@ -87,7 +87,7 @@ class InterviewNoteResource(private val interviewNoteService: InterviewNoteServi
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<Unit> {
-		interviewNoteService.delete(applicationId, id)
+		interviewNoteService.deleteForCurrentUser(applicationId, id)
 		return ResponseEntity.noContent().build()
 	}
 }

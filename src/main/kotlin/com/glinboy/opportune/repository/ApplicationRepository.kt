@@ -29,6 +29,23 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" LEFT JOIN a.company c")
 	fun findAllApplications(pageable: Pageable): Page<ApplicationProjection>
 
+	@Query("SELECT a.id AS id, " +
+		" a.url AS url, " +
+		" a.title AS title, " +
+		" a.location AS location, " +
+		" a.appliedAt AS appliedAt, " +
+		" a.salary AS salary, " +
+		" a.note AS note, " +
+		" a.status AS status, " +
+		" a.company.id AS companyId, " +
+		" a.company.createdDate as createdDate, " +
+		" a.company.lastModifiedDate as lastModifiedDate, " +
+		" c.name AS companyName " +
+		" FROM Application a " +
+		" LEFT JOIN a.company c " +
+		" WHERE a.profile.id = :profileId ")
+	fun findAllApplicationsByProfileId(profileId: UUID, pageable: Pageable): Page<ApplicationProjection>
+
 	@Query("SELECT a FROM Application a " +
 		" LEFT JOIN FETCH a.company " +
 		" LEFT JOIN FETCH a.timeline " +
@@ -38,4 +55,15 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" LEFT JOIN FETCH a.attachments " +
 		" WHERE a.id = :id")
 	fun findApplicationDetailsById(id: UUID): Optional<Application>
+
+	@Query("SELECT a FROM Application a " +
+		" LEFT JOIN FETCH a.company " +
+		" LEFT JOIN FETCH a.timeline " +
+		" LEFT JOIN FETCH a.interviewNotes " +
+		" LEFT JOIN FETCH a.metadata " +
+		" LEFT JOIN FETCH a.resume " +
+		" LEFT JOIN FETCH a.attachments " +
+		" WHERE a.id = :id " +
+		" AND a.profile.id = :profileId ")
+	fun findApplicationDetailsByProfileIdAndId(profileId: UUID, id: UUID): Optional<Application>
 }

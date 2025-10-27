@@ -32,7 +32,7 @@ class ApplicationMetaDataResource(private val applicationMetaDataService: Applic
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationMetaDataDTO>> {
-		val page: Page<ApplicationMetaDataDTO> = applicationMetaDataService.findAll(applicationId, pageable)
+		val page: Page<ApplicationMetaDataDTO> = applicationMetaDataService.findAllForCurrentUser(applicationId, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -42,7 +42,7 @@ class ApplicationMetaDataResource(private val applicationMetaDataService: Applic
 	fun getApplicationMetaData(
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
-	): ResponseEntity<ApplicationMetaDataDTO> = applicationMetaDataService.findById(applicationId, id)
+	): ResponseEntity<ApplicationMetaDataDTO> = applicationMetaDataService.findByIdForCurrentUser(applicationId, id)
 		.map { ResponseEntity.ok().body(it) }
 		.orElse(ResponseEntity.notFound().build())
 

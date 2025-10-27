@@ -35,4 +35,23 @@ class ApplicationResumeServiceImpl(
 		)
 	}
 
+	override fun currentUserSpecification(): Specification<ApplicationResume> =
+		createCurrentUserSpecification { it.get<ApplicationResume>("application").get<UUID>("profile").get("id") }
+
+	override fun findByApplicationIdForCurrentUser(applicationId: UUID): Optional<ApplicationResumeDTO> =
+		repository.findOne(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
+				}
+		).map(mapper::toDto)
+
+	override fun deleteByApplicationIdForCurrentUser(applicationId: UUID) {
+		repository.delete(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
+				}
+		)
+	}
 }

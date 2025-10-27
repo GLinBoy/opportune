@@ -32,7 +32,7 @@ class ApplicationTimelineResource(private val applicationTimelineService: Applic
 		@Parameter(hidden = true) pageable: Pageable,
 		request: HttpServletRequest
 	): ResponseEntity<List<ApplicationTimelineDTO>> {
-		val page: Page<ApplicationTimelineDTO> = applicationTimelineService.findAll(applicationId, pageable)
+		val page: Page<ApplicationTimelineDTO> = applicationTimelineService.findAllForCurrentUser(applicationId, pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)
@@ -42,7 +42,7 @@ class ApplicationTimelineResource(private val applicationTimelineService: Applic
 	fun getApplicationTimeline(
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
-	): ResponseEntity<ApplicationTimelineDTO> = applicationTimelineService.findById(applicationId, id)
+	): ResponseEntity<ApplicationTimelineDTO> = applicationTimelineService.findByIdForCurrentUser(applicationId, id)
 		.map { ResponseEntity.ok().body(it) }
 		.orElse(ResponseEntity.notFound().build())
 
@@ -79,7 +79,7 @@ class ApplicationTimelineResource(private val applicationTimelineService: Applic
 				HttpStatus.BAD_REQUEST, "Application ID in path must match application ID in body"
 			)
 		}
-		return ResponseEntity.ok().body(applicationTimelineService.update(applicationTimelineDTO))
+		return ResponseEntity.ok().body(applicationTimelineService.updateForCurrentUser(applicationTimelineDTO))
 	}
 
 	@DeleteMapping("/{application_id}/timelines/{id}")
@@ -87,7 +87,7 @@ class ApplicationTimelineResource(private val applicationTimelineService: Applic
 		@PathVariable("application_id") applicationId: UUID,
 		@PathVariable(name = "id") id: UUID
 	): ResponseEntity<Unit> {
-		applicationTimelineService.delete(applicationId, id)
+		applicationTimelineService.deleteForCurrentUser(applicationId, id)
 		return ResponseEntity.noContent().build()
 	}
 }
