@@ -5,6 +5,7 @@ import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.mapper.CompanyMapper
 import com.glinboy.opportune.repository.CompanyRepository
 import com.glinboy.opportune.service.CompanyService
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -12,4 +13,6 @@ import java.util.*
 class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMapper) :
 	GenericServiceImpl<UUID, Company, CompanyDTO, CompanyRepository, CompanyMapper>(companyRepository, mapper),
 	CompanyService {
+	override fun currentUserSpecification(): Specification<Company> =
+		createCurrentUserSpecification { it.get<UUID>("profile").get("id") }
 }
