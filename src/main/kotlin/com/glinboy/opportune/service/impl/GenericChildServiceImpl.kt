@@ -18,6 +18,10 @@ abstract class GenericChildServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO, R,
 ) : GenericServiceImpl<ID, E, D, R, M>(repository, mapper), GenericChildService<ID, D>
 	where R : JpaRepository<E, ID>, R : JpaSpecificationExecutor<E> {
 
+	fun getIdFieldName(): String = "id"
+
+	abstract fun getParentFieldName(): String
+
 	override fun findById(parentID: ID, id: ID): Optional<D> =
 		repository.findOne(
 			Specification.allOf<E>()
@@ -50,6 +54,39 @@ abstract class GenericChildServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO, R,
 		)
 	}
 
-	fun getIdFieldName(): String = "id"
-	abstract fun getParentFieldName(): String
+	override fun currentUserSpecification(): Specification<E> =
+		createCurrentUserSpecification { root ->
+			root.get<E>(getParentFieldName()).get<UUID>("profile").get("id")
+		}
+
+	override fun findByIdForCurrentUser(parentID: ID, id: ID): Optional<D> =
+		repository.findOne(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<ID>(this.getParentFieldName()).get<ID>(this.getIdFieldName()), parentID)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<ID>(this.getIdFieldName()), id)
+				})
+			.map(mapper::toDto)
+
+	override fun findAllForCurrentUser(parentID: ID, pageable: Pageable): Page<D> =
+		repository.findAll(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<ID>(this.getParentFieldName()).get<ID>(this.getIdFieldName()), parentID)
+				}, pageable
+		).map(mapper::toDto)
+
+	override fun deleteForCurrentUser(parentID: ID, id: ID) {
+		repository.delete(
+			currentUserSpecification()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<ID>(this.getParentFieldName()).get<ID>(this.getIdFieldName()), parentID)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<ID>(this.getIdFieldName()), id)
+				}
+		)
+	}
 }
