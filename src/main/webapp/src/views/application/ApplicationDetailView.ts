@@ -1,8 +1,9 @@
 import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Application, type ApplicationResume, type IApplication, type IApplicationAttachment, type IApplicationDetails, type IApplicationMetaData, type IApplicationTimeline, type ICompany, type IInterviewNote } from '../../models'
+import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData, type ICompany } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
 import { ApplicationService, CompanyService } from '../../services'
+import RawContentDialog from '../../components/RawContentDialog.vue'
 
 export interface Snackbar {
   show: boolean
@@ -14,6 +15,9 @@ export interface Snackbar {
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ApplicationDetailView',
+  components: {
+    RawContentDialog
+  },
   computed: {
     statusOptions() {
       return Object.values(ApplicationStatus).map(status => ({
@@ -52,6 +56,9 @@ export default defineComponent({
     const metaDataForm = ref()
     const metaDataFormValid = ref(false)
     const newMetaData = ref<IApplicationMetaData>({})
+
+    // Raw Content Dialog state
+    const rawContentDialog = ref(false)
 
     // Snackbar state
     const snackbar = ref<Snackbar>({
@@ -169,14 +176,8 @@ export default defineComponent({
     }
 
     const showRawContent = () => {
-      // Function to show raw content fetched from job posting URL
-      console.log('Show raw content clicked for application:', application.value?.id)
-      console.log('Job URL:', application.value?.url)
-      snackbar.value = {
-        show: true,
-        message: 'Show raw content functionality will be implemented soon!',
-        color: 'info',
-      }
+      // Open the raw content dialog
+      rawContentDialog.value = true
     }
 
     const deleteApplication = () => {
@@ -425,6 +426,9 @@ export default defineComponent({
       metaDataForm,
       metaDataFormValid,
       newMetaData,
+
+      // Raw Content Dialog state
+      rawContentDialog,
 
       // UI state
       snackbar,

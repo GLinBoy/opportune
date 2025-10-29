@@ -62,7 +62,7 @@
               />
             </template>
           </v-tooltip>
-          <v-tooltip text="Show raw content from job posting">
+          <v-tooltip text="Show original Job Description content">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -371,6 +371,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Raw Content Dialog -->
+    <RawContentDialog
+      v-model="rawContentDialog"
+      :content="application?.rawContent || ''"
+    />
   </div>
 </template>
 
