@@ -35,7 +35,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 9000,
+    port: 9090,
     proxy: Object.fromEntries(
       ['/api', '/v3/api-docs', '/h2-console'].map(res => [
         res,
