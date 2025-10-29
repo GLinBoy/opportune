@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, defineComponent, inject, watch } from 'vue'
+import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData, type ICompany } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
@@ -39,7 +39,6 @@ export default defineComponent({
     const loading = ref(false)
     const saving = ref(false)
     const savingMetaData = ref(false)
-    const isCompanyEditing = ref(false)
     const isCompanyLoading = ref(false)
 
     // Company search state
@@ -377,22 +376,11 @@ export default defineComponent({
 
     // Handle company selection
     const handleCompanySelect = (company: ICompany | null) => {
-      // Only exit edit mode if a company was actually selected (not cleared)
+      // Clear search input when company is selected
       if (company) {
-        // Exit edit mode after company is selected
-        isCompanyEditing.value = false
-        // Clear search input
         companySearchInput.value = ''
       }
     }
-
-    // Watch for when editing is enabled to load companies
-    watch(isCompanyEditing, async (newValue) => {
-      if (newValue) {
-        // When edit mode is enabled, load companies
-        await loadCompanies()
-      }
-    })
 
     // Lifecycle
     onMounted(() => {
@@ -409,7 +397,6 @@ export default defineComponent({
       loading,
       saving,
       savingMetaData,
-      isCompanyEditing,
       isCompanyLoading,
 
       // Company search

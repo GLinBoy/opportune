@@ -115,24 +115,12 @@
                 label="Company"
                 variant="outlined"
                 :loading="isCompanyLoading"
-                :readonly="!isCompanyEditing"
                 prepend-inner-icon="mdi-domain"
                 return-object
                 @input="markAsModified"
                 @update:search="handleCompanySearch"
                 @update:model-value="handleCompanySelect"
-              >
-                <template v-slot:append>
-                  <v-slide-x-reverse-transition mode="out-in">
-                    <v-icon
-                      :key="`icon-${isCompanyEditing}`"
-                      :color="isCompanyEditing ? 'success' : 'info'"
-                      :icon="isCompanyEditing ? 'mdi-briefcase-check-outline' : 'mdi-briefcase-edit-outline'"
-                      @click="isCompanyEditing = !isCompanyEditing"
-                    ></v-icon>
-                  </v-slide-x-reverse-transition>
-                </template>
-              </v-autocomplete>
+              />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
