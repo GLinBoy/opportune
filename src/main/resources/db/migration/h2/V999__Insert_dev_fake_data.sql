@@ -2,10 +2,10 @@
 
 -- Insert fake profiles
 INSERT INTO profile (id, email, forename, surname, password, job_title, location, avatar, email_verification, last_login, status, subscription, created_date, last_modified_date) VALUES
-('550e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'Software Engineer', 'San Francisco, CA', null, true, '2024-09-01 10:30:00', 'ACTIVE', 'PREMIUM', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
-('550e8400-e29b-41d4-a716-446655440002', 'jane.smith@example.com', 'Jane', 'Smith', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'Frontend Developer', 'New York, NY', null, true, '2024-09-02 14:15:00', 'ACTIVE', 'BASIC', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
-('550e8400-e29b-41d4-a716-446655440003', 'mike.wilson@example.com', 'Mike', 'Wilson', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'DevOps Engineer', 'Austin, TX', null, false, '2024-08-28 09:45:00', 'PENDING_VERIFICATION', 'BASIC', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
-('550e8400-e29b-41d4-a716-446655440004', 'sarah.johnson@example.com', 'Sarah', 'Johnson', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfp5cyeOOBYrB/wFjKOgDK8a', 'Product Manager', 'Seattle, WA', null, true, '2024-09-03 16:20:00', 'ACTIVE', 'PREMIUM', '2024-09-01 00:00:00', '2024-09-01 00:00:00');
+('550e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$5xkCdmUKZkrDjFPuBH.FSOkrOhjR/d2Q/SBqQm2wkBJSoVMm/pkCC', 'Software Engineer', 'San Francisco, CA', null, true, '2024-09-01 10:30:00', 'ACTIVE', 'PREMIUM', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
+('550e8400-e29b-41d4-a716-446655440002', 'jane.smith@example.com', 'Jane', 'Smith', '$2a$10$5xkCdmUKZkrDjFPuBH.FSOkrOhjR/d2Q/SBqQm2wkBJSoVMm/pkCC', 'Frontend Developer', 'New York, NY', null, true, '2024-09-02 14:15:00', 'ACTIVE', 'BASIC', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
+('550e8400-e29b-41d4-a716-446655440003', 'mike.wilson@example.com', 'Mike', 'Wilson', '$2a$10$5xkCdmUKZkrDjFPuBH.FSOkrOhjR/d2Q/SBqQm2wkBJSoVMm/pkCC', 'DevOps Engineer', 'Austin, TX', null, false, '2024-08-28 09:45:00', 'PENDING_VERIFICATION', 'BASIC', '2024-09-01 00:00:00', '2024-09-01 00:00:00'),
+('550e8400-e29b-41d4-a716-446655440004', 'sarah.johnson@example.com', 'Sarah', 'Johnson', '$2a$10$5xkCdmUKZkrDjFPuBH.FSOkrOhjR/d2Q/SBqQm2wkBJSoVMm/pkCC', 'Product Manager', 'Seattle, WA', null, true, '2024-09-03 16:20:00', 'ACTIVE', 'PREMIUM', '2024-09-01 00:00:00', '2024-09-01 00:00:00');
 
 -- Insert fake profile roles
 INSERT INTO profile_role (profile_id, role) VALUES
