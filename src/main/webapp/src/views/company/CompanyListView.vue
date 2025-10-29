@@ -7,15 +7,46 @@
         <p class="text-subtitle-1 text-medium-emphasis">Manage companies and your interest level</p>
       </div>
       <div class="d-flex align-self-center" style="gap: 16px">
-        <v-text-field
+        <v-autocomplete
+          v-model="selectedCompany"
+          v-model:search="searchQuery"
+          :items="searchResults"
+          :loading="isSearching"
+          item-title="name"
+          item-value="id"
           label="Search companies..."
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
           style="min-width: 300px"
           clearable
-          @input="handleSearch"
-        />
+          no-filter
+          return-object
+          @update:search="handleSearchInput"
+          @update:model-value="handleCompanySelect"
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="item.raw.name"
+              :subtitle="item.raw.status"
+            >
+              <template v-slot:prepend>
+                <v-icon
+                  :color="getSearchResultStatusColor(item.raw.status)"
+                  :icon="getSearchResultStatusIcon(item.raw.status)"
+                />
+              </template>
+            </v-list-item>
+          </template>
+          <template v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                {{ searchQuery ? 'No companies found' : 'Start typing to search...' }}
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
         <v-tooltip text="Add new company" location="bottom">
           <template #activator="{ props }">
             <v-btn

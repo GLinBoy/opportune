@@ -1,7 +1,8 @@
 import { ref, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type ICompany, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
+import { type ICompany, type CompanyStatus, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import CompanyService from '../../services/company.service'
+import SearchService from '../../services/search.service'
 import CompanyForm from '../../components/CompanyForm.vue'
 
 import defaultCompanyLogo from '@/assets/images/office-building.png'
@@ -20,6 +21,7 @@ export default defineComponent({
   setup() {
     // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
+    const searchService = inject('searchService', () => new SearchService())
     const router = useRouter()
 
     // Data table state
@@ -29,6 +31,12 @@ export default defineComponent({
     const page: Ref<number> = ref(1)
     const itemsPerPage: Ref<number> = ref(10)
     const sortBy: Ref<Array<ISortBy>> = ref([])
+
+    // Search/Autocomplete state
+    const searchQuery = ref<string>('')
+    const searchResults = ref<Array<{ id: string; name: string; status: string; type: string }>>([])
+    const isSearching = ref(false)
+    const selectedCompany = ref<{ id: string; name: string; status: string; type: string } | null>(null)
 
     // Dialog state
     const addNewCompanyDialog = ref(false)
@@ -55,18 +63,21 @@ export default defineComponent({
     }
 
     const search = (): string => {
-      return ''
+      return searchQuery.value.trim()
     }
 
     // Data fetching
     const retrieveCompanies = async () => {
       isFetching.value = true
       try {
+        const searchText = search()
+
+        // Always use the regular list endpoint for the table
         const paginationQuery = {
           page: page.value - 1,
           size: itemsPerPage.value,
           sort: sort(),
-          query: search(),
+          query: searchText,
         }
         const res = await companyService().retrieve(paginationQuery)
         totalItems.value = Number(res.headers['x-total-count'])
@@ -75,6 +86,28 @@ export default defineComponent({
         console.error('Failed to retrieve companies:', err)
       } finally {
         isFetching.value = false
+      }
+    }
+
+    // Search companies for autocomplete
+    const searchCompaniesForAutocomplete = async (query: string) => {
+      if (!query || query.trim().length < 2) {
+        searchResults.value = []
+        return
+      }
+
+      isSearching.value = true
+      try {
+        const response = await searchService().searchCompanies(query.trim(), {
+          page: 0,
+          size: 10, // Limit autocomplete results
+        })
+        searchResults.value = response.data
+      } catch (error) {
+        console.error('Error searching companies:', error)
+        searchResults.value = []
+      } finally {
+        isSearching.value = false
       }
     }
 
@@ -88,6 +121,30 @@ export default defineComponent({
 
     const handleRowClick = (event: Event, { item }: { item: ICompany }) => {
       goToCompanyDetail(event, { item })
+    }
+
+    // Debounced search handler for autocomplete
+    let searchTimeout: ReturnType<typeof setTimeout> | null = null
+    const handleSearchInput = (value: string) => {
+      searchQuery.value = value || ''
+
+      // Clear existing timeout
+      if (searchTimeout) {
+        clearTimeout(searchTimeout)
+      }
+
+      // Debounce the search for autocomplete
+      searchTimeout = setTimeout(async () => {
+        await searchCompaniesForAutocomplete(searchQuery.value)
+      }, 300) // Wait 300ms after user stops typing
+    }
+
+    // Handle company selection from autocomplete
+    const handleCompanySelect = (selected: { id: string; name: string; status: string; type: string } | null) => {
+      if (selected) {
+        // Navigate to the selected company
+        router.push(`/companies/${selected.id}`)
+      }
     }
 
     const handleSearch = () => {
@@ -127,6 +184,15 @@ export default defineComponent({
       }
     }
 
+    // Helper methods for search results (to handle string to enum conversion)
+    const getSearchResultStatusColor = (status: string) => {
+      return getCompanyStatusColor(status as CompanyStatus)
+    }
+
+    const getSearchResultStatusIcon = (status: string) => {
+      return getCompanyStatusIcon(status as CompanyStatus)
+    }
+
     return {
       // Data
       companies,
@@ -142,10 +208,18 @@ export default defineComponent({
       page,
       itemsPerPage,
 
+      // Search/Autocomplete state
+      searchQuery,
+      searchResults,
+      isSearching,
+      selectedCompany,
+
       // Event handlers
       handleUpdateOptions,
       handleRowClick,
       handleSearch,
+      handleSearchInput,
+      handleCompanySelect,
 
       // Dialog state
       addNewCompanyDialog,
@@ -156,6 +230,8 @@ export default defineComponent({
       addNewCompany,
       closeDialog,
       createCompany,
+      getSearchResultStatusColor,
+      getSearchResultStatusIcon,
     }
   }
 })
