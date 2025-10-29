@@ -108,6 +108,7 @@
             <v-col cols="12" md="6">
               <v-autocomplete
                 v-model="application.company"
+                v-model:search="companySearchInput"
                 :items="companies"
                 item-title="name"
                 item-value="id"
@@ -116,7 +117,10 @@
                 :loading="isCompanyLoading"
                 :readonly="!isCompanyEditing"
                 prepend-inner-icon="mdi-domain"
+                return-object
                 @input="markAsModified"
+                @update:search="handleCompanySearch"
+                @update:model-value="handleCompanySelect"
               >
                 <template v-slot:append>
                   <v-slide-x-reverse-transition mode="out-in">

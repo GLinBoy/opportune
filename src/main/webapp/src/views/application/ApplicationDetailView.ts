@@ -38,6 +38,9 @@ export default defineComponent({
     const isCompanyEditing = ref(false)
     const isCompanyLoading = ref(false)
 
+    // Company search state
+    const companySearchInput = ref<string>('')
+
     // Form state
     const formValid = ref(false)
     const hasModifications = ref(false)
@@ -309,6 +312,11 @@ export default defineComponent({
     }
 
     const search = (): string => {
+      // Strip spaces and generate RSQL query like: name=ilike=ant
+      const cleanInput = companySearchInput.value.trim().split(/\s+/).join('')
+      if (cleanInput) {
+        return `name=ilike=${cleanInput}`
+      }
       return ''
     }
 
@@ -322,13 +330,68 @@ export default defineComponent({
           query: search(),
         }
         const res = await companyService().retrieve(paginationQuery)
-        companies.value = [application.value!.company!, ...res.data.filter(c => c.id !== application.value?.company?.id)]
+
+        // If there's a current company and no search query, include it in the list
+        if (application.value?.company && !companySearchInput.value.trim()) {
+          // Add current company at the top if not already in results
+          const currentCompanyExists = res.data.some(c => c.id === application.value?.company?.id)
+          if (currentCompanyExists) {
+            companies.value = res.data
+          } else {
+            companies.value = [application.value.company, ...res.data]
+          }
+        } else {
+          // During search, just show search results
+          companies.value = res.data
+        }
       } catch (err) {
         console.error('Failed to retrieve companies:', err)
       } finally {
         isCompanyLoading.value = false
       }
     }
+
+    // Debounced search handler for company autocomplete
+    let companySearchTimeout: ReturnType<typeof setTimeout> | null = null
+    const handleCompanySearch = () => {
+      // Clear existing timeout
+      if (companySearchTimeout) {
+        clearTimeout(companySearchTimeout)
+      }
+
+      // Check if search input matches the currently selected company name
+      const currentCompanyName = application.value?.company?.name || ''
+      const searchInput = companySearchInput.value.trim()
+
+      // If search input matches current company name, don't call API
+      if (searchInput === currentCompanyName) {
+        return
+      }
+
+      // Debounce the search
+      companySearchTimeout = setTimeout(async () => {
+        await loadCompanies()
+      }, 300) // Wait 300ms after user stops typing
+    }
+
+    // Handle company selection
+    const handleCompanySelect = (company: ICompany | null) => {
+      // Only exit edit mode if a company was actually selected (not cleared)
+      if (company) {
+        // Exit edit mode after company is selected
+        isCompanyEditing.value = false
+        // Clear search input
+        companySearchInput.value = ''
+      }
+    }
+
+    // Watch for when editing is enabled to load companies
+    watch(isCompanyEditing, async (newValue) => {
+      if (newValue) {
+        // When edit mode is enabled, load companies
+        await loadCompanies()
+      }
+    })
 
     // Lifecycle
     onMounted(() => {
@@ -347,6 +410,9 @@ export default defineComponent({
       savingMetaData,
       isCompanyEditing,
       isCompanyLoading,
+
+      // Company search
+      companySearchInput,
 
       // Form state
       formValid,
@@ -398,6 +464,10 @@ export default defineComponent({
 
       // Data methods
       loadApplication,
+
+      // Company search methods
+      handleCompanySearch,
+      handleCompanySelect,
     }
   }
 })
