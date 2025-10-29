@@ -1,7 +1,8 @@
 import { ref, onMounted, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type IApplication, type IApplicationProjection, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
+import { type IApplication, type IApplicationProjection, type ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import ApplicationService from '../../services/application.service'
+import SearchService from '../../services/search.service'
 
 export interface Snackbar {
   show: boolean
@@ -27,6 +28,7 @@ export default defineComponent({
   },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
+    const searchService = inject('searchService', () => new SearchService())
     const router = useRouter()
 
     // Reactive data
@@ -36,6 +38,10 @@ export default defineComponent({
     const page: Ref<number> = ref(1)
     const itemsPerPage: Ref<number> = ref(10)
     const sortBy: Ref<Array<ISortBy>> = ref([])
+    const searchQuery = ref<string>('')
+    const searchResults = ref<Array<{ id: string; name: string; status: string; type: string }>>([])
+    const isSearching = ref(false)
+    const selectedApplication = ref<{ id: string; name: string; status: string; type: string } | null>(null)
 
     // Table headers
     const headers = [
@@ -56,20 +62,23 @@ export default defineComponent({
     }
 
     const search = (): string => {
-      return ''
+      return searchQuery.value.trim()
     }
 
     const retrieveApplications = async () => {
       isFetching.value = true
       try {
+        const searchText = search()
+
+        // Always use the regular list endpoint for the table
         const response = await applicationService().retrieveList({
           page: page.value - 1,
           size: itemsPerPage.value,
           sort: sort(),
-          search: search(),
+          search: searchText,
         })
         applications.value = response.data
-        totalItems.value = parseInt(response.headers['x-total-count'], 10)
+        totalItems.value = Number.parseInt(response.headers['x-total-count'], 10)
       } catch (error) {
         console.error('Error fetching applications:', error)
         snackbar.value.message = 'Error fetching applications'
@@ -80,11 +89,57 @@ export default defineComponent({
       }
     }
 
+    // Search applications for autocomplete
+    const searchApplicationsForAutocomplete = async (query: string) => {
+      if (!query || query.trim().length < 2) {
+        searchResults.value = []
+        return
+      }
+
+      isSearching.value = true
+      try {
+        const response = await searchService().searchApplications(query.trim(), {
+          page: 0,
+          size: 10, // Limit autocomplete results
+        })
+        searchResults.value = response.data
+      } catch (error) {
+        console.error('Error searching applications:', error)
+        searchResults.value = []
+      } finally {
+        isSearching.value = false
+      }
+    }
+
     const handleUpdateOptions = async (options: IDataTableOptions) => {
       page.value = options.page
       itemsPerPage.value = options.itemsPerPage
       sortBy.value = options.sortBy
       await retrieveApplications()
+    }
+
+    // Debounced search handler for autocomplete
+    let searchTimeout: ReturnType<typeof setTimeout> | null = null
+    const handleSearchInput = (value: string) => {
+      searchQuery.value = value || ''
+
+      // Clear existing timeout
+      if (searchTimeout) {
+        clearTimeout(searchTimeout)
+      }
+
+      // Debounce the search for autocomplete
+      searchTimeout = setTimeout(async () => {
+        await searchApplicationsForAutocomplete(searchQuery.value)
+      }, 300) // Wait 300ms after user stops typing
+    }
+
+    // Handle application selection from autocomplete
+    const handleApplicationSelect = (selected: { id: string; name: string; status: string; type: string } | null) => {
+      if (selected) {
+        // Navigate to the selected application
+        router.push(`/applications/${selected.id}`)
+      }
     }
 
     // Snackbar for notifications
@@ -180,6 +235,15 @@ export default defineComponent({
       // retrieveApplications()
     })
 
+    // Helper methods for search results (to handle string to enum conversion)
+    const getSearchResultStatusColor = (status: string) => {
+      return getApplicationStatusColor(status as ApplicationStatus)
+    }
+
+    const getSearchResultStatusIcon = (status: string) => {
+      return getApplicationStatusIcon(status as ApplicationStatus)
+    }
+
     // Return all the reactive properties and methods
     return {
       applications,
@@ -191,6 +255,10 @@ export default defineComponent({
 
       page,
       itemsPerPage,
+      searchQuery,
+      searchResults,
+      isSearching,
+      selectedApplication,
 
       // Reactive data
       snackbar,
@@ -209,6 +277,10 @@ export default defineComponent({
       closeAddDialog,
       fetchJobFromUrl,
       handleUpdateOptions,
+      handleSearchInput,
+      handleApplicationSelect,
+      getSearchResultStatusColor,
+      getSearchResultStatusIcon,
     }
   }
 })

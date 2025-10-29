@@ -7,14 +7,46 @@
         <p class="text-subtitle-1 text-medium-emphasis">Manage your job applications</p>
       </div>
       <div class="d-flex align-self-center" style="gap: 16px">
-        <v-text-field
+        <v-autocomplete
+          v-model="selectedApplication"
+          v-model:search="searchQuery"
+          :items="searchResults"
+          :loading="isSearching"
+          item-title="name"
+          item-value="id"
           label="Search applications..."
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
           style="min-width: 300px"
           clearable
-        />
+          no-filter
+          return-object
+          @update:search="handleSearchInput"
+          @update:model-value="handleApplicationSelect"
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="item.raw.name"
+              :subtitle="item.raw.status"
+            >
+              <template v-slot:prepend>
+                <v-icon
+                  :color="getSearchResultStatusColor(item.raw.status)"
+                  :icon="getSearchResultStatusIcon(item.raw.status)"
+                />
+              </template>
+            </v-list-item>
+          </template>
+          <template v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title>
+                {{ searchQuery ? 'No applications found' : 'Start typing to search...' }}
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
         <v-tooltip text="Add new application" location="bottom">
           <template #activator="{ props }">
             <v-btn
