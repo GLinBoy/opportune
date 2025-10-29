@@ -31,6 +31,29 @@ repositories {
 
 defaultTasks("bootRun")
 
+// Function to load environment variables from .env files
+fun loadEnvFile(profile: String): Map<String, String> {
+	val envVars = mutableMapOf<String, String>()
+	val envFile = file(".env.$profile")
+	if (envFile.exists()) {
+		envFile.readLines()
+			.filter { it.isNotBlank() && !it.trim().startsWith("#") }
+			.forEach { line ->
+				val parts = line.split("=", limit = 2)
+				if (parts.size == 2) {
+					val key = parts[0].trim()
+					val value = parts[1].trim()
+					System.setProperty(key, value)
+					envVars[key] = value
+				}
+			}
+		println("✓ Loaded environment variables from .env.$profile")
+	} else {
+		println("⚠ Warning: .env.$profile not found")
+	}
+	return envVars
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -103,16 +126,35 @@ val cleanFrontend = tasks.register<Delete>("cleanFrontend") {
 	delete("node_modules")
 }
 
+// Load environment variables based on active profile
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+	val profile = project.findProperty("profile")?.toString() ?: System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev"
+	val envVars = loadEnvFile(profile)
+	// Set environment variables for the bootRun process
+	envVars.forEach { (key, value) -> environment(key, value) }
+	systemProperty("spring.profiles.active", profile)
+	println("🚀 Starting application with profile: $profile")
+}
+
+// Load environment variables for tests
+tasks.withType<Test> {
+	val profile = project.findProperty("profile")?.toString() ?: "test"
+	loadEnvFile(profile)
+	systemProperty("spring.profiles.active", profile)
+}
+
+// Load environment variables for bootJar (useful for building with specific profile)
+tasks.bootJar {
+	val profile = project.findProperty("profile")?.toString() ?: "prod"
+	loadEnvFile(profile)
+	dependsOn(buildFrontend)
+}
+
 // Ensure frontend is built before processing resources
 tasks.processResources {
 	filesMatching("config/**") {
 		expand(project.properties)
 	}
-	dependsOn(buildFrontend)
-}
-
-// Ensure frontend is built before bootJar
-tasks.bootJar {
 	dependsOn(buildFrontend)
 }
 
