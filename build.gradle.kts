@@ -32,7 +32,7 @@ repositories {
 defaultTasks("bootRun")
 
 // Function to load environment variables from .env files
-fun loadEnvFile(profile: String): Map<String, String> {
+fun loadEnvFile(profile: String, warnIfMissing: Boolean = false): Map<String, String> {
 	val envVars = mutableMapOf<String, String>()
 	val envFile = file(".env.$profile")
 	if (envFile.exists()) {
@@ -48,7 +48,7 @@ fun loadEnvFile(profile: String): Map<String, String> {
 				}
 			}
 		println("✓ Loaded environment variables from .env.$profile")
-	} else {
+	} else if (warnIfMissing) {
 		println("⚠ Warning: .env.$profile not found")
 	}
 	return envVars
@@ -128,26 +128,33 @@ val cleanFrontend = tasks.register<Delete>("cleanFrontend") {
 
 // Load environment variables based on active profile
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
-	val profile = project.findProperty("profile")?.toString() ?: System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev"
-	val envVars = loadEnvFile(profile)
-	// Set environment variables for the bootRun process
-	envVars.forEach { (key, value) -> environment(key, value) }
-	systemProperty("spring.profiles.active", profile)
-	println("🚀 Starting application with profile: $profile")
+	doFirst {
+		val profile = project.findProperty("profile")?.toString() ?: System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev"
+		val envVars = loadEnvFile(profile, warnIfMissing = true)
+		// Set environment variables for the bootRun process
+		envVars.forEach { (key, value) -> environment(key, value) }
+		systemProperty("spring.profiles.active", profile)
+		println("🚀 Starting application with profile: $profile")
+	}
 }
 
 // Load environment variables for tests
 tasks.withType<Test> {
-	val profile = project.findProperty("profile")?.toString() ?: "test"
-	loadEnvFile(profile)
-	systemProperty("spring.profiles.active", profile)
+	doFirst {
+		val profile = project.findProperty("profile")?.toString() ?: "test"
+		val envVars = loadEnvFile(profile, warnIfMissing = false)
+		envVars.forEach { (key, value) -> systemProperty(key, value) }
+		systemProperty("spring.profiles.active", profile)
+	}
 }
 
 // Load environment variables for bootJar (useful for building with specific profile)
 tasks.bootJar {
-	val profile = project.findProperty("profile")?.toString() ?: "prod"
-	loadEnvFile(profile)
 	dependsOn(buildFrontend)
+	doFirst {
+		val profile = project.findProperty("profile")?.toString() ?: "prod"
+		loadEnvFile(profile, warnIfMissing = false)
+	}
 }
 
 // Ensure frontend is built before processing resources
