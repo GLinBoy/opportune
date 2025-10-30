@@ -14,8 +14,11 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import kotlin.collections.map
 
+@Transactional(readOnly = true)
 abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 	R, M : GenericMapper<D, E>>(
 	protected open val repository: R,
@@ -130,8 +133,19 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 			.map { mapper.toDto(it) }
 	}
 
-	override fun updateForCurrentUser(t: D): D {
-		TODO("Not yet implemented")
+	@Transactional
+	override fun updateForCurrentUser(d: D): D {
+		currentUserSpecification()
+			.and(Specification<E> { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<ID>("id"), d.id)
+			}
+			).let { specification ->
+				return repository.findOne(specification)
+					.map { mapper.updateEntity(d, it) }
+					.map { repository.save(it) }
+					.map { mapper.toDto(it) }
+					.orElseThrow { NoSuchElementException("Entity with id ${d.id} not found") }
+			}
 	}
 
 	override fun deleteForCurrentUser(id: ID) {
