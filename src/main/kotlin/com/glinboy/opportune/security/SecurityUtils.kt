@@ -25,6 +25,8 @@ object SecurityUtils {
 	fun getCurrentUserLogin(): String? =
 		extractPrincipal(SecurityContextHolder.getContext().authentication)
 
+	fun getCurrentUserLoginID(): UUID = getCurrentUserLogin().let(UUID::fromString)
+
 	fun extractPrincipal(authentication: Authentication?): String? {
 		if (authentication == null) {
 			return null
