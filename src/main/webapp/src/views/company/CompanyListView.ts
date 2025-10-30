@@ -59,7 +59,7 @@ export default defineComponent({
       if (sortBy.value.length > 0) {
         return sortBy.value.map(s => `${s.key},${s.order}`)
       }
-      return ['createdDate,asc']
+      return ['createdDate,desc']
     }
 
     const search = (): string => {
