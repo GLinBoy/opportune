@@ -34,27 +34,30 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 	 * @param profileIdPath A function that extracts the profile ID path from the entity root.
 	 * @return A Specification that filters by the current user's profile ID.
 	 */
-	protected fun createCurrentUserSpecification(
-		profileIdPath: (Root<E>) -> Path<UUID>
-	): Specification<E> {
-		return Specification<E> { root, _, criteriaBuilder ->
+	protected fun createCurrentUserSpecification(profileIdPath: (Root<E>) -> Path<UUID>): Specification<E> =
+		Specification<E> { root, _, criteriaBuilder ->
 			criteriaBuilder.equal(
 				profileIdPath(root),
-				SecurityUtils.getCurrentUserLogin().let(UUID::fromString)
+				SecurityUtils.getCurrentUserLoginID()
 			)
 		}
-	}
 
 	abstract fun currentUserSpecification(): Specification<E>
+	abstract fun validateOwnership(d: D)
 
-	override fun save(t: D): D {
-		val entity: E = mapper.createEntity(t)
+	@Transactional
+	override fun save(d: D): D {
+		validateOwnership(d)
+		val entity: E = mapper.createEntity(d)
 		val savedEntity: E = repository.save(entity)
 		return mapper.toDto(savedEntity)
 	}
 
+	@Transactional
 	override fun saveAll(entities: List<D>): List<D> {
-		val entityList: List<E> = entities.map { mapper.createEntity(it) }
+		val entityList: List<E> = entities
+			.onEach { validateOwnership(it) }
+			.map { mapper.createEntity(it) }
 		val savedEntities: List<E> = repository.saveAll(entityList)
 		return savedEntities.map { mapper.toDto(it) }
 	}
@@ -79,18 +82,21 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 			.map { mapper.toDto(it) }
 	}
 
-	override fun update(t: D): D {
-		return this.repository.findById(t.id as ID)
-			.map { mapper.updateEntity(t, it) }
+	@Transactional
+	override fun update(d: D): D {
+		return this.repository.findById(d.id as ID)
+			.map { mapper.updateEntity(d, it) }
 			.map { repository.save(it) }
 			.map { mapper.toDto(it) }
-			.orElseThrow { NoSuchElementException("Entity with id ${t.id} not found") }
+			.orElseThrow { NoSuchElementException("Entity with id ${d.id} not found") }
 	}
 
+	@Transactional
 	override fun delete(id: ID) {
 		repository.deleteById(id)
 	}
 
+	@Transactional
 	override fun deleteAllByIds(ids: List<ID>) {
 		repository.deleteAllById(ids)
 	}
@@ -104,11 +110,11 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 			.and(Specification<E> { root, _, criteriaBuilder ->
 				criteriaBuilder.equal(root.get<ID>("id"), id)
 			}
-		).let { specification ->
-			return repository.findOne(specification)
-				.map { mapper.toDto(it) }
-				.orElseThrow { NoSuchElementException("Entity with id $id not found") }
-		}
+			).let { specification ->
+				return repository.findOne(specification)
+					.map { mapper.toDto(it) }
+					.orElseThrow { NoSuchElementException("Entity with id $id not found") }
+			}
 	}
 
 	override fun findByIdForCurrentUser(id: ID): Optional<D> {
@@ -116,10 +122,10 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 			.and(Specification<E> { root, _, criteriaBuilder ->
 				criteriaBuilder.equal(root.get<ID>("id"), id)
 			}
-		).let { specification ->
-			return repository.findOne(specification)
-				.map { mapper.toDto(it) }
-		}
+			).let { specification ->
+				return repository.findOne(specification)
+					.map { mapper.toDto(it) }
+			}
 	}
 
 	override fun findAllForCurrentUser(pageable: Pageable): Page<D> =
