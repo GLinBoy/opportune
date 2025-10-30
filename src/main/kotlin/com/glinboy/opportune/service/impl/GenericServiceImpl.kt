@@ -164,7 +164,12 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 			}).let { specification -> repository.delete(specification) }
 	}
 
-	override fun existsByIdForCurrentUser(id: ID): Boolean {
-		TODO("Not yet implemented")
-	}
+	override fun existsByIdForCurrentUser(id: ID): Boolean =
+		currentUserSpecification()
+			.and(Specification<E> { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<ID>("id"), id)
+			}
+			).let { specification ->
+				return repository.exists(specification)
+			}
 }
