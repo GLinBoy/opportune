@@ -36,7 +36,7 @@ class ProfileServiceImpl(
 
 	override fun getCurrentProfile(): Optional<ProfileDTO> =
 		repository
-			.findById(SecurityUtils.getCurrentUserLogin().let(UUID::fromString))
+			.findById(SecurityUtils.getCurrentUserLoginID())
 			.map(mapper::toDto)
 
 	override fun loadUserByUsername(username: String): UserDetails? =
@@ -139,4 +139,11 @@ class ProfileServiceImpl(
 
 	override fun currentUserSpecification(): Specification<Profile> =
 		createCurrentUserSpecification { it.get("id") }
+
+	override fun validateOwnership(profileDTO: ProfileDTO) {
+		if (profileDTO.id != null && profileDTO.id != UUID.fromString(SecurityUtils.getCurrentUserLogin())) {
+			throw ResponseStatusException(HttpStatus.FORBIDDEN,
+				"You do not have permission to access this resource")
+		}
+	}
 }

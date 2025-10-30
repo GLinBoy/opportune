@@ -9,17 +9,21 @@ import com.glinboy.opportune.projection.ApplicationProjection
 import com.glinboy.opportune.repository.ApplicationRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.ApplicationService
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @Service
 class ApplicationServiceImpl(
 	applicationRepository: ApplicationRepository,
 	mapper: ApplicationMapper,
-	private val applicationDetailsMapper: ApplicationDetailsMapper
+	private val applicationDetailsMapper: ApplicationDetailsMapper,
+	private val entityManager: EntityManager
 ) : GenericServiceImpl<UUID, Application, ApplicationDTO, ApplicationRepository,
 	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 
@@ -42,6 +46,34 @@ class ApplicationServiceImpl(
 	override fun currentUserSpecification(): Specification<Application> =
 		createCurrentUserSpecification { it.get<UUID>("profile").get("id") }
 
+	override fun validateOwnership(applicationDTO: ApplicationDTO) {
+		if (applicationDTO.profileId != null &&
+			applicationDTO.profileId != UUID.fromString(SecurityUtils.getCurrentUserLogin())) {
+			throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to save this application")
+		}
+		val parentId = applicationDTO.companyId ?: throw IllegalArgumentException("Parent ID is required")
+		val currentUserId = SecurityUtils.getCurrentUserLoginID()
+
+		// Query parent entity directly using JPQL
+		val query = entityManager.createQuery(
+			"""
+			SELECT COUNT(p) FROM Company p
+			WHERE p.id = :parentId AND p.profile.id = :userId
+			""".trimIndent(),
+			Long::class.java
+		)
+		query.setParameter("parentId", parentId)
+		query.setParameter("userId", currentUserId)
+
+		val count = query.singleResult
+		if (count == 0L) {
+			throw ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"Parent not found or you do not have permission to access this resource"
+			)
+		}
+	}
+
 	override fun getCompanyApplicationsForCurrentUser(
 		companyId: UUID,
 		pageable: Pageable
@@ -56,10 +88,10 @@ class ApplicationServiceImpl(
 
 	override fun findAllApplicationsForCurrentUser(pageable: Pageable): Page<ApplicationProjection> =
 		repository
-			.findAllApplicationsByProfileId(SecurityUtils.getCurrentUserLogin().let(UUID::fromString), pageable)
+			.findAllApplicationsByProfileId(SecurityUtils.getCurrentUserLoginID(), pageable)
 
 	override fun getApplicationDetailsForCurrentUser(id: UUID): Optional<ApplicationDetailsDTO> =
 		repository
-			.findApplicationDetailsByProfileIdAndId(SecurityUtils.getCurrentUserLogin().let(UUID::fromString), id)
+			.findApplicationDetailsByProfileIdAndId(SecurityUtils.getCurrentUserLoginID(), id)
 			.map { applicationDetailsMapper.toDto(it) }
 }

@@ -55,5 +55,9 @@ class VerificationCodeServiceImpl(verificationCodeRepository: VerificationCodeRe
 	override fun currentUserSpecification(): Specification<VerificationCode> =
 		createCurrentUserSpecification { it.get<Profile>("profile").get("id") }
 
+	override fun validateOwnership(verificationCodeDTO: VerificationCodeDTO) {
+		// No ownership validation required for VerificationCode
+	}
+
 }
 
