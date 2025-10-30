@@ -3,6 +3,7 @@ package com.glinboy.opportune.mapper
 import com.glinboy.opportune.dto.CompanyDTO
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,7 +21,7 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			note = dto.note,
 			logo = dto.logo,
 			status = dto.status,
-			profile = dto.profileId?.let { Profile(id = it) },
+			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
 	}
 

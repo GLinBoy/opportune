@@ -3,6 +3,7 @@ package com.glinboy.opportune.mapper
 import com.glinboy.opportune.dto.ProfileResumeDTO
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.entity.ProfileResume
+import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,7 +15,7 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
-			profile = dto.profileId?.let { Profile(id = it) },
+			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
 	}
 

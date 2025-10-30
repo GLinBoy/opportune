@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,7 +24,7 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			resumeInsights = dto.resumeInsights,
 			status = dto.status,
 			company = dto.companyId?.let { Company(id = it) },
-			profile = dto.profileId?.let { Profile(id = it) }
+			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
 	}
 
