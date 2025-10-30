@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.*
 
 interface GenericService<ID, D : BaseDTO> {
-	fun save(t: D): D
+	fun save(d: D): D
 
 	fun saveAll(entities: List<D>): List<D>
 
@@ -27,9 +27,9 @@ interface GenericService<ID, D : BaseDTO> {
 
 	fun findAllForCurrentUser(specification: Specification<Any>, pageable: Pageable): Page<D>
 
-	fun update(t: D): D
+	fun update(d: D): D
 
-	fun updateForCurrentUser(t: D): D
+	fun updateForCurrentUser(d: D): D
 
 	fun delete(id: ID): Unit
 
