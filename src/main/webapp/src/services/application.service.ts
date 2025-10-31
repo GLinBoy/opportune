@@ -74,4 +74,13 @@ export default class ApplicationService {
     })
   }
 
+  submitUrl(urlSubmission: { url: string }): Promise<IApplication> {
+    return new Promise<IApplication>((resolve, reject) => {
+      apiClient
+        .post(`${APPLICATION_API_URL}/submit-url`, urlSubmission)
+        .then(res => { resolve(res.data) })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
+
 }
