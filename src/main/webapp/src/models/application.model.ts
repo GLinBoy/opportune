@@ -85,3 +85,7 @@ export interface IApplicationDetails {
   createdDate?: Date
   lastModifiedDate?: Date
 }
+
+export interface IApplicationUrlSubmission {
+  url: string
+}
