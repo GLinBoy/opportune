@@ -132,39 +132,60 @@
       </template>
     </v-snackbar>
 
-    <!-- Add Application Dialog -->
-    <v-dialog v-model="addDialog.show" max-width="600">
-      <v-card>
-        <v-card-title class="d-flex align-center">
-          <v-icon icon="mdi-plus" class="mr-2" />
-          Add New Application
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="addForm" v-model="addDialog.valid">
-            <v-text-field
-              v-model="addDialog.jobUrl"
-              label="Job Posting URL"
-              placeholder="https://company.com/careers/job-posting"
-              variant="outlined"
-              prepend-inner-icon="mdi-link"
-              :rules="[rules.required, rules.url]"
-              hint="Paste the URL of the job posting to automatically fetch job details"
-              persistent-hint
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn variant="text" @click="closeAddDialog"> Cancel </v-btn>
-          <v-btn
-            color="primary"
-            :loading="addDialog.loading"
-            :disabled="!addDialog.valid"
-            @click="fetchJobFromUrl"
-          >
-            Fetch Job Details
+    <!-- Add Application Dialog - Full Screen -->
+    <v-dialog v-model="addDialog.show" fullscreen transition="dialog-bottom-transition">
+      <v-card class="d-flex flex-column">
+        <v-toolbar color="primary" dark>
+          <v-btn icon @click="closeAddDialog">
+            <v-icon>mdi-close</v-icon>
           </v-btn>
-        </v-card-actions>
+          <v-toolbar-title>Add New Application</v-toolbar-title>
+          <v-spacer />
+        </v-toolbar>
+
+        <v-tabs v-model="addDialog.activeTab" bg-color="primary" class="elevation-2 flex-grow-0">
+          <v-tab value="url">
+            <v-icon start>mdi-link</v-icon>
+            From URL
+          </v-tab>
+          <v-tab value="manual">
+            <v-icon start>mdi-form-textbox</v-icon>
+            Manual Entry
+          </v-tab>
+        </v-tabs>
+
+        <v-window v-model="addDialog.activeTab" class="flex-grow-1 overflow-y-auto">
+          <v-window-item value="url" class="h-100">
+            <v-container class="py-8">
+              <v-row justify="center">
+                <v-col cols="12" md="8" lg="6">
+                  <AddApplicationByUrlForm
+                    ref="urlFormRef"
+                    :loading="addDialog.loading"
+                    @submit="handleUrlSubmit"
+                    @cancel="closeAddDialog"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-window-item>
+
+          <v-window-item value="manual" class="h-100">
+            <v-container class="py-8">
+              <v-row justify="center">
+                <v-col cols="12" md="10" lg="8">
+                  <AddApplicationManualForm
+                    ref="manualFormRef"
+                    :loading="addDialog.loading"
+                    :initial-url="failedUrl"
+                    @submit="handleManualSubmit"
+                    @cancel="closeAddDialog"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-window-item>
+        </v-window>
       </v-card>
     </v-dialog>
   </div>

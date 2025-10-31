@@ -34,3 +34,21 @@
   color: rgb(var(--v-theme-on-primary)) !important;
   font-weight: 600;
 }
+
+/* Full-screen dialog scrolling */
+:deep(.v-dialog--fullscreen .v-card) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+:deep(.v-dialog--fullscreen .v-window) {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+:deep(.v-dialog--fullscreen .v-window-item) {
+  height: auto;
+  min-height: 100%;
+}

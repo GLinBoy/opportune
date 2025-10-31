@@ -1,8 +1,10 @@
 import { ref, onMounted, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type IApplication, type IApplicationProjection, type ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
+import { Application, type IApplication, type IApplicationProjection, type ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import ApplicationService from '../../services/application.service'
 import SearchService from '../../services/search.service'
+import AddApplicationByUrlForm from '../../components/application/AddApplicationByUrlForm.vue'
+import AddApplicationManualForm from '../../components/application/AddApplicationManualForm.vue'
 
 export interface Snackbar {
   show: boolean
@@ -12,15 +14,18 @@ export interface Snackbar {
 
 export interface AddDialog {
   show: boolean
-  valid: boolean
   loading: boolean
-  jobUrl: string
+  activeTab: string
 }
 
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ApplicationListView',
+  components: {
+    AddApplicationByUrlForm,
+    AddApplicationManualForm
+  },
   methods: {
     getApplicationStatusDisplay,
     getApplicationStatusColor,
@@ -58,7 +63,7 @@ export default defineComponent({
       if (sortBy.value.length > 0) {
         return sortBy.value.map(s => `${s.key},${s.order}`)
       }
-      return ['createdDate,desc']
+      return ['createdDate,asc']
     }
 
     const search = (): string => {
@@ -152,22 +157,14 @@ export default defineComponent({
     // Add application dialog
     const addDialog = ref<AddDialog>({
       show: false,
-      valid: false,
       loading: false,
-      jobUrl: '',
+      activeTab: 'url',
     })
 
-    const addForm = ref()
+    const urlFormRef = ref()
+    const manualFormRef = ref()
 
-    // Form validation rules
-    const rules = {
-      required: (value: string) => !!value || 'This field is required',
-      url: (value: string) => {
-        if (!value) return true
-        const pattern = /^https?:\/\/.+/
-        return pattern.test(value) || 'Please enter a valid URL starting with http:// or https://'
-      },
-    }
+    const failedUrl = ref<string>('')
 
     // Methods
     const formatDate = (dateInput: string | Date): string => {
@@ -202,28 +199,101 @@ export default defineComponent({
     }
 
     const addNewApplication = () => {
-      // Open dialog to get job URL from user
       addDialog.value.show = true
-      addDialog.value.jobUrl = ''
-      addDialog.value.valid = false
+      addDialog.value.activeTab = 'url'
+      failedUrl.value = ''
     }
 
     const closeAddDialog = () => {
       addDialog.value.show = false
-      addDialog.value.jobUrl = ''
-      addDialog.value.valid = false
+      addDialog.value.loading = false
+      failedUrl.value = ''
+      // Reset forms
+      urlFormRef.value?.reset()
+      manualFormRef.value?.reset()
     }
 
-    const fetchJobFromUrl = async () => {
-      // TODO: Implement job fetching from URL
+
+
+    const handleUrlSubmit = async (data: { url: string }) => {
       addDialog.value.loading = true
       try {
-        // Placeholder - implement actual job fetching logic
-        console.log('Fetching job from URL:', addDialog.value.jobUrl)
-        // Close dialog after successful fetch
+        const createdApplication = await applicationService().submitUrl({ url: data.url })
+
+        snackbar.value.message = 'Application created successfully!'
+        snackbar.value.color = 'success'
+        snackbar.value.show = true
         closeAddDialog()
+
+        // Redirect to the created application
+        if (createdApplication.id) {
+          router.push(`/applications/${createdApplication.id}`)
+        }
       } catch (error) {
-        console.error('Error fetching job:', error)
+        console.error('Error creating application from URL:', error)
+
+        // Store the failed URL to pre-fill in manual form
+        failedUrl.value = data.url
+
+        // Show error and suggest switching to manual entry
+        snackbar.value.message = 'Failed to fetch job details from URL. Please try manual entry.'
+        snackbar.value.color = 'warning'
+        snackbar.value.show = true
+
+        // Switch to manual entry tab
+        addDialog.value.activeTab = 'manual'
+      } finally {
+        addDialog.value.loading = false
+      }
+    }
+
+    const handleManualSubmit = async (data: {
+      url: string
+      title: string
+      location: string
+      salary: string
+      rawContent: string
+      companyId?: string
+    }) => {
+      addDialog.value.loading = true
+      try {
+        // Create an Application instance
+        const application = new Application(
+          undefined, // id
+          data.url || undefined,
+          data.title,
+          data.location || undefined,
+          undefined, // appliedAt
+          data.salary || undefined,
+          undefined, // note
+          data.rawContent,
+          undefined, // description
+          undefined, // coverLetter
+          undefined, // resumeInsights
+          null, // status
+          data.companyId || undefined,
+          undefined, // profileId
+          undefined, // resumeId
+          undefined, // createdDate
+          undefined  // lastModifiedDate
+        )
+
+        const createdApplication = await applicationService().create(application)
+
+        snackbar.value.message = 'Application created successfully!'
+        snackbar.value.color = 'success'
+        snackbar.value.show = true
+        closeAddDialog()
+
+        // Redirect to the created application
+        if (createdApplication.id) {
+          router.push(`/applications/${createdApplication.id}`)
+        }
+      } catch (error) {
+        console.error('Error creating application:', error)
+        snackbar.value.message = 'Error creating application. Please try again.'
+        snackbar.value.color = 'error'
+        snackbar.value.show = true
       } finally {
         addDialog.value.loading = false
       }
@@ -263,10 +333,9 @@ export default defineComponent({
       // Reactive data
       snackbar,
       addDialog,
-      addForm,
-
-      // Configuration
-      rules,
+      urlFormRef,
+      manualFormRef,
+      failedUrl,
 
       // Methods
       formatDate,
@@ -275,7 +344,8 @@ export default defineComponent({
       handleRowClick,
       addNewApplication,
       closeAddDialog,
-      fetchJobFromUrl,
+      handleUrlSubmit,
+      handleManualSubmit,
       handleUpdateOptions,
       handleSearchInput,
       handleApplicationSelect,
