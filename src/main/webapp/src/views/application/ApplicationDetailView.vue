@@ -106,20 +106,10 @@
               />
             </v-col>
             <v-col cols="12" md="6">
-              <v-autocomplete
+              <CompanyAutocomplete
                 v-model="application.company"
-                v-model:search="companySearchInput"
-                :items="companies"
-                item-title="name"
-                item-value="id"
-                label="Company"
-                variant="outlined"
-                :loading="isCompanyLoading"
-                prepend-inner-icon="mdi-domain"
-                return-object
-                @input="markAsModified"
-                @update:search="handleCompanySearch"
-                @update:model-value="handleCompanySelect"
+                :initial-company="application.company"
+                @update:model-value="markAsModified"
               />
             </v-col>
             <v-col cols="12" md="6">

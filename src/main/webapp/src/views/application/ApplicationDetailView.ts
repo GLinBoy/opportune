@@ -1,9 +1,10 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData, type ICompany } from '../../models'
+import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
-import { ApplicationService, CompanyService } from '../../services'
+import { ApplicationService } from '../../services'
 import RawContentDialog from '../../components/RawContentDialog.vue'
+import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 
 export interface Snackbar {
   show: boolean
@@ -16,7 +17,8 @@ export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ApplicationDetailView',
   components: {
-    RawContentDialog
+    RawContentDialog,
+    CompanyAutocomplete
   },
   computed: {
     statusOptions() {
@@ -28,21 +30,15 @@ export default defineComponent({
   },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
-    const companyService = inject('companyService', () => new CompanyService())
     const route = useRoute()
 
     // Main data state
     const application = ref<IApplicationDetails | null>(null)
-    const companies = ref<ICompany[]>([])
 
     // Loading states
     const loading = ref(false)
     const saving = ref(false)
     const savingMetaData = ref(false)
-    const isCompanyLoading = ref(false)
-
-    // Company search state
-    const companySearchInput = ref<string>('')
 
     // Form state
     const formValid = ref(false)
@@ -291,7 +287,6 @@ export default defineComponent({
         await applicationService().getApplicationsDetails(applicationId.value)
           .then(data => {
             application.value = data
-            companies.value.push(data.company!)
           })
 
       } catch (error) {
@@ -307,81 +302,6 @@ export default defineComponent({
       }
     }
 
-    const sort = (): Array<string> => {
-      return ['createdDate,asc']
-    }
-
-    const search = (): string => {
-      // Strip spaces and generate RSQL query like: name=ilike=ant
-      const cleanInput = companySearchInput.value.trim().split(/\s+/).join('')
-      if (cleanInput) {
-        return `name=ilike=${cleanInput}`
-      }
-      return ''
-    }
-
-    const loadCompanies = async () => {
-      try {
-        isCompanyLoading.value = true
-        const paginationQuery = {
-          page: 0,
-          size: 5,
-          sort: sort(),
-          query: search(),
-        }
-        const res = await companyService().retrieve(paginationQuery)
-
-        // If there's a current company and no search query, include it in the list
-        if (application.value?.company && !companySearchInput.value.trim()) {
-          // Add current company at the top if not already in results
-          const currentCompanyExists = res.data.some(c => c.id === application.value?.company?.id)
-          if (currentCompanyExists) {
-            companies.value = res.data
-          } else {
-            companies.value = [application.value.company, ...res.data]
-          }
-        } else {
-          // During search, just show search results
-          companies.value = res.data
-        }
-      } catch (err) {
-        console.error('Failed to retrieve companies:', err)
-      } finally {
-        isCompanyLoading.value = false
-      }
-    }
-
-    // Debounced search handler for company autocomplete
-    let companySearchTimeout: ReturnType<typeof setTimeout> | null = null
-    const handleCompanySearch = () => {
-      // Clear existing timeout
-      if (companySearchTimeout) {
-        clearTimeout(companySearchTimeout)
-      }
-
-      // Check if search input matches the currently selected company name
-      const currentCompanyName = application.value?.company?.name || ''
-      const searchInput = companySearchInput.value.trim()
-
-      // If search input matches current company name, don't call API
-      if (searchInput === currentCompanyName) {
-        return
-      }
-
-      // Debounce the search
-      companySearchTimeout = setTimeout(async () => {
-        await loadCompanies()
-      }, 300) // Wait 300ms after user stops typing
-    }
-
-    // Handle company selection
-    const handleCompanySelect = (company: ICompany | null) => {
-      // Clear search input when company is selected
-      if (company) {
-        companySearchInput.value = ''
-      }
-    }
-
     // Lifecycle
     onMounted(() => {
       loadApplication()
@@ -391,16 +311,11 @@ export default defineComponent({
     return {
       // Main data
       application,
-      companies,
 
       // Loading states
       loading,
       saving,
       savingMetaData,
-      isCompanyLoading,
-
-      // Company search
-      companySearchInput,
 
       // Form state
       formValid,
@@ -455,10 +370,6 @@ export default defineComponent({
 
       // Data methods
       loadApplication,
-
-      // Company search methods
-      handleCompanySearch,
-      handleCompanySelect,
     }
   }
 })
