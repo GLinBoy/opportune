@@ -51,26 +51,27 @@ class ApplicationServiceImpl(
 			applicationDTO.profileId != UUID.fromString(SecurityUtils.getCurrentUserLogin())) {
 			throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to save this application")
 		}
-		val parentId = applicationDTO.companyId ?: throw IllegalArgumentException("Parent ID is required")
-		val currentUserId = SecurityUtils.getCurrentUserLoginID()
+		applicationDTO.companyId?.let {
+			val currentUserId = SecurityUtils.getCurrentUserLoginID()
 
-		// Query parent entity directly using JPQL
-		val query = entityManager.createQuery(
-			"""
+			// Query parent entity directly using JPQL
+			val query = entityManager.createQuery(
+				"""
 			SELECT COUNT(p) FROM Company p
 			WHERE p.id = :parentId AND p.profile.id = :userId
 			""".trimIndent(),
-			Long::class.java
-		)
-		query.setParameter("parentId", parentId)
-		query.setParameter("userId", currentUserId)
-
-		val count = query.singleResult
-		if (count == 0L) {
-			throw ResponseStatusException(
-				HttpStatus.FORBIDDEN,
-				"Parent not found or you do not have permission to access this resource"
+				Long::class.java
 			)
+			query.setParameter("parentId", it)
+			query.setParameter("userId", currentUserId)
+
+			val count = query.singleResult
+			if (count == 0L) {
+				throw ResponseStatusException(
+					HttpStatus.FORBIDDEN,
+					"Parent not found or you do not have permission to access this resource"
+				)
+			}
 		}
 	}
 
