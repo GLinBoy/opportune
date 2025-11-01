@@ -2,6 +2,7 @@ package com.glinboy.opportune.service
 
 import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.dto.ApplicationDetailsDTO
+import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
 import com.glinboy.opportune.projection.ApplicationProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -14,4 +15,5 @@ interface ApplicationService : GenericService<UUID, ApplicationDTO> {
 	fun getCompanyApplicationsForCurrentUser(companyId: UUID, pageable: Pageable): Page<ApplicationDTO>
 	fun findAllApplicationsForCurrentUser(pageable: Pageable): Page<ApplicationProjection>
 	fun getApplicationDetailsForCurrentUser(id: UUID): Optional<ApplicationDetailsDTO>
+	fun submitApplicationUrl(submission: ApplicationUrlSubmissionDTO): Optional<ApplicationDTO>
 }
