@@ -5,6 +5,7 @@ import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.entity.ProfileResume
 import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
@@ -28,7 +29,7 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			contentLength = dto.contentLength,
 			profile = entity.profile ?: dto.profileId?.let { Profile(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 

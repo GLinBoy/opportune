@@ -5,6 +5,7 @@ import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class CompanyMapper : GenericMapper<CompanyDTO, Company> {
@@ -42,7 +43,7 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			metaData = entity.metaData,
 			profile = entity.profile,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate,
+			lastModifiedDate = Instant.now(),
 		)
 	}
 
@@ -61,7 +62,7 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			status = entity.status,
 			profileId = entity.profile?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate =  entity.lastModifiedDate,
+			lastModifiedDate = entity.lastModifiedDate,
 		)
 	}
 }

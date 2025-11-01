@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.InterviewAttachmentDTO
 import com.glinboy.opportune.entity.InterviewAttachment
 import com.glinboy.opportune.entity.InterviewNote
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, InterviewAttachment> {
@@ -27,7 +28,7 @@ class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, Intervie
 			contentLength = dto.contentLength,
 			interviewNote = entity.interviewNote ?: dto.interviewNoteId?.let { InterviewNote(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 

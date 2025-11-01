@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.ApplicationTimelineDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationTimeline
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, ApplicationTimeline> {
@@ -27,7 +28,7 @@ class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, Applicat
 			occurredAt = dto.occurredAt,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 

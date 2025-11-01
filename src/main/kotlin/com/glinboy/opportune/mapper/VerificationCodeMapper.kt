@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.VerificationCodeDTO
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.entity.VerificationCode
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class VerificationCodeMapper : GenericMapper<VerificationCodeDTO, VerificationCode> {
@@ -21,7 +22,7 @@ class VerificationCodeMapper : GenericMapper<VerificationCodeDTO, VerificationCo
 			type = dto.type,
 			profile = entity.profile,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 

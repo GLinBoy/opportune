@@ -4,8 +4,10 @@ import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.enums.ApplicationStatus
 import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
@@ -22,7 +24,7 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			description = dto.description,
 			coverLetter = dto.coverLetter,
 			resumeInsights = dto.resumeInsights,
-			status = dto.status,
+			status = ApplicationStatus.INITIATED,
 			company = dto.companyId?.let { Company(id = it) },
 			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
@@ -52,7 +54,7 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			resume = entity.resume,
 			attachments = entity.attachments,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate,
+			lastModifiedDate = Instant.now(),
 		)
 	}
 

@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.ApplicationResumeDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationResume
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class ApplicationResumeMapper : GenericMapper<ApplicationResumeDTO, ApplicationResume> {
@@ -27,7 +28,7 @@ class ApplicationResumeMapper : GenericMapper<ApplicationResumeDTO, ApplicationR
 			contentLength = dto.contentLength,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 

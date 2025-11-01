@@ -4,6 +4,7 @@ import com.glinboy.opportune.dto.ApplicationAttachmentDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.entity.ApplicationAttachment
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, ApplicationAttachment> {
@@ -27,7 +28,7 @@ class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, Appl
 			contentLength = dto.contentLength,
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = Instant.now()
 		)
 	}
 
