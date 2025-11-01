@@ -49,16 +49,10 @@ open class ApplicationResource(applicationService: ApplicationService) :
 	fun submitApplicationUrl(
 		@Valid @RequestBody submission: ApplicationUrlSubmissionDTO
 	): ResponseEntity<ApplicationDTO> {
-		log.info("Received URL submission: ${submission.url}")
-
-		// TODO: Implement URL fetching and application creation logic
-
-		return service.findById(UUID.fromString("770e8400-e29b-41d4-a716-446655440056"))
-			.map {
-				ResponseEntity.created(URI.create("/api/applications/${it.id}"))
-					.contentType(MediaType.APPLICATION_JSON)
-					.body(it)
-			}
-			.orElse(ResponseEntity.internalServerError().build())
+		return service.submitApplicationUrl(submission).map {
+			ResponseEntity.created(URI.create("/api/applications/${it.id}"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(it)
+		}.orElse(ResponseEntity.internalServerError().build())
 	}
 }
