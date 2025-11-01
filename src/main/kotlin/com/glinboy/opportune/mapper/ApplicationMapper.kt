@@ -43,7 +43,7 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			resumeInsights = dto.resumeInsights,
 			status = dto.status,
 			// Use existing entity relationships if they exist, otherwise create from DTO IDs
-			company = entity.company,
+			company = dto.companyId?.let { Company(id = it) },
 			profile = entity.profile,
 			// Preserve existing collections
 			timeline = entity.timeline,
