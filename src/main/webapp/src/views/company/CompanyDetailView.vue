@@ -221,7 +221,6 @@
         <v-card-text>
           Are you sure you want to delete
           <strong>"{{ metaDataToDelete?.metaName }}"</strong>?
-          This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn

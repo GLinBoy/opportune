@@ -223,42 +223,43 @@
       <v-card class="mb-6">
         <v-card-title class="d-flex align-center justify-space-between">
           <div class="d-flex align-center">
-            <v-icon icon="mdi-database" class="mr-2" />
+            <v-icon icon="mdi-tag-multiple" class="mr-2" />
             Meta Data
           </div>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            prepend-icon="mdi-plus"
-            size="small"
-            @click="showAddMetaDataDialog"
-          >
-            Add Meta Data
-          </v-btn>
+          <v-tooltip text="Add new meta data" location="bottom">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="primary"
+                icon="mdi-tag-plus"
+                size="small"
+                @click="showAddMetaDataDialog" />
+            </template>
+          </v-tooltip>
         </v-card-title>
         <v-card-text>
           <v-data-table
-            v-if="application.metadata && application.metadata.length > 0"
+            v-if="applicationMetadata && applicationMetadata.length > 0"
             :headers="metaDataHeaders"
-            :items="application.metadata"
+            :items="applicationMetadata"
             hide-default-footer
             density="compact"
           >
-            <template v-slot:[`item.key`]="{ item }">
+            <template v-slot:[`item.metaName`]="{ item }">
               <span class="font-weight-medium">{{ item.metaName }}</span>
             </template>
-            <template v-slot:[`item.value`]="{ item }">
+            <template v-slot:[`item.metaValue`]="{ item }">
               <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
                 {{ item.metaValue }}
               </div>
             </template>
-            <template v-slot:[`item.actions`]="{ index }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-btn
                 color="error"
                 variant="text"
                 icon="mdi-delete"
                 size="small"
-                @click="removeMetaData(index)"
+                @click="removeMetaData(item.id)"
               />
             </template>
           </v-data-table>
@@ -371,7 +372,6 @@
         <v-card-text>
           Are you sure you want to delete
           <strong>{{ application?.title }}</strong>?
-          This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
@@ -388,6 +388,36 @@
             prepend-icon="mdi-delete"
             :loading="isDeleting"
             @click="performDelete"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirm Delete Meta Data Dialog -->
+    <v-dialog
+      v-model="confirmDeleteMetaDataDialog"
+      max-width="420"
+    >
+      <v-card>
+        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete
+          <strong>"{{ metaDataToDelete?.metaName }}"</strong>?
+          This action cannot be undone.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text="Cancel"
+            variant="outlined"
+            prepend-icon="mdi-close"
+            @click="closeDeleteMetaDataDialog"
+          />
+          <v-btn
+            text="Delete"
+            color="error"
+            variant="flat"
+            prepend-icon="mdi-delete"
+            @click="performMetaDataDelete"
           />
         </v-card-actions>
       </v-card>

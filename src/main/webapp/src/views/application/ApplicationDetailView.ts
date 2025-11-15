@@ -2,7 +2,7 @@ import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
-import { ApplicationService } from '../../services'
+import { ApplicationService, ApplicationMetaDataService } from '../../services'
 import RawContentDialog from '../../components/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 
@@ -30,11 +30,13 @@ export default defineComponent({
   },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
+    const applicationMetadataService = inject('applicationMetadataService', () => new ApplicationMetaDataService())
     const route = useRoute()
     const router = useRouter()
 
     // Main data state
     const application = ref<IApplicationDetails | null>(null)
+    const applicationMetadata = ref<IApplicationMetaData[]>([])
 
     // Loading states
     const loading = ref(false)
@@ -53,6 +55,8 @@ export default defineComponent({
     const metaDataForm = ref()
     const metaDataFormValid = ref(false)
     const newMetaData = ref<IApplicationMetaData>({})
+    const confirmDeleteMetaDataDialog = ref(false)
+    const metaDataToDelete = ref<IApplicationMetaData | null>(null)
 
     // Raw Content Dialog state
     const rawContentDialog = ref(false)
@@ -84,9 +88,9 @@ export default defineComponent({
     const workTypeOptions = ['On-site', 'Remote', 'Hybrid']
 
     const metaDataHeaders = [
-      { title: 'Key', value: 'key', width: '200px' },
-      { title: 'Value', value: 'value', width: 'auto' },
-      { title: 'Actions', value: 'actions', width: '100px', sortable: false, align: 'center' as const },
+      { title: 'Key', value: 'metaName', sortable: false },
+      { title: 'Value', value: 'metaValue', sortable: false },
+      { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
     ]
 
     // Utility functions
@@ -258,7 +262,7 @@ export default defineComponent({
 
     // Meta Data Management Methods
     const showAddMetaDataDialog = () => {
-      newMetaData.value = {}
+      newMetaData.value = { metaName: '', metaValue: '' }
       metaDataDialog.value = true
     }
 
@@ -271,17 +275,20 @@ export default defineComponent({
         return
       }
 
+      savingMetaData.value = true
       try {
-        savingMetaData.value = true
+        if (!applicationMetadata.value) {
+          applicationMetadata.value = []
+        }
+        newMetaData.value.applicationId = application.value?.id || ''
+        await applicationMetadataService()
+          .create(application.value?.id || '', newMetaData.value)
+          .then(data => {
+            applicationMetadata.value.push(data)
+          })
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        // Add to application meta data
-
-        markAsModified()
         metaDataDialog.value = false
-
+        newMetaData.value = { metaName: '', metaValue: '' }
         snackbar.value = {
           show: true,
           message: 'Meta data added successfully!',
@@ -301,17 +308,53 @@ export default defineComponent({
 
     const cancelAddMetaData = () => {
       metaDataDialog.value = false
-      newMetaData.value = {}
+      newMetaData.value = { metaName: '', metaValue: '' }
     }
 
-    const removeMetaData = (index: number) => {
-      console.log('Remove meta data at index:', index)
-      markAsModified()
+    const removeMetaData = (id: string | undefined) => {
+      const metadata = applicationMetadata.value.find(item => item.id === id)
+      if (metadata) {
+        metaDataToDelete.value = metadata
+        confirmDeleteMetaDataDialog.value = true
+      }
+    }
 
-      snackbar.value = {
-        show: true,
-        message: 'Meta data removed successfully!',
-        color: 'success',
+    const closeDeleteMetaDataDialog = () => {
+      confirmDeleteMetaDataDialog.value = false
+      metaDataToDelete.value = null
+    }
+
+    const performMetaDataDelete = async () => {
+      const metadata = metaDataToDelete.value
+      if (applicationMetadata.value && metadata?.id) {
+        try {
+          await applicationMetadataService().delete(application.value?.id || '', metadata.id)
+          const index = applicationMetadata.value.findIndex(item => item.id === metadata.id)
+          if (index !== -1) {
+            applicationMetadata.value.splice(index, 1)
+            snackbar.value = {
+              show: true,
+              message: 'Meta data removed successfully!',
+              color: 'success',
+            }
+          }
+        } catch (err) {
+          console.error('Failed to delete meta data:', err)
+          snackbar.value = {
+            show: true,
+            message: 'Failed to delete meta data. Please try again.',
+            color: 'error',
+          }
+        } finally {
+          closeDeleteMetaDataDialog()
+        }
+      } else {
+        snackbar.value = {
+          show: true,
+          message: 'Meta data item not found.',
+          color: 'error',
+        }
+        closeDeleteMetaDataDialog()
       }
     }
 
@@ -322,6 +365,19 @@ export default defineComponent({
         await applicationService().getApplicationsDetails(applicationId.value)
           .then(data => {
             application.value = data
+          })
+
+        const metadataPaginationQuery = {
+          page: 0,
+          size: 100,
+          sort: `metaName,asc`
+        }
+        await applicationMetadataService().retrieve(applicationId.value, metadataPaginationQuery)
+          .then(data => {
+            applicationMetadata.value = data
+          })
+          .catch(err => {
+            console.error('Failed to load metadata:', err)
           })
 
       } catch (error) {
@@ -346,6 +402,7 @@ export default defineComponent({
     return {
       // Main data
       application,
+      applicationMetadata,
 
       // Loading states
       loading,
@@ -364,6 +421,8 @@ export default defineComponent({
       metaDataForm,
       metaDataFormValid,
       newMetaData,
+      confirmDeleteMetaDataDialog,
+      metaDataToDelete,
 
       // Raw Content Dialog state
       rawContentDialog,
@@ -410,6 +469,8 @@ export default defineComponent({
       saveMetaData,
       cancelAddMetaData,
       removeMetaData,
+      closeDeleteMetaDataDialog,
+      performMetaDataDelete,
 
       // Data methods
       loadApplication,
