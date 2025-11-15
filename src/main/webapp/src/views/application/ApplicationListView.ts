@@ -53,6 +53,7 @@ export default defineComponent({
       { title: 'Title', key: 'title', sortable: true },
       { title: 'Company', key: 'companyName', sortable: true },
       { title: 'Date Applied', key: 'appliedAt', sortable: true },
+      { title: 'Last Modified', key: 'lastModifiedDate', sortable: true },
       { title: 'Status', key: 'status', sortable: true, width: '200px' },
     ]
 
