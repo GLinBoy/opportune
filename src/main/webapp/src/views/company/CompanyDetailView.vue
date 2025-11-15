@@ -42,6 +42,12 @@
         </v-col>
         <v-col cols="auto" class="d-flex align-center" style="gap: 12px">
           <v-btn
+            color="error"
+            variant="flat"
+            icon="mdi-delete"
+            @click="confirmDelete"
+          />
+          <v-btn
             color="success"
             variant="flat"
             icon="mdi-content-save"
@@ -169,6 +175,38 @@
           <v-btn color="primary" variant="flat" :loading="savingMetaData" @click="saveMetaData">
             Save
           </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirm Delete Dialog -->
+    <v-dialog
+      v-model="confirmDeleteDialog"
+      max-width="420"
+    >
+      <v-card>
+        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete
+          <strong>{{ company?.name }}</strong>?
+          This action cannot be undone.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text="Cancel"
+            variant="outlined"
+            prepend-icon="mdi-close"
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          />
+          <v-btn
+            text="Delete"
+            color="error"
+            variant="flat"
+            prepend-icon="mdi-delete"
+            :loading="isDeleting"
+            @click="performDelete"
+          />
         </v-card-actions>
       </v-card>
     </v-dialog>
