@@ -21,9 +21,9 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" a.salary AS salary, " +
 		" a.note AS note, " +
 		" a.status AS status, " +
+		" a.createdDate as createdDate, " +
+		" a.lastModifiedDate as lastModifiedDate, " +
 		" a.company.id AS companyId, " +
-		" a.company.createdDate as createdDate, " +
-		" a.company.lastModifiedDate as lastModifiedDate, " +
 		" c.name AS companyName " +
 		" FROM Application a " +
 		" LEFT JOIN a.company c")
@@ -37,9 +37,9 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" a.salary AS salary, " +
 		" a.note AS note, " +
 		" a.status AS status, " +
+		" a.createdDate as createdDate, " +
+		" a.lastModifiedDate as lastModifiedDate, " +
 		" a.company.id AS companyId, " +
-		" a.company.createdDate as createdDate, " +
-		" a.company.lastModifiedDate as lastModifiedDate, " +
 		" c.name AS companyName " +
 		" FROM Application a " +
 		" LEFT JOIN a.company c " +

@@ -35,6 +35,8 @@ class ApplicationDetailsMapper(
 			coverLetter = entity.coverLetter,
 			resumeInsights = entity.resumeInsights,
 			status = entity.status,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate,
 			company = entity.company?.let { companyMapper.toDto(it) },
 			timeline = entity.timeline.map { t -> applicationTimelineMapper.toDto(t) }.toSet(),
 			interviewNotes = entity.interviewNotes.map { i -> interviewNoteMapper.toDto(i) }.toSet(),
