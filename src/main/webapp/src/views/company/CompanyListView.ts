@@ -19,6 +19,11 @@ export default defineComponent({
     getCompanyStatusIcon
   },
   setup() {
+    // Snackbar state
+    const snackbar = ref<{ show: boolean; message: string; color: 'success' | 'error' }>({ show: false, message: '', color: 'success' })
+    const showSnackbar = (message: string, color: 'success' | 'error' = 'success') => {
+      snackbar.value = { show: true, message, color }
+    }
     // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
     const searchService = inject('searchService', () => new SearchService())
@@ -51,6 +56,7 @@ export default defineComponent({
       { title: 'Last Modified', key: 'lastModifiedDate', sortable: true },
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Description', key: 'description', sortable: true },
+      { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
     ])
 
     const itemsPerPageOptions = [10, 25, 50, 100]
@@ -96,6 +102,40 @@ export default defineComponent({
         console.error('Failed to retrieve companies:', err)
       } finally {
         isFetching.value = false
+      }
+    }
+
+    // Delete state and actions
+    const confirmDeleteDialog = ref(false)
+    const companyToDelete: Ref<ICompany | null> = ref(null)
+    const isDeleting = ref(false)
+
+    const confirmDelete = (item: ICompany) => {
+      companyToDelete.value = item
+      confirmDeleteDialog.value = true
+    }
+
+    const closeDeleteDialog = () => {
+      confirmDeleteDialog.value = false
+      companyToDelete.value = null
+    }
+
+    const performDelete = async () => {
+      if (!companyToDelete.value?.id) {
+        closeDeleteDialog()
+        return
+      }
+      isDeleting.value = true
+      try {
+        await companyService().delete(String(companyToDelete.value.id))
+        await retrieveCompanies()
+        showSnackbar(`Deleted ${companyToDelete.value.name || 'company'} successfully.`, 'success')
+      } catch (err) {
+        console.error('Failed to delete company:', err)
+        showSnackbar('Failed to delete company. Please try again.', 'error')
+      } finally {
+        isDeleting.value = false
+        closeDeleteDialog()
       }
     }
 
@@ -235,11 +275,21 @@ export default defineComponent({
       addNewCompanyDialog,
       newCompany,
       isCreating,
+      isDeleting,
 
       // Dialog actions
       addNewCompany,
       closeDialog,
       createCompany,
+      // Delete dialog
+      confirmDeleteDialog,
+      companyToDelete,
+      confirmDelete,
+      closeDeleteDialog,
+      performDelete,
+      // Snackbar
+      snackbar,
+      showSnackbar,
       getSearchResultStatusColor,
       getSearchResultStatusIcon,
       formatDate,

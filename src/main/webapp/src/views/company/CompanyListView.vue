@@ -136,6 +136,23 @@
           size="x-small"
           :prepend-icon="getCompanyStatusIcon(value)" />
       </template>
+
+      <template v-slot:[`item.actions`]="{ item }">
+        <div class="d-flex justify-end" style="gap: 4px">
+          <v-tooltip text="Delete" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                size="x-small"
+                variant="text"
+                color="error"
+                icon="mdi-delete-outline"
+                @click.stop="confirmDelete(item)"
+              />
+            </template>
+          </v-tooltip>
+        </div>
+      </template>
       </v-data-table-server>
     </v-card>
 
@@ -189,6 +206,43 @@
         </v-container>
       </v-card>
     </v-dialog>
+
+    <!-- Confirm Delete Dialog -->
+    <v-dialog
+      v-model="confirmDeleteDialog"
+      max-width="420"
+    >
+      <v-card>
+        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete
+          <strong>{{ companyToDelete?.name }}</strong>?
+          This action cannot be undone.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text="Cancel"
+            variant="outlined"
+            prepend-icon="mdi-close"
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          />
+          <v-btn
+            text="Delete"
+            color="error"
+            variant="flat"
+            prepend-icon="mdi-delete"
+            :loading="isDeleting"
+            @click="performDelete"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Success/Error Snackbar -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
+      {{ snackbar.message }}
+    </v-snackbar>
   </div>
 </template>
 <script lang="ts" src="./CompanyListView.ts" />
