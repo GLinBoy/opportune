@@ -55,6 +55,7 @@ export default defineComponent({
       { title: 'Date Applied', key: 'appliedAt', sortable: true },
       { title: 'Last Modified', key: 'lastModifiedDate', sortable: true },
       { title: 'Status', key: 'status', sortable: true, width: '200px' },
+      { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
     ]
 
     const itemsPerPageOptions = [10, 25, 50, 100]
@@ -167,6 +168,11 @@ export default defineComponent({
 
     const failedUrl = ref<string>('')
 
+    // Delete confirmation dialog
+    const confirmDeleteDialog = ref(false)
+    const applicationToDelete = ref<IApplicationProjection | null>(null)
+    const isDeleting = ref(false)
+
     // Methods
     const formatDate = (dateInput: string | Date): string => {
       const date = dateInput instanceof Date ? dateInput : new Date(dateInput)
@@ -214,7 +220,39 @@ export default defineComponent({
       manualFormRef.value?.reset()
     }
 
+    // Delete methods
+    const confirmDelete = (item: IApplicationProjection) => {
+      applicationToDelete.value = item
+      confirmDeleteDialog.value = true
+    }
 
+    const closeDeleteDialog = () => {
+      confirmDeleteDialog.value = false
+      applicationToDelete.value = null
+    }
+
+    const performDelete = async () => {
+      if (!applicationToDelete.value?.id) {
+        closeDeleteDialog()
+        return
+      }
+      isDeleting.value = true
+      try {
+        await applicationService().delete(String(applicationToDelete.value.id))
+        await retrieveApplications()
+        snackbar.value.message = `Deleted ${applicationToDelete.value.title || 'application'} successfully.`
+        snackbar.value.color = 'success'
+        snackbar.value.show = true
+      } catch (err) {
+        console.error('Failed to delete application:', err)
+        snackbar.value.message = 'Failed to delete application. Please try again.'
+        snackbar.value.color = 'error'
+        snackbar.value.show = true
+      } finally {
+        isDeleting.value = false
+        closeDeleteDialog()
+      }
+    }
 
     const handleUrlSubmit = async (data: { url: string }) => {
       addDialog.value.loading = true
@@ -352,6 +390,13 @@ export default defineComponent({
       handleApplicationSelect,
       getSearchResultStatusColor,
       getSearchResultStatusIcon,
+      // Delete
+      confirmDeleteDialog,
+      applicationToDelete,
+      isDeleting,
+      confirmDelete,
+      closeDeleteDialog,
+      performDelete,
     }
   }
 })
