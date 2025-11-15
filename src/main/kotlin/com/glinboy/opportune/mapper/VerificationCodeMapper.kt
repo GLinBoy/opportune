@@ -12,6 +12,8 @@ class VerificationCodeMapper : GenericMapper<VerificationCodeDTO, VerificationCo
 		return VerificationCode(
 			id = null,
 			type = dto.type,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			profile = dto.profileId?.let { Profile(id = it) }
 		)
 	}
@@ -20,9 +22,9 @@ class VerificationCodeMapper : GenericMapper<VerificationCodeDTO, VerificationCo
 		return entity.copy(
 			id = entity.id,
 			type = dto.type,
-			profile = entity.profile,
 			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
+			lastModifiedDate = Instant.now(),
+			profile = entity.profile,
 		)
 	}
 
@@ -30,9 +32,9 @@ class VerificationCodeMapper : GenericMapper<VerificationCodeDTO, VerificationCo
 		return VerificationCodeDTO(
 			id = entity.id,
 			type = entity.type,
-			profileId = entity.profile?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			profileId = entity.profile?.id,
 		)
 	}
 }

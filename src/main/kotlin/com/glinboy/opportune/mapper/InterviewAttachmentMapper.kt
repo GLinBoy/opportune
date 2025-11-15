@@ -15,6 +15,8 @@ class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, Intervie
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			interviewNote = dto.interviewNoteId?.let { InterviewNote(id = it) },
 		)
 	}
@@ -26,9 +28,9 @@ class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, Intervie
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
-			interviewNote = entity.interviewNote ?: dto.interviewNoteId?.let { InterviewNote(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
+			lastModifiedDate = Instant.now(),
+			interviewNote = entity.interviewNote ?: dto.interviewNoteId?.let { InterviewNote(id = it) },
 		)
 	}
 
@@ -39,9 +41,9 @@ class InterviewAttachmentMapper : GenericMapper<InterviewAttachmentDTO, Intervie
 			path = entity.path,
 			contentType = entity.contentType,
 			contentLength = entity.contentLength,
-			interviewNoteId = entity.interviewNote?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			interviewNoteId = entity.interviewNote?.id,
 		)
 	}
 }

@@ -3,6 +3,7 @@ package com.glinboy.opportune.mapper
 import com.glinboy.opportune.dto.CompanyDTO
 import com.glinboy.opportune.entity.Company
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.enums.CompanyStatus
 import com.glinboy.opportune.security.SecurityUtils
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -21,7 +22,9 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			description = dto.description,
 			note = dto.note,
 			logo = dto.logo,
-			status = dto.status,
+			status = CompanyStatus.INTERESTED,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
 	}
@@ -41,9 +44,9 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			status = dto.status,
 			applications = entity.applications,
 			metaData = entity.metaData,
-			profile = entity.profile,
 			createdDate = entity.createdDate,
 			lastModifiedDate = Instant.now(),
+			profile = entity.profile,
 		)
 	}
 
@@ -60,9 +63,9 @@ class CompanyMapper : GenericMapper<CompanyDTO, Company> {
 			note = entity.note,
 			logo = entity.logo,
 			status = entity.status,
-			profileId = entity.profile?.id,
 			createdDate = entity.createdDate,
 			lastModifiedDate = entity.lastModifiedDate,
+			profileId = entity.profile?.id,
 		)
 	}
 }

@@ -25,6 +25,8 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			coverLetter = dto.coverLetter,
 			resumeInsights = dto.resumeInsights,
 			status = ApplicationStatus.INITIATED,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			company = dto.companyId?.let { Company(id = it) },
 			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
@@ -44,6 +46,8 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			coverLetter = dto.coverLetter,
 			resumeInsights = dto.resumeInsights,
 			status = dto.status,
+			createdDate = entity.createdDate,
+			lastModifiedDate = Instant.now(),
 			// Use existing entity relationships if they exist, otherwise create from DTO IDs
 			company = dto.companyId?.let { Company(id = it) },
 			profile = entity.profile,
@@ -53,8 +57,6 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			metadata = entity.metadata,
 			resume = entity.resume,
 			attachments = entity.attachments,
-			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now(),
 		)
 	}
 
@@ -72,11 +74,11 @@ class ApplicationMapper : GenericMapper<ApplicationDTO, Application> {
 			coverLetter = entity.coverLetter,
 			resumeInsights = entity.resumeInsights,
 			status = entity.status,
+			createdDate = entity.createdDate,
+			lastModifiedDate = entity.lastModifiedDate,
 			companyId = entity.company?.id,
 			profileId = entity.profile?.id,
 			resumeId = entity.resume?.id,
-			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate,
 		)
 	}
 }

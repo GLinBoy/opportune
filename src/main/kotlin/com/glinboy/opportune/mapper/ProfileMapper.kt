@@ -23,6 +23,8 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 			status = dto.status,
 			subscription = dto.subscription,
 			roles = emptySet(),
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			resume = dto.resumeId?.let { ProfileResume(id = it) }
 		)
 	}
@@ -42,10 +44,10 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 			status = dto.status,
 			subscription = dto.subscription,
 			roles = entity.roles,
+			createdDate = entity.createdDate,
+			lastModifiedDate = Instant.now(),
 			resume = entity.resume ?: dto.resumeId?.let { ProfileResume(id = it) },
 			applications = entity.applications,
-			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
 		)
 	}
 
@@ -63,9 +65,9 @@ class ProfileMapper : GenericMapper<ProfileDTO, Profile> {
 			status = entity.status,
 			subscription = entity.subscription,
 			roles = entity.roles,
-			resumeId = entity.resume?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			resumeId = entity.resume?.id,
 		)
 	}
 }

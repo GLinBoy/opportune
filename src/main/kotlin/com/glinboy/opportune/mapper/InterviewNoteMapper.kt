@@ -13,7 +13,9 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 			id = null,
 			date = dto.date,
 			notes = dto.notes,
-			application = dto.applicationId?.let { Application(id = it) }
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
+			application = dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
@@ -22,10 +24,10 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 			id = entity.id,
 			date = dto.date,
 			notes = dto.notes,
+			createdDate = entity.createdDate,
+			lastModifiedDate = Instant.now(),
 			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			attachments = entity.attachments,
-			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
 		)
 	}
 
@@ -34,9 +36,9 @@ class InterviewNoteMapper : GenericMapper<InterviewNoteDTO, InterviewNote> {
 			id = entity.id,
 			date = entity.date,
 			notes = entity.notes,
-			applicationId = entity.application?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			applicationId = entity.application?.id,
 		)
 	}
 }

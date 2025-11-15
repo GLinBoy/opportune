@@ -16,6 +16,8 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
 		)
 	}
@@ -27,9 +29,9 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
-			profile = entity.profile ?: dto.profileId?.let { Profile(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
+			lastModifiedDate = Instant.now(),
+			profile = entity.profile ?: dto.profileId?.let { Profile(id = it) },
 		)
 	}
 
@@ -40,9 +42,9 @@ class ProfileResumeMapper : GenericMapper<ProfileResumeDTO, ProfileResume> {
 			path = entity.path,
 			contentType = entity.contentType,
 			contentLength = entity.contentLength,
-			profileId = entity.profile?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			profileId = entity.profile?.id,
 		)
 	}
 }

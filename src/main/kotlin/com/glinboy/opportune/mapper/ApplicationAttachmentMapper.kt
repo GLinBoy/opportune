@@ -15,6 +15,8 @@ class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, Appl
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
 			application = dto.applicationId?.let { Application(id = it) },
 		)
 	}
@@ -26,9 +28,9 @@ class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, Appl
 			path = dto.path,
 			contentType = dto.contentType,
 			contentLength = dto.contentLength,
-			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
+			lastModifiedDate = Instant.now(),
+			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
@@ -39,10 +41,9 @@ class ApplicationAttachmentMapper : GenericMapper<ApplicationAttachmentDTO, Appl
 			path = entity.path,
 			contentType = entity.contentType,
 			contentLength = entity.contentLength,
-			applicationId = entity.application?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			applicationId = entity.application?.id,
 		)
 	}
 }
-

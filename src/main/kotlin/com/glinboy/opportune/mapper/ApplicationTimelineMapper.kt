@@ -15,7 +15,9 @@ class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, Applicat
 			description = dto.description,
 			status = dto.status,
 			occurredAt = dto.occurredAt,
-			application = dto.applicationId?.let { Application(id = it) }
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
+			application = dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
@@ -26,9 +28,9 @@ class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, Applicat
 			description = dto.description,
 			status = dto.status,
 			occurredAt = dto.occurredAt,
-			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 			createdDate = entity.createdDate,
-			lastModifiedDate = Instant.now()
+			lastModifiedDate = Instant.now(),
+			application = entity.application ?: dto.applicationId?.let { Application(id = it) },
 		)
 	}
 
@@ -39,9 +41,9 @@ class ApplicationTimelineMapper : GenericMapper<ApplicationTimelineDTO, Applicat
 			description = entity.description,
 			status = entity.status,
 			occurredAt = entity.occurredAt,
-			applicationId = entity.application?.id,
 			createdDate = entity.createdDate,
-			lastModifiedDate = entity.lastModifiedDate
+			lastModifiedDate = entity.lastModifiedDate,
+			applicationId = entity.application?.id,
 		)
 	}
 }
