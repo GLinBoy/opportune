@@ -45,6 +45,8 @@ export default defineComponent({
     const metaDataFormValid = ref(false)
     const newMetaData = ref<ICompanyMetadata>({ companyId: '', metaName: '', metaValue: '' })
     const confirmDeleteDialog = ref(false)
+    const confirmDeleteMetaDataDialog = ref(false)
+    const metaDataToDelete = ref<ICompanyMetadata | null>(null)
 
     // Snackbar state
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
@@ -186,21 +188,37 @@ export default defineComponent({
     }
 
     const removeMetaData = (id: string | undefined) => {
-      if (companyMetadata.value && id) {
-        companyMetadataService().delete(company.value?.id || '', id)
-          .then(() => {
-            const index = companyMetadata.value.findIndex(item => item.id === id)
-            if (index !== -1) {
-              companyMetadata.value.splice(index, 1)
-              showSnackbar('Meta data removed successfully!', 'success')
-            }
-          })
-          .catch(err => {
-            console.error('Failed to delete meta data:', err)
-            showSnackbar('Failed to delete meta data. Please try again.', 'error')
-          })
+      const metadata = companyMetadata.value.find(item => item.id === id)
+      if (metadata) {
+        metaDataToDelete.value = metadata
+        confirmDeleteMetaDataDialog.value = true
+      }
+    }
+
+    const closeDeleteMetaDataDialog = () => {
+      confirmDeleteMetaDataDialog.value = false
+      metaDataToDelete.value = null
+    }
+
+    const performMetaDataDelete = async () => {
+      const metadata = metaDataToDelete.value
+      if (companyMetadata.value && metadata?.id) {
+        try {
+          await companyMetadataService().delete(company.value?.id || '', metadata.id)
+          const index = companyMetadata.value.findIndex(item => item.id === metadata.id)
+          if (index !== -1) {
+            companyMetadata.value.splice(index, 1)
+            showSnackbar('Meta data removed successfully!', 'success')
+          }
+        } catch (err) {
+          console.error('Failed to delete meta data:', err)
+          showSnackbar('Failed to delete meta data. Please try again.', 'error')
+        } finally {
+          closeDeleteMetaDataDialog()
+        }
       } else {
         showSnackbar('Meta data item not found.', 'error')
+        closeDeleteMetaDataDialog()
       }
     }
 
@@ -267,6 +285,8 @@ export default defineComponent({
       metaDataFormValid,
       newMetaData,
       confirmDeleteDialog,
+      confirmDeleteMetaDataDialog,
+      metaDataToDelete,
 
       // Actions
       markAsModified,
@@ -277,6 +297,8 @@ export default defineComponent({
       cancelAddMetaData,
       saveMetaData,
       removeMetaData,
+      closeDeleteMetaDataDialog,
+      performMetaDataDelete,
       confirmDelete,
       closeDeleteDialog,
       performDelete,

@@ -179,7 +179,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- Confirm Delete Dialog -->
+    <!-- Confirm Delete Company Dialog -->
     <v-dialog
       v-model="confirmDeleteDialog"
       max-width="420"
@@ -206,6 +206,36 @@
             prepend-icon="mdi-delete"
             :loading="isDeleting"
             @click="performDelete"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirm Delete Meta Data Dialog -->
+    <v-dialog
+      v-model="confirmDeleteMetaDataDialog"
+      max-width="420"
+    >
+      <v-card>
+        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete
+          <strong>"{{ metaDataToDelete?.metaName }}"</strong>?
+          This action cannot be undone.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text="Cancel"
+            variant="outlined"
+            prepend-icon="mdi-close"
+            @click="closeDeleteMetaDataDialog"
+          />
+          <v-btn
+            text="Delete"
+            color="error"
+            variant="flat"
+            prepend-icon="mdi-delete"
+            @click="performMetaDataDelete"
           />
         </v-card-actions>
       </v-card>
