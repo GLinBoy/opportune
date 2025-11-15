@@ -73,6 +73,17 @@
               />
             </template>
           </v-tooltip>
+          <v-tooltip text="Delete application">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="error"
+                variant="flat"
+                icon="mdi-delete"
+                @click="confirmDelete"
+              />
+            </template>
+          </v-tooltip>
           <v-tooltip text="Save changes">
             <template #activator="{ props }">
               <v-btn
@@ -346,6 +357,38 @@
           <v-btn color="primary" variant="flat" :loading="savingMetaData" @click="saveMetaData">
             Save
           </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirm Delete Dialog -->
+    <v-dialog
+      v-model="confirmDeleteDialog"
+      max-width="420"
+    >
+      <v-card>
+        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete
+          <strong>{{ application?.title }}</strong>?
+          This action cannot be undone.
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text="Cancel"
+            variant="outlined"
+            prepend-icon="mdi-close"
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          />
+          <v-btn
+            text="Delete"
+            color="error"
+            variant="flat"
+            prepend-icon="mdi-delete"
+            :loading="isDeleting"
+            @click="performDelete"
+          />
         </v-card-actions>
       </v-card>
     </v-dialog>

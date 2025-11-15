@@ -1,5 +1,5 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
 import { ApplicationService } from '../../services'
@@ -31,6 +31,7 @@ export default defineComponent({
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
     const route = useRoute()
+    const router = useRouter()
 
     // Main data state
     const application = ref<IApplicationDetails | null>(null)
@@ -39,6 +40,7 @@ export default defineComponent({
     const loading = ref(false)
     const saving = ref(false)
     const savingMetaData = ref(false)
+    const isDeleting = ref(false)
 
     // Form state
     const formValid = ref(false)
@@ -54,6 +56,9 @@ export default defineComponent({
 
     // Raw Content Dialog state
     const rawContentDialog = ref(false)
+
+    // Delete confirmation dialog state
+    const confirmDeleteDialog = ref(false)
 
     // Snackbar state
     const snackbar = ref<Snackbar>({
@@ -175,12 +180,42 @@ export default defineComponent({
       rawContentDialog.value = true
     }
 
-    const deleteApplication = () => {
-      // Show confirmation dialog and delete when implemented
-      snackbar.value = {
-        show: true,
-        message: 'Delete application feature coming soon!',
-        color: 'info',
+    // Delete application
+    const confirmDelete = () => {
+      confirmDeleteDialog.value = true
+    }
+
+    const closeDeleteDialog = () => {
+      confirmDeleteDialog.value = false
+    }
+
+    const performDelete = async () => {
+      if (!application.value?.id) {
+        closeDeleteDialog()
+        return
+      }
+      isDeleting.value = true
+      try {
+        await applicationService().delete(String(application.value.id))
+        snackbar.value = {
+          show: true,
+          message: `Deleted ${application.value.title || 'application'} successfully.`,
+          color: 'success',
+        }
+        closeDeleteDialog()
+        // Navigate back to applications list after successful deletion
+        setTimeout(() => {
+          router.push('/applications')
+        }, 1000)
+      } catch (err) {
+        console.error('Failed to delete application:', err)
+        snackbar.value = {
+          show: true,
+          message: 'Failed to delete application. Please try again.',
+          color: 'error',
+        }
+        isDeleting.value = false
+        closeDeleteDialog()
       }
     }
 
@@ -316,6 +351,7 @@ export default defineComponent({
       loading,
       saving,
       savingMetaData,
+      isDeleting,
 
       // Form state
       formValid,
@@ -331,6 +367,9 @@ export default defineComponent({
 
       // Raw Content Dialog state
       rawContentDialog,
+
+      // Delete confirmation dialog state
+      confirmDeleteDialog,
 
       // UI state
       snackbar,
@@ -353,8 +392,12 @@ export default defineComponent({
       saveApplication,
       uploadResume,
       showRawContent,
-      deleteApplication,
       appliedJob,
+
+      // Delete actions
+      confirmDelete,
+      closeDeleteDialog,
+      performDelete,
 
       // AI methods
       regenerateJobDescription,
