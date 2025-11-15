@@ -48,6 +48,7 @@ export default defineComponent({
       { title: 'Company', key: 'name', sortable: true },
       { title: 'Industry', key: 'industry', sortable: true },
       { title: 'Location', key: 'location', sortable: true },
+      { title: 'Last Modified', key: 'lastModifiedDate', sortable: true },
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Description', key: 'description', sortable: true },
     ])
@@ -55,6 +56,15 @@ export default defineComponent({
     const itemsPerPageOptions = [10, 25, 50, 100]
 
     // Utility functions
+    const formatDate = (dateInput: string | Date): string => {
+      const date = dateInput instanceof Date ? dateInput : new Date(dateInput)
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    }
+
     const sort = (): Array<string> => {
       if (sortBy.value.length > 0) {
         return sortBy.value.map(s => `${s.key},${s.order}`)
@@ -232,6 +242,7 @@ export default defineComponent({
       createCompany,
       getSearchResultStatusColor,
       getSearchResultStatusIcon,
+      formatDate,
     }
   }
 })

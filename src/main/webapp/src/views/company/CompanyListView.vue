@@ -105,6 +105,35 @@
         </v-container>
       </template>
 
+      <template v-slot:[`item.lastModifiedDate`]="{ item }">
+        <v-container fluid class="pa-0">
+          <v-row no-gutters align="center">
+            <v-col>
+              {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
+            </v-col>
+            <template v-if="item.createdDate && item.lastModifiedDate">
+              <script setup>
+                const formattedCreatedDate = formatDate(item.createdDate);
+                const formattedLastModifiedDate = formatDate(item.lastModifiedDate);
+              </script>
+              <v-col cols="auto" v-if="formattedCreatedDate !== formattedLastModifiedDate">
+                <v-tooltip :text="`Created: ${formattedCreatedDate}`" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      class="ms-1"
+                      color="info"
+                      size="small"
+                      icon="mdi-update"
+                      v-bind="props"
+                    />
+                  </template>
+                </v-tooltip>
+              </v-col>
+            </template>
+          </v-row>
+        </v-container>
+      </template>
+
       <template v-slot:[`item.status`]="{ value }">
         <v-chip
           :border="`${getCompanyStatusColor(value)} thin opacity-25`"
