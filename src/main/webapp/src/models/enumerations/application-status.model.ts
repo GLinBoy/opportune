@@ -1,5 +1,7 @@
 export enum ApplicationStatus {
   INITIATED = 'INITIATED',
+  AI_PROCESSING = 'AI_PROCESSING',
+  READY_TO_APPLY = 'READY_TO_APPLY',
   APPLIED = 'APPLIED',
   IN_PROGRESS = 'IN_PROGRESS',
   REJECTED = 'REJECTED',
@@ -11,6 +13,8 @@ export enum ApplicationStatus {
 export function getApplicationStatusDisplay(status: ApplicationStatus): string {
   const statusMap: Record<ApplicationStatus, string> = {
     [ApplicationStatus.INITIATED]: 'Initiated',
+    [ApplicationStatus.AI_PROCESSING]: 'AI Processing',
+    [ApplicationStatus.READY_TO_APPLY]: 'Ready to Apply',
     [ApplicationStatus.APPLIED]: 'Applied',
     [ApplicationStatus.IN_PROGRESS]: 'In Progress',
     [ApplicationStatus.REJECTED]: 'Rejected',
@@ -22,6 +26,8 @@ export function getApplicationStatusDisplay(status: ApplicationStatus): string {
 }
 
 export function getApplicationStatusColor(status: ApplicationStatus): string {
+  if (status === ApplicationStatus.AI_PROCESSING) return 'purple'
+  if (status === ApplicationStatus.READY_TO_APPLY) return 'teal'
   if (status === ApplicationStatus.ACCEPTED || status === ApplicationStatus.OFFER_RECEIVED) return 'green'
   if (status === ApplicationStatus.REJECTED || status === ApplicationStatus.DECLINED) return 'red'
   if (status === ApplicationStatus.IN_PROGRESS) return 'blue'
@@ -31,6 +37,8 @@ export function getApplicationStatusColor(status: ApplicationStatus): string {
 
 export function getApplicationStatusIcon(status: ApplicationStatus): string {
   if (status === ApplicationStatus.INITIATED) return 'mdi-play-circle-outline'
+  if (status === ApplicationStatus.AI_PROCESSING) return 'mdi-robot'
+  if (status === ApplicationStatus.READY_TO_APPLY) return 'mdi-clipboard-check-outline'
   if (status === ApplicationStatus.APPLIED) return 'mdi-send'
   if (status === ApplicationStatus.IN_PROGRESS) return 'mdi-clock-outline'
   if (status === ApplicationStatus.REJECTED) return 'mdi-close-circle'

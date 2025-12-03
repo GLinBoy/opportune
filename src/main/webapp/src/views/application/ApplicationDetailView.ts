@@ -108,6 +108,8 @@ export default defineComponent({
 
       const colorMap: Record<keyof typeof ApplicationStatus, string> = {
         INITIATED: 'info',
+        AI_PROCESSING: 'purple',
+        READY_TO_APPLY: 'teal',
         APPLIED: 'blue',
         IN_PROGRESS: 'orange',
         REJECTED: 'error',
