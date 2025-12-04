@@ -60,3 +60,7 @@ logging:
     ROOT: ERROR
     org.hibernate.SQL: ERROR
     com.glinboy.opportune: DEBUG
+
+application:
+  files:
+    base-path: ./build/uploads/

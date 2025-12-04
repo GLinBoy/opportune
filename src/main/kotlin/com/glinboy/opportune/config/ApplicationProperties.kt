@@ -6,6 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class ApplicationProperties {
 	var info: Info = Info()
 	var security: Security = Security()
+	var files: Files = Files()
+
+	data class Files(var basePath: String = "./uploads")
 
 	data class Info(
 		var name: String? = null,
@@ -18,19 +21,14 @@ class ApplicationProperties {
 		var servers: List<Server>? = null
 	)
 
-	data class Server(
-		var url: String? = null,
-		var description: String? = null
-	)
+	data class Server(var url: String? = null, var description: String? = null)
 
 	data class Security(
 		var contentSecurityPolicy: String? = null,
 		var authentication: Authentication = Authentication()
 	)
 
-	data class Authentication(
-		var jwt: Jwt = Jwt()
-	)
+	data class Authentication(var jwt: Jwt = Jwt())
 
 	data class Jwt(
 		var base64Secret: String? = null,

@@ -19,6 +19,8 @@ springdoc:
     operations-sorter: alpha
 
 application:
+  files:
+    base-path: \${OPPORTUNE_FILES_PATH:./uploads}
   info:
     name: \${spring.application.name}
     version: ${version}
