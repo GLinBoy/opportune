@@ -1,0 +1,263 @@
+<template>
+  <div>
+    <v-file-input
+      v-model="resumeFile"
+      @update:model-value="handleResumeUpload"
+      label="Upload Resume"
+      variant="outlined"
+      prepend-inner-icon="mdi-file-document"
+      accept=".pdf,.doc,.docx"
+      density="compact"
+      :loading="uploading"
+      clearable
+      hint="Supported formats: PDF, DOC, DOCX (Max 10MB)"
+      persistent-hint
+    />
+
+    <!-- Loading state -->
+    <div v-if="loading" class="d-flex align-center mt-2">
+      <v-progress-circular indeterminate size="20" class="mr-2" />
+      <span class="text-caption">Loading resume information...</span>
+    </div>
+
+    <!-- Resume info display -->
+    <div v-else-if="resumeInfo" class="mt-2">
+      <v-card variant="tonal" density="compact" class="pa-3">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-file-document-check" color="success" class="mr-2" />
+          <div class="flex-grow-1">
+            <div class="text-body-2 font-weight-medium">{{ resumeInfo.name }}</div>
+            <div class="text-caption text-medium-emphasis">
+              {{ formatFileSize(resumeInfo.contentLength) }} • {{ resumeInfo.contentType }}
+            </div>
+            <div v-if="resumeInfo.lastModifiedDate" class="text-caption text-medium-emphasis">
+              Updated: {{ formatDate(resumeInfo.lastModifiedDate) }}
+            </div>
+          </div>
+          <div class="d-flex ga-1">
+            <v-btn
+              color="primary"
+              variant="text"
+              size="small"
+              icon="mdi-download"
+              :loading="downloading"
+              @click="downloadResume"
+            />
+            <v-btn
+              color="error"
+              variant="text"
+              size="small"
+              icon="mdi-delete"
+              :loading="deleting"
+              @click="confirmDelete"
+            />
+          </div>
+        </div>
+      </v-card>
+    </div>
+
+    <!-- No resume message -->
+    <div v-else-if="!loading" class="text-caption text-medium-emphasis mt-2">
+      No resume uploaded yet
+    </div>
+
+    <!-- Delete confirmation dialog -->
+    <v-dialog v-model="showDeleteDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6">Delete Resume</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this resume? This action cannot be undone.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="showDeleteDialog = false">Cancel</v-btn>
+          <v-btn color="error" variant="flat" :loading="deleting" @click="deleteResume">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Snackbar for notifications -->
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="snackbar.timeout"
+    >
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted, reactive } from 'vue'
+import { type IProfileResume } from '../models'
+import ProfileResumeService from '../services/profile-resume.service'
+
+const props = defineProps<{
+  profileId?: string
+  resumeId?: string
+}>()
+
+const emit = defineEmits<{
+  'update:resumeId': [value: string | undefined]
+}>()
+
+const resumeService = new ProfileResumeService()
+
+// State
+const resumeFile = ref<File[]>([])
+const resumeInfo = ref<IProfileResume | null>(null)
+const loading = ref(false)
+const uploading = ref(false)
+const downloading = ref(false)
+const deleting = ref(false)
+const showDeleteDialog = ref(false)
+
+// Snackbar state
+const snackbar = reactive({
+  show: false,
+  message: '',
+  color: 'success',
+  timeout: 3000
+})
+
+const showNotification = (message: string, color: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+  snackbar.message = message
+  snackbar.color = color
+  snackbar.show = true
+}
+
+// Fetch resume info when resumeId changes
+watch(() => props.resumeId, async (newResumeId) => {
+  if (newResumeId) {
+    await fetchResumeInfo(newResumeId)
+  } else {
+    resumeInfo.value = null
+  }
+}, { immediate: true })
+
+onMounted(async () => {
+  if (props.resumeId) {
+    await fetchResumeInfo(props.resumeId)
+  }
+})
+
+// Methods
+const fetchResumeInfo = async (resumeId: string) => {
+  loading.value = true
+  try {
+    resumeInfo.value = await resumeService.find(resumeId)
+  } catch (error) {
+    console.error('Failed to fetch resume info:', error)
+    resumeInfo.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleResumeUpload = async (files: File | File[]) => {
+  const fileArray = Array.isArray(files) ? files : [files]
+
+  if (!fileArray || fileArray.length === 0) {
+    return
+  }
+
+  const file = fileArray[0]
+
+  if (!file) {
+    return
+  }
+
+  // Validate file type
+  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+  if (!allowedTypes.includes(file.type)) {
+    showNotification('Please select a valid document file (PDF, DOC, DOCX)', 'error')
+    return
+  }
+
+  // Validate file size (max 10MB)
+  const maxSize = 10 * 1024 * 1024
+  if (file.size > maxSize) {
+    showNotification('File size must be less than 10MB', 'error')
+    return
+  }
+
+  uploading.value = true
+
+  try {
+    const result = await resumeService.upload(file)
+    resumeInfo.value = result
+    emit('update:resumeId', result.id)
+    showNotification('Resume uploaded successfully', 'success')
+  } catch (error) {
+    console.error('Failed to upload resume:', error)
+    showNotification('Failed to upload resume. Please try again.', 'error')
+  } finally {
+    uploading.value = false
+    resumeFile.value = []
+  }
+}
+
+const downloadResume = async () => {
+  if (!props.resumeId) return
+
+  downloading.value = true
+  try {
+    const blob = await resumeService.downloadById(props.resumeId)
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = resumeInfo.value?.name || 'resume'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('Failed to download resume:', error)
+    showNotification('Failed to download resume. Please try again.', 'error')
+  } finally {
+    downloading.value = false
+  }
+}
+
+const confirmDelete = () => {
+  showDeleteDialog.value = true
+}
+
+const deleteResume = async () => {
+  if (!props.resumeId) return
+
+  deleting.value = true
+  try {
+    await resumeService.deleteById(props.resumeId)
+    resumeInfo.value = null
+    emit('update:resumeId', undefined)
+    showDeleteDialog.value = false
+    showNotification('Resume deleted successfully', 'success')
+  } catch (error) {
+    console.error('Failed to delete resume:', error)
+    showNotification('Failed to delete resume. Please try again.', 'error')
+  } finally {
+    deleting.value = false
+  }
+}
+
+// Utility functions
+const formatFileSize = (bytes?: number): string => {
+  if (!bytes) return 'Unknown size'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+const formatDate = (date?: Date): string => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+</script>
