@@ -142,41 +142,6 @@
                     :rules="[rules.required, rules.email]"
                   />
                 </v-col>
-                <v-col cols="12">
-                  <v-file-input
-                    v-model="resumeFile"
-                    @update:model-value="handleResumeUpload"
-                    label="Upload Resume"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-file-document"
-                    accept=".pdf,.doc,.docx"
-                    density="compact"
-                    :loading="uploadingResume"
-                    clearable
-                    hint="Supported formats: PDF, DOC, DOCX (Max 10MB)"
-                    persistent-hint
-                  />
-                  <div v-if="currentResumeFileName" class="d-flex align-center mt-2">
-                    <v-chip
-                      color="success"
-                      variant="outlined"
-                      prepend-icon="mdi-check-circle"
-                      size="small"
-                    >
-                      Current: {{ currentResumeFileName }}
-                    </v-chip>
-                    <v-spacer />
-                    <v-btn
-                      color="primary"
-                      variant="text"
-                      size="small"
-                      prepend-icon="mdi-download"
-                      @click="downloadResume"
-                    >
-                      Download
-                    </v-btn>
-                  </div>
-                </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     :model-value="modelValue.jobTitle"
@@ -197,6 +162,13 @@
                     placeholder="e.g., San Francisco, CA"
                   />
                 </v-col>
+                <v-col cols="12">
+                  <ProfileResumeField
+                    :profile-id="modelValue.id"
+                    :resume-id="modelValue.resumeId"
+                    @update:resume-id="updateField('resumeId', $event)"
+                  />
+                </v-col>
               </v-row>
             </v-card-text>
           </v-card>
@@ -210,8 +182,8 @@
 import { computed, ref } from 'vue'
 import { type IProfile, ProfileStatus } from '../models'
 import CryptoJS from 'crypto-js'
+import ProfileResumeField from './ProfileResumeField.vue'
 // import { AvatarService } from '../services' // Uncomment when avatar endpoint is ready
-// import { ProfileResumeService } from '../services' // Uncomment when resume endpoint is ready
 
 const props = defineProps<{
   modelValue: IProfile
@@ -225,10 +197,6 @@ const emit = defineEmits<{
 // Avatar upload state
 const avatarFile = ref<File[]>([])
 const uploadingAvatar = ref(false)
-
-// Resume upload state
-const resumeFile = ref<File[]>([])
-const uploadingResume = ref(false)
 
 // Computed properties
 const fullName = computed(() => {
@@ -269,15 +237,6 @@ const statusOptions = computed(() => {
     title: status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
     value: status
   }))
-})
-
-const currentResumeFileName = computed(() => {
-  // Extract filename from resume path or resumeId
-  if (props.modelValue.resumeId) {
-    // If resumeId exists, show a generic filename (real filename would come from API)
-    return 'resume.pdf'
-  }
-  return null
 })
 
 // Validation rules
@@ -357,76 +316,6 @@ const handleAvatarUpload = async (files: File | File[]) => {
   } finally {
     uploadingAvatar.value = false
     avatarFile.value = []
-  }
-}
-
-const handleResumeUpload = async (files: File | File[]) => {
-  const fileArray = Array.isArray(files) ? files : [files]
-
-  if (!fileArray || fileArray.length === 0) {
-    return
-  }
-
-  const file = fileArray[0]
-
-  if (!file) {
-    return
-  }
-
-  // Validate file type
-  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
-  if (!allowedTypes.includes(file.type)) {
-    alert('Please select a valid document file (PDF, DOC, DOCX)')
-    return
-  }
-
-  // Validate file size (max 10MB)
-  const maxSize = 10 * 1024 * 1024
-  if (file.size > maxSize) {
-    alert('File size must be less than 10MB')
-    return
-  }
-
-  uploadingResume.value = true
-
-  try {
-    // When resume upload endpoint is ready, replace the simulation below with:
-    // const resumeService = new ProfileResumeService()
-    // const result = await resumeService.upload(props.modelValue.id || '', file)
-    // updateField('resumeId', result.id)
-
-    // SIMULATION CODE (remove when real endpoint is ready)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    const timestamp = new Date().getTime()
-    const resumeId = `resume_${props.modelValue.id}_${timestamp}`
-    updateField('resumeId', resumeId)
-
-    console.log('Resume upload simulated:', {
-      originalFile: file.name,
-      size: file.size,
-      type: file.type,
-      simulatedResumeId: resumeId
-    })
-
-    alert('Resume uploaded successfully!')
-
-  } catch (error) {
-    console.error('Failed to upload resume:', error)
-    alert('Failed to upload resume. Please try again.')
-  } finally {
-    uploadingResume.value = false
-    resumeFile.value = []
-  }
-}
-
-const downloadResume = () => {
-  if (props.modelValue.resumeId) {
-    // When download endpoint is ready, replace with actual API call:
-    // window.open(`/api/profiles/${props.modelValue.id}/resumes/${props.modelValue.resumeId}/download`, '_blank')
-
-    // SIMULATION CODE (remove when real endpoint is ready)
-    alert(`Download resume: ${props.modelValue.resumeId}`)
-    console.log('Resume download simulated for resumeId:', props.modelValue.resumeId)
   }
 }
 </script>
