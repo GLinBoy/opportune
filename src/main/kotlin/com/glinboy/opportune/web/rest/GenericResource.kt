@@ -4,12 +4,10 @@ import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.BaseDTO
 import com.glinboy.opportune.service.GenericService
 import com.glinboy.opportune.util.PaginationUtil
-import io.github.perplexhub.rsql.RSQLJPASupport.toSpecification
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
-import org.apache.commons.lang3.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springdoc.core.converters.models.PageableAsQueryParam
@@ -40,10 +38,10 @@ abstract class GenericResource<ID, D : BaseDTO, S : GenericService<ID, D>>(
 		request: HttpServletRequest
 	): ResponseEntity<List<D>> {
 		val specification = Optional.of<String>(query)
-			.filter { StringUtils.isNotBlank(it) }
-			.map { toSpecification<Any>(it) }
-			.orElseGet { Specification.allOf() }
-		val page: Page<D> = service.findAllForCurrentUser(specification, pageable)
+//			.filter { StringUtils.isNotBlank(it) }
+//			.map { toSpecification<Any>(it) }
+//			.orElseGet { Specification.allOf() }
+		val page: Page<D> = service.findAllForCurrentUser(Specification.allOf(), pageable)
 		val headers: HttpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, request)
 		headers.accessControlExposeHeaders = listOf(HttpHeaders.LINK, "X-Total-Count")
 		return ResponseEntity(page.content, headers, HttpStatus.OK)

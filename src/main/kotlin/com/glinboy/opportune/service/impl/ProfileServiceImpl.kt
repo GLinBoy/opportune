@@ -39,7 +39,7 @@ class ProfileServiceImpl(
 			.findById(SecurityUtils.getCurrentUserLoginID())
 			.map(mapper::toDto)
 
-	override fun loadUserByUsername(username: String): UserDetails? =
+	override fun loadUserByUsername(username: String): UserDetails =
 		repository.findById(UUID.fromString(username))
 			.map { UserSecurityDTO(it) }
 			.orElseThrow { UsernameNotFoundException("User not found") }
@@ -114,7 +114,7 @@ class ProfileServiceImpl(
 				repository.findById(vk.profileId!!).map { profile ->
 					repository.updatePassword(
 						profile.id!!,
-						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)
+						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)!!
 					)
 					verificationCodeService.deleteAllProfilePasswordReset(vk.profileId!!)
 				}
@@ -131,7 +131,7 @@ class ProfileServiceImpl(
 			.map { profile ->
 				repository.updatePassword(
 					profile.id!!,
-					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword)
+					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword)!!
 				)
 			}
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect") }

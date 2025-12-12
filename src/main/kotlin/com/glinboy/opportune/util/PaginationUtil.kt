@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets
  */
 object PaginationUtil {
 
-	fun <T> generatePaginationHttpHeaders(page: Page<T>, request: HttpServletRequest): HttpHeaders {
+	fun <T: Any> generatePaginationHttpHeaders(page: Page<T>, request: HttpServletRequest): HttpHeaders {
 		val headers = HttpHeaders()
 		headers.add("X-Total-Count", page.totalElements.toString())
 
@@ -53,7 +53,7 @@ object PaginationUtil {
 		return builder.toUriString()
 	}
 
-	fun <T> generateSearchPaginationHttpHeaders(query: String, page: Page<T>, baseUrl: String): HttpHeaders {
+	fun <T: Any> generateSearchPaginationHttpHeaders(query: String, page: Page<T>, baseUrl: String): HttpHeaders {
 		val escapedQuery = try {
 			URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
 		} catch (e: Exception) {
