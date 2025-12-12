@@ -11,12 +11,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.DeleteSpecification
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
-import kotlin.collections.map
 
 @Transactional(readOnly = true)
 abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
@@ -40,6 +40,16 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 				profileIdPath(root),
 				SecurityUtils.getCurrentUserLoginID()
 			)
+		}
+
+	/**
+	 * Converts a Specification to a DeleteSpecification.
+	 * This allows reusing existing Specification logic for delete operations.
+	 */
+	@Suppress("UNCHECKED_CAST")
+	protected fun Specification<E>.toDeleteSpecification(): DeleteSpecification<E> =
+		DeleteSpecification.where<E> { root, criteriaBuilder ->
+			this.toPredicate(root as Root<E>, criteriaBuilder.createQuery(Any::class.java), criteriaBuilder)
 		}
 
 	abstract fun currentUserSpecification(): Specification<E>
@@ -159,7 +169,9 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 		currentUserSpecification()
 			.and(Specification<E> { root, _, criteriaBuilder ->
 				criteriaBuilder.equal(root.get<ID>("id"), id)
-			}).let { specification -> repository.delete(specification) }
+			})
+			.toDeleteSpecification()
+			.let { specification -> repository.delete(specification) }
 	}
 
 	@Transactional
@@ -167,7 +179,9 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 		currentUserSpecification()
 			.and(Specification<E> { root, _, criteriaBuilder ->
 				root.get<ID>("id").`in`(ids)
-			}).let { specification -> repository.delete(specification) }
+			})
+			.toDeleteSpecification()
+			.let { specification -> repository.delete(specification) }
 	}
 
 	override fun existsByIdForCurrentUser(id: ID): Boolean =

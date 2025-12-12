@@ -32,12 +32,11 @@ class ApplicationResumeServiceImpl(
 
 	@Transactional
 	override fun deleteByApplicationId(applicationId: UUID) {
-		repository.delete(
-			Specification.allOf<ApplicationResume>()
-				.and { root, _, criteriaBuilder ->
-					criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
-				}
-		)
+		val spec = Specification.allOf<ApplicationResume>()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+		repository.findOne(spec).ifPresent { repository.delete(it) }
 	}
 
 	override fun currentUserSpecification(): Specification<ApplicationResume> =
@@ -76,11 +75,10 @@ class ApplicationResumeServiceImpl(
 		).map(mapper::toDto)
 
 	override fun deleteByApplicationIdForCurrentUser(applicationId: UUID) {
-		repository.delete(
-			currentUserSpecification()
-				.and { root, _, criteriaBuilder ->
-					criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
-				}
-		)
+		val spec = currentUserSpecification()
+			.and { root, _, criteriaBuilder ->
+				criteriaBuilder.equal(root.get<UUID>("application").get<UUID>("id"), applicationId)
+			}
+		repository.findOne(spec).ifPresent { repository.delete(it) }
 	}
 }

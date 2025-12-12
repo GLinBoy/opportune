@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.DeleteSpecification
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
@@ -60,13 +61,18 @@ abstract class GenericChildServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO, R,
 	@Transactional
 	override fun delete(parentID: ID, id: ID) {
 		repository.delete(
-			Specification.allOf<E>()
-				.and { root, _, criteriaBuilder ->
-					criteriaBuilder.equal(root.get<ID>(this.getParentFieldName()).get<ID>(this.getIdFieldName()), parentID)
-				}
-				.and { root, _, criteriaBuilder ->
-					criteriaBuilder.equal(root.get<ID>(this.getIdFieldName()), id)
-				}
+			DeleteSpecification.where<E> { root, criteriaBuilder ->
+				criteriaBuilder.and(
+					criteriaBuilder.equal(
+						root.get<ID>(this.getParentFieldName()).get<ID>(this.getIdFieldName()),
+						parentID
+					),
+					criteriaBuilder.equal(
+						root.get<ID>(this.getIdFieldName()),
+						id
+					)
+				)
+			}
 		)
 	}
 
@@ -132,6 +138,7 @@ abstract class GenericChildServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO, R,
 				.and { root, _, criteriaBuilder ->
 					criteriaBuilder.equal(root.get<ID>(this.getIdFieldName()), id)
 				}
+				.toDeleteSpecification()
 		)
 	}
 }

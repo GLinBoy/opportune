@@ -62,6 +62,7 @@ class InterviewAttachmentServiceImpl(
 				.and { root, _, criteriaBuilder ->
 					criteriaBuilder.equal(root.get<UUID>("id"), id)
 				}
+				.toDeleteSpecification()
 		)
 	}
 
@@ -138,6 +139,7 @@ class InterviewAttachmentServiceImpl(
 				.and { root, _, criteriaBuilder ->
 					criteriaBuilder.equal(root.get<UUID>("id"), id)
 				}
+				.toDeleteSpecification()
 		)
 	}
 }

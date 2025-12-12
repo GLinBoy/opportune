@@ -61,6 +61,6 @@ object SecurityUtils {
 	}
 
 	fun getAuthorities(authentication: Authentication): List<String> {
-		return authentication.authorities.map(GrantedAuthority::getAuthority)
+		return authentication.authorities.mapNotNull(GrantedAuthority::getAuthority)
 	}
 }
