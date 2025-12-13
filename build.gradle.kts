@@ -1,3 +1,5 @@
+import com.github.gradle.node.npm.task.NpmTask
+
 plugins {
 	kotlin("jvm") version "2.2.21"
 	kotlin("plugin.spring") version "2.2.21"
@@ -117,12 +119,14 @@ node {
 }
 
 // Frontend build tasks
-val installFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("installFrontend") {
+val installFrontend = tasks.register<NpmTask>("installFrontend") {
+	group = "frontend"
 	description = "Install frontend dependencies"
 	args = listOf("install")
 }
 
-val buildFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("buildFrontend") {
+val buildFrontend = tasks.register<NpmTask>("buildFrontend") {
+	group = "frontend"
 	description = "Build the frontend"
 	dependsOn(installFrontend)
 	args = listOf("run", "build")
@@ -131,6 +135,7 @@ val buildFrontend = tasks.register<com.github.gradle.node.npm.task.NpmTask>("bui
 }
 
 val cleanFrontend = tasks.register<Delete>("cleanFrontend") {
+	group = "frontend"
 	description = "Clean frontend build artifacts"
 	delete("build/resources/main/static")
 	delete("node_modules")
