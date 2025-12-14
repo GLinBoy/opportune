@@ -4,7 +4,7 @@ import com.glinboy.opportune.enums.ApplicationStatus
 import java.time.Instant
 import java.util.*
 
-interface ApplicationProjection {
+interface ApplicationProjection: ProjectionBase {
 	fun getId(): UUID?
 	fun getUrl(): String?
 	fun getTitle(): String?
