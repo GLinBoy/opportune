@@ -184,3 +184,7 @@ tasks.processResources {
 tasks.clean {
 	dependsOn(cleanFrontend)
 }
+
+tasks.getByName<Jar>("jar") {
+	enabled = false
+}
