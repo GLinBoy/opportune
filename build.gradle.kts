@@ -3,7 +3,7 @@ import com.github.gradle.node.npm.task.NpmTask
 plugins {
 	kotlin("jvm") version "2.2.21"
 	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "4.0.2"
+	id("org.springframework.boot") version "4.0.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
 	id("org.ec4j.editorconfig") version "0.1.0"
