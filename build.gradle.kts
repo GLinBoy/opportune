@@ -74,7 +74,7 @@ dependencies {
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	implementation("tools.jackson.module:jackson-module-kotlin")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
-//	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.0")
+	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
