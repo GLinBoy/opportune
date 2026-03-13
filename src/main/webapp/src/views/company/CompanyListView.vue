@@ -28,13 +28,13 @@
           <template v-slot:item="{ props, item }">
             <v-list-item
               v-bind="props"
-              :title="item.raw.name"
-              :subtitle="item.raw.status"
+              :title="item.name"
+              :subtitle="item.status"
             >
               <template v-slot:prepend>
                 <v-icon
-                  :color="getSearchResultStatusColor(item.raw.status)"
-                  :icon="getSearchResultStatusIcon(item.raw.status)"
+                  :color="getSearchResultStatusColor(item.status)"
+                  :icon="getSearchResultStatusIcon(item.status)"
                 />
               </template>
             </v-list-item>
