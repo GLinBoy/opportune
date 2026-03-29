@@ -3,8 +3,8 @@ package com.glinboy.opportune.web.rest
 import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.service.ProfileService
+import com.glinboy.opportune.service.SessionService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
-import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
-class AuthResource(private val profileService: ProfileService) {
+class AuthResource(
+	private val profileService: ProfileService,
+	private val sessionService: SessionService
+) {
 
 	private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -25,27 +28,22 @@ class AuthResource(private val profileService: ProfileService) {
 	}
 
 	@PostMapping("/auth/login")
-	fun login(
-		@Valid @RequestBody loginRequestDTO: LoginRequestDTO,
-		response: HttpServletResponse
-	): ResponseEntity<AccessTokenResponseDTO> {
+	fun login(@Valid @RequestBody loginRequestDTO: LoginRequestDTO, ): ResponseEntity<AccessTokenResponseDTO> {
 		return ResponseEntity.ok(profileService.login(loginRequestDTO))
 	}
 
 	@PostMapping("/auth/token/refresh")
-	@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
-	fun refreshToken(): ResponseEntity<Void> {
-		// TODO: Implement refresh token
+	fun refreshToken(@Valid @RequestBody refreshTokenRequestDTO: RefreshTokenRequestDTO): ResponseEntity<AccessTokenResponseDTO> {
 		log.debug("REST request to refresh token")
-		return ResponseEntity.ok().build()
+		return ResponseEntity.ok(profileService.refreshToken(refreshTokenRequestDTO.refreshToken))
 	}
 
 	@PostMapping("/auth/logout")
 	@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 	fun logout(): ResponseEntity<Void> {
-		// TODO: Implement logout
-		log.debug("REST request to logout")
-		return ResponseEntity.ok().build()
+		log.debug("REST request to terminate current session")
+		sessionService.terminateCurrentSession()
+		return ResponseEntity.noContent().build()
 	}
 
 	@PostMapping("/auth/password/reset/init")

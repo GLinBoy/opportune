@@ -45,223 +45,40 @@
         <!-- Main Content Area -->
         <v-col cols="12" md="9">
           <!-- Info Tab -->
-          <v-card v-show="activeTab === 'info'">
-            <v-card-title class="d-flex align-center justify-space-between">
-              <div class="d-flex align-center">
-                <v-icon icon="mdi-account" class="mr-2" />
-                Profile Information
-              </div>
-              <v-btn
-                color="primary"
-                variant="flat"
-                prepend-icon="mdi-content-save"
-                :loading="saving"
-                @click="saveProfile"
-                :disabled="!hasChanges"
-              >
-                Save Changes
-              </v-btn>
-            </v-card-title>
-            <v-card-text>
-              <ProfileForm
-                v-if="profile"
-                v-model="profile"
-                @change="markAsModified"
-              />
-              <div v-else class="text-center py-8 text-medium-emphasis">
-                <v-icon icon="mdi-account-off" size="48" class="mb-2" />
-                <p>Unable to load profile information.</p>
-              </div>
-            </v-card-text>
-          </v-card>
+          <ProfileInfoCard
+            v-show="activeTab === 'info'"
+            :profile="profile"
+            :saving="saving"
+            :has-changes="hasChanges"
+            @update:profile="profile = $event"
+            @save="saveProfile"
+            @change="markAsModified"
+          />
 
           <!-- Password Tab -->
-          <v-card v-show="activeTab === 'password'">
-            <v-card-title class="d-flex align-center">
-              <v-icon icon="mdi-lock" class="mr-2" />
-              Password & Security
-            </v-card-title>
-            <v-card-text>
-              <v-row>
-                <v-col cols="12">
-                  <v-card variant="outlined" class="mb-4">
-                    <v-card-title class="text-subtitle-1">
-                      <v-icon icon="mdi-key-variant" class="mr-2" />
-                      Change Password
-                    </v-card-title>
-                    <v-card-text>
-                      <v-form @submit.prevent="changePassword">
-                        <v-text-field
-                          v-model="passwordForm.currentPassword"
-                          label="Current Password"
-                          :type="showCurrentPassword ? 'text' : 'password'"
-                          :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                          @click:append-inner="showCurrentPassword = !showCurrentPassword"
-                          variant="outlined"
-                          @input="validatePasswordForm"
-                          class="mb-3"
-                        />
-                        <v-text-field
-                          v-model="passwordForm.newPassword"
-                          label="New Password"
-                          :type="showNewPassword ? 'text' : 'password'"
-                          :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                          @click:append-inner="showNewPassword = !showNewPassword"
-                          variant="outlined"
-                          @input="validatePasswordForm"
-                          hint="Password must be at least 8 characters"
-                          persistent-hint
-                          class="mb-3"
-                        />
-                        <v-text-field
-                          v-model="passwordForm.confirmPassword"
-                          label="Confirm New Password"
-                          :type="showConfirmPassword ? 'text' : 'password'"
-                          :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                          @click:append-inner="showConfirmPassword = !showConfirmPassword"
-                          variant="outlined"
-                          @input="validatePasswordForm"
-                        />
-                      </v-form>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn
-                        color="primary"
-                        variant="flat"
-                        :disabled="!passwordFormValid"
-                        :loading="passwordChanging"
-                        @click="changePassword"
-                      >
-                        Update Password
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-col>
+          <PasswordSecurityCard
+            v-show="activeTab === 'password'"
+            :password-form="passwordForm"
+            :password-form-valid="passwordFormValid"
+            :password-changing="passwordChanging"
+            @update:password-form="passwordForm = $event"
+            @change-password="changePassword"
+            @validate="validatePasswordForm"
+          />
 
-                <v-col cols="12">
-                  <v-card variant="outlined">
-                    <v-card-title class="text-subtitle-1">
-                      <v-icon icon="mdi-shield-key" class="mr-2" />
-                      Two-Factor Authentication
-                    </v-card-title>
-                    <v-card-text>
-                      <v-alert
-                        color="info"
-                        variant="tonal"
-                        icon="mdi-information"
-                        class="mb-4"
-                      >
-                        Two-factor authentication (2FA) feature is coming soon.
-                      </v-alert>
-                      <p class="text-body-2 mb-4">
-                        Two-factor authentication (2FA) adds an extra layer of security to your account.
-                      </p>
-                      <v-chip
-                        color="grey"
-                        variant="outlined"
-                        prepend-icon="mdi-shield-off"
-                      >
-                        Not Enabled
-                      </v-chip>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn color="success" variant="flat" disabled>
-                        Enable 2FA
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
+          <!-- Sessions Tab -->
+          <SessionsCard
+            v-show="activeTab === 'sessions'"
+            :sessions="sessions"
+            :loading="sessionsLoading"
+            :terminating-session-id="terminatingSessionId"
+            :highlighted-session-id="highlightedSessionId"
+            @refresh="loadSessions"
+            @terminate="terminateSession"
+          />
 
           <!-- API & Webhook Tab -->
-          <v-card v-show="activeTab === 'api'">
-            <v-card-title class="d-flex align-center">
-              <v-icon icon="mdi-api" class="mr-2" />
-              API & Webhooks
-            </v-card-title>
-            <v-card-text>
-              <v-alert
-                color="info"
-                variant="tonal"
-                icon="mdi-information"
-                class="mb-4"
-              >
-                API key and webhook management features are coming soon.
-              </v-alert>
-
-              <v-row>
-                <v-col cols="12">
-                  <v-card variant="outlined">
-                    <v-card-title class="text-subtitle-1">
-                      <v-icon icon="mdi-key" class="mr-2" />
-                      API Key & Webhook Configuration
-                    </v-card-title>
-                    <v-card-text>
-                      <p class="text-body-2 mb-4">
-                        Configure your API key and webhook URL. The API key is required for authenticating webhook calls.
-                      </p>
-
-                      <v-alert
-                        color="warning"
-                        variant="tonal"
-                        icon="mdi-alert"
-                        class="mb-4"
-                      >
-                        Keep your API key secure and never share it publicly. It will be used to authenticate webhook requests.
-                      </v-alert>
-
-                      <!-- API Key Section -->
-                      <div class="mb-6">
-                        <h3 class="text-subtitle-1 mb-3 d-flex align-center">
-                          <v-icon icon="mdi-key" class="mr-2" size="small" />
-                          API Key
-                        </h3>
-                        <div class="text-center py-4">
-                          <v-icon icon="mdi-key-off" size="48" class="mb-2" color="grey" />
-                          <p class="text-medium-emphasis">No API key configured</p>
-                          <v-btn color="primary" variant="flat" disabled class="mt-2">
-                            <v-icon icon="mdi-plus" class="mr-1" />
-                            Generate API Key
-                          </v-btn>
-                        </div>
-                      </div>
-
-                      <!-- Webhook Section -->
-                      <div>
-                        <h3 class="text-subtitle-1 mb-3 d-flex align-center">
-                          <v-icon icon="mdi-webhook" class="mr-2" size="small" />
-                          Webhook URL
-                        </h3>
-                        <p class="text-body-2 mb-3">
-                          Enter your webhook URL to receive notifications about events in your account.
-                        </p>
-                        <v-text-field
-                          label="Webhook URL"
-                          variant="outlined"
-                          prepend-inner-icon="mdi-link"
-                          placeholder="https://your-app.com/webhook"
-                          disabled
-                          class="mb-3"
-                        />
-                        <div class="d-flex gap-2">
-                          <v-btn color="primary" variant="flat" disabled>
-                            <v-icon icon="mdi-content-save" class="mr-1" />
-                            Save Webhook URL
-                          </v-btn>
-                          <v-btn color="error" variant="outlined" disabled>
-                            <v-icon icon="mdi-test-tube" class="mr-1" />
-                            Test Webhook
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
+          <ApiWebhookCard v-show="activeTab === 'api'" />
         </v-col>
       </v-row>
     </div>
@@ -283,9 +100,5 @@
 
 .v-list-item--active .v-icon {
   color: rgb(var(--v-theme-primary)) !important;
-}
-
-.d-flex.gap-2 {
-  gap: 8px;
 }
 </style>

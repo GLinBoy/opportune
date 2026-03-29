@@ -20,6 +20,16 @@ export interface IAccessTokenResponse {
   tokenType: string
 }
 
+export interface IRefreshTokenRequest {
+  refreshToken: string
+}
+
+export class RefreshTokenRequest implements IRefreshTokenRequest {
+  constructor(
+    public refreshToken: string
+  ) { }
+}
+
 export interface IPasswordResetInitiationRequest {
   email: string
 }

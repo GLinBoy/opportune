@@ -2,7 +2,7 @@ import apiClient from './api'
 
 import buildPaginationQueryOpts from '../utils/pagination'
 
-import { type IProfile, type IPasswordChangeRequest } from '../models'
+import { type IProfile, type IPasswordChangeRequest, type ISession } from '../models'
 import type { AxiosResponse } from 'axios'
 
 const PROFILE_API_URL = '/api/profiles'
@@ -85,7 +85,26 @@ export default class ProfileService {
   verifyEmail(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       apiClient
-        .post(`${PROFILE_API_URL}/email/verify`)
+        .post(`${PROFILE_API_URL}/email/verify/request`)
+        .then(() => { resolve() })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
+
+  getSessions(paginationQuery?: Record<string, unknown>): Promise<AxiosResponse<ISession[]>> {
+    return new Promise<AxiosResponse<ISession[]>>((resolve, reject) => {
+      const query = buildPaginationQueryOpts(paginationQuery)
+      const url = query ? `${PROFILE_API_URL}/sessions?${query}` : `${PROFILE_API_URL}/sessions`
+      apiClient.get<ISession[]>(url)
+        .then(res => resolve(res))
+        .catch((error: unknown) => reject(error instanceof Error ? error : new Error(String(error))))
+    })
+  }
+
+  terminateSession(refreshTokenId: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      apiClient
+        .delete(`${PROFILE_API_URL}/sessions/${refreshTokenId}`)
         .then(() => { resolve() })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })

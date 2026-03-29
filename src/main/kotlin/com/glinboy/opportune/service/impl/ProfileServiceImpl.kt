@@ -7,7 +7,7 @@ import com.glinboy.opportune.enums.Role
 import com.glinboy.opportune.mapper.ProfileMapper
 import com.glinboy.opportune.repository.ProfileRepository
 import com.glinboy.opportune.security.SecurityUtils
-import com.glinboy.opportune.security.jwt.JwtService
+import com.glinboy.opportune.service.JwtTokenService
 import com.glinboy.opportune.service.MailService
 import com.glinboy.opportune.service.ProfileService
 import com.glinboy.opportune.service.VerificationCodeService
@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
@@ -26,7 +28,8 @@ import java.util.*
 class ProfileServiceImpl(
 	profileRepository: ProfileRepository,
 	mapper: ProfileMapper,
-	private val jwtService: JwtService,
+	private val jwtTokenService: JwtTokenService,
+	private val jwtDecoder: JwtDecoder,
 	private val passwordEncoder: PasswordEncoder,
 	private val verificationCodeService: VerificationCodeService,
 	private val mailService: MailService
@@ -71,11 +74,27 @@ class ProfileServiceImpl(
 	}
 
 	override fun login(loginRequestDTO: LoginRequestDTO): AccessTokenResponseDTO {
-		// TODO: Implement refresh token generation
 		return repository.findOneByEmailIgnoreCase(loginRequestDTO.email)
 			.filter { passwordEncoder.matches(loginRequestDTO.password, it.password) }
-			.map { jwtService.createToken(it, loginRequestDTO.rememberMe) }
+			.map(mapper::toDto)
+			.map { jwtTokenService.generateTokens(it, loginRequestDTO.rememberMe) }
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password") }
+	}
+
+	override fun refreshToken(refreshToken: String): AccessTokenResponseDTO {
+		val jwt: Jwt = try {
+			jwtDecoder.decode(refreshToken)
+		} catch (e: Exception) {
+			throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token")
+		}
+		if (jwt.getClaimAsString(SecurityUtils.TYPE_CLAIM) != SecurityUtils.TYPE_TOKEN_REFRESH) {
+			throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is not a refresh token")
+		}
+		val profileId = UUID.fromString(jwt.subject)
+		return repository.findById(profileId)
+			.map(mapper::toDto)
+			.map { jwtTokenService.refreshAccessToken(jwt, it) }
+			.orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found") }
 	}
 
 	private fun sendVerificationEmail(profileDTO: ProfileDTO) {
@@ -111,13 +130,15 @@ class ProfileServiceImpl(
 	override fun finalizePasswordReset(passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO) {
 		verificationCodeService.findByPasswordReset(UUIDBase64.fromBase64(passwordResetFinalizationRequestDTO.code))
 			.map { vk ->
-				repository.findById(vk.profileId!!).map { profile ->
-					repository.updatePassword(
-						profile.id!!,
-						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)!!
-					)
-					verificationCodeService.deleteAllProfilePasswordReset(vk.profileId!!)
-				}
+				vk.profileId?.let { profileId ->
+					repository.findById(profileId).map { profile ->
+						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)?.let { enc ->
+							repository.updatePassword(profileId, enc)
+							verificationCodeService.deleteAllProfilePasswordReset(profileId)
+							mailService.sendPasswordResetSuccessEmail(mapper.toDto(profile))
+						} ?: throw IllegalStateException("Failed to encode new password")
+					}
+				}?: throw IllegalStateException("profileId must not be null on a verified reset token")
 			}
 	}
 

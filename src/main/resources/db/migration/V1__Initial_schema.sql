@@ -35,6 +35,36 @@ CREATE TABLE verification_code (
     CONSTRAINT fk_verification_code_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
 );
 
+-- Create Session table
+-- refresh_token_id is the primary key (indexed automatically)
+-- access_token_id has a unique index for O(1) lookup by access token
+CREATE TABLE session (
+    refresh_token_id          UUID         NOT NULL PRIMARY KEY,
+    access_token_id           UUID         NOT NULL,
+    access_token_expiration   TIMESTAMP    NOT NULL,
+    refresh_token_expiration  TIMESTAMP    NOT NULL,
+    status                    VARCHAR(50)  NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'EXPIRED', 'REVOKED')),
+    last_active_at            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    client_agent              VARCHAR(255) NOT NULL,
+    client_ip                 VARCHAR(255) NOT NULL,
+    client_geo                VARCHAR(255),
+    device_id                 VARCHAR(255),
+    device_type               VARCHAR(255),
+    os                        VARCHAR(255),
+    browser                   VARCHAR(255),
+    is_mobile                 BOOLEAN      NOT NULL DEFAULT FALSE,
+    login_at                  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    revoked_at                TIMESTAMP,
+    revocation_reason         VARCHAR(50)  CHECK (revocation_reason IN (
+                                  'USER_INITIATED', 'USER_ALL_SESSIONS', 'PASSWORD_CHANGE',
+                                  'SUSPICIOUS_ACTIVITY', 'ADMIN_ACTION', 'ACCOUNT_SUSPENDED',
+                                  'DEVICE_LOST_OR_STOLEN', 'SECURITY_INCIDENT', 'OTHER'
+                              )),
+    last_refreshed_at         TIMESTAMP,
+    profile_id                UUID         NOT NULL,
+    CONSTRAINT fk_session_profile FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
+);
+
 -- Create Company table
 CREATE TABLE company (
     id UUID NOT NULL PRIMARY KEY,
@@ -200,3 +230,17 @@ CREATE INDEX idx_application_attachment_application ON application_attachment(ap
 CREATE INDEX idx_interview_attachment_interview_note ON interview_attachment(interview_note_id);
 CREATE INDEX idx_company_meta_data_meta_name ON company_meta_data(meta_name);
 CREATE INDEX idx_application_meta_data_meta_name ON application_meta_data(meta_name);
+
+-- Session indexes
+-- Unique index on access_token_id: O(1) lookup / existence check by access token
+CREATE UNIQUE INDEX idx_session_access_token_id       ON session(access_token_id);
+-- Profile sessions: fast retrieval of all sessions for a user
+CREATE INDEX idx_session_profile_id                   ON session(profile_id);
+-- Active sessions per user: most common query (auth validation path)
+CREATE INDEX idx_session_profile_status               ON session(profile_id, status);
+-- Token expiry maintenance: sweep expired rows efficiently
+CREATE INDEX idx_session_refresh_token_expiration     ON session(refresh_token_expiration);
+CREATE INDEX idx_session_access_token_expiration      ON session(access_token_expiration);
+-- Status-only: bulk revocation / audit queries
+CREATE INDEX idx_session_status                       ON session(status);
+
