@@ -7,6 +7,6 @@ data class AccessTokenResponseDTO(
 	val expiresIn: Long,
 	val refreshToken: String,
 	val refreshExpiresIn: Long,
-	val tokenType: String = SecurityUtils.TOKEN_TYPE_BEARER,
+	val tokenType: String = SecurityUtils.TYPE_TOKEN_BEARER,
 
 	)

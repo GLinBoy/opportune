@@ -8,6 +8,7 @@ interface ProfileService : GenericService<UUID, ProfileDTO>, UserDetailsService 
 	fun getCurrentProfile(): Optional<ProfileDTO>
 	fun register(profileDTO: ProfileDTO)
 	fun login(loginRequestDTO: LoginRequestDTO): AccessTokenResponseDTO
+	fun refreshToken(refreshToken: String): AccessTokenResponseDTO
 	fun confirmEmail(code: String)
 	fun initiatePasswordReset(passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO)
 	fun finalizePasswordReset(passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO)

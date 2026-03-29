@@ -1,7 +1,12 @@
-import { ref, onMounted, defineComponent, inject } from 'vue'
-import { type IProfile, type IPasswordChangeRequest } from '../../models'
+import { ref, computed, watch, onMounted, defineComponent, inject } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { type IProfile, type IPasswordChangeRequest, type ISession } from '../../models'
 import ProfileService from '../../services/profile.service'
-import ProfileForm from '../../components/ProfileForm.vue'
+import { useAuthStore } from '../../stores/auth.store'
+import ProfileInfoCard from '../../components/profile/ProfileInfoCard.vue'
+import PasswordSecurityCard from '../../components/profile/PasswordSecurityCard.vue'
+import SessionsCard from '../../components/profile/SessionsCard.vue'
+import ApiWebhookCard from '../../components/profile/ApiWebhookCard.vue'
 
 export interface Snackbar {
   show: boolean
@@ -13,11 +18,19 @@ export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ProfileView',
   components: {
-    ProfileForm
+    ProfileInfoCard,
+    PasswordSecurityCard,
+    SessionsCard,
+    ApiWebhookCard
   },
   setup() {
+    // Router
+    const route = useRoute()
+    const router = useRouter()
+
     // Services and dependencies
     const profileService = inject('profileService', () => new ProfileService())
+    const authStore = useAuthStore()
 
     // Main data state
     const profile = ref<IProfile | null>(null)
@@ -33,12 +46,21 @@ export default defineComponent({
     })
     const passwordFormValid = ref(false)
     const passwordChanging = ref(false)
-    const showCurrentPassword = ref(false)
-    const showNewPassword = ref(false)
-    const showConfirmPassword = ref(false)
 
     // Tab navigation
-    const activeTab = ref('info')
+    const tabRouteMap: Record<string, string> = {
+      info: 'profile-settings',
+      password: 'profile-security',
+      sessions: 'profile-sessions',
+      api: 'profile-api'
+    }
+    const activeTab = computed({
+      get: () => (route.meta.tab as string) || 'info',
+      set: (tab: string) => {
+        router.push({ name: tabRouteMap[tab] })
+      }
+    })
+    const highlightedSessionId = computed(() => (route.params.sessionId as string) || null)
     const tabs = [
       {
         value: 'info',
@@ -49,6 +71,11 @@ export default defineComponent({
         value: 'password',
         title: 'Password & Security',
         icon: 'mdi-lock'
+      },
+      {
+        value: 'sessions',
+        title: 'Sessions',
+        icon: 'mdi-devices'
       },
       {
         value: 'api',
@@ -126,13 +153,6 @@ export default defineComponent({
       }
     }
 
-    // Password validation rules
-    const passwordRules = {
-      required: (v: string) => !!v || 'Password is required',
-      minLength: (v: string) => v.length >= 8 || 'Password must be at least 8 characters',
-      match: (v: string) => v === passwordForm.value.newPassword || 'Passwords do not match'
-    }
-
     // Validate password form
     const validatePasswordForm = () => {
       const { currentPassword, newPassword, confirmPassword } = passwordForm.value
@@ -181,10 +201,71 @@ export default defineComponent({
       }
     }
 
+    // Sessions state
+    const sessions = ref<ISession[]>([])
+    const sessionsLoading = ref(false)
+    const terminatingSessionId = ref<string | null>(null)
+
+    // Load sessions
+    const loadSessions = async () => {
+      sessionsLoading.value = true
+      try {
+        const response = await profileService().getSessions({ size: 100, sort: ['loginAt,desc'] })
+        sessions.value = response.data
+      } catch (error) {
+        console.error('Failed to load sessions:', error)
+        showSnackbar('Failed to load sessions. Please try again.', 'error')
+      } finally {
+        sessionsLoading.value = false
+      }
+    }
+
+    // Terminate a session
+    const terminateSession = async (refreshTokenId: string) => {
+      // Check if this is the current session
+      const currentSession = sessions.value.find(s => {
+        const token = localStorage.getItem('accessToken')
+        if (!token) return false
+        try {
+          const parts = token.split('.')
+          if (parts.length !== 3) return false
+          const base64 = parts[1]!.split('-').join('+').split('_').join('/')
+          const payload = JSON.parse(atob(base64))
+          return payload.jti && s.accessTokenId === payload.jti
+        } catch {
+          return false
+        }
+      })
+      const isCurrentSession = currentSession?.refreshTokenId === refreshTokenId
+
+      terminatingSessionId.value = refreshTokenId
+      try {
+        await profileService().terminateSession(refreshTokenId)
+        if (isCurrentSession) {
+          await authStore.logout()
+          router.push({ name: 'login' })
+        } else {
+          showSnackbar('Session revoked successfully.', 'success')
+          await loadSessions()
+        }
+      } catch (error) {
+        console.error('Failed to terminate session:', error)
+        showSnackbar('Failed to revoke session. Please try again.', 'error')
+      } finally {
+        terminatingSessionId.value = null
+      }
+    }
+
     // Lifecycle
     onMounted(() => {
       loadProfile()
     })
+
+    watch(() => route.meta.tab, (newTab) => {
+      if (newTab === 'sessions' && sessions.value.length === 0) {
+        loadSessions()
+      }
+    }, { immediate: true })
 
     return {
       // Data
@@ -200,16 +281,19 @@ export default defineComponent({
       passwordForm,
       passwordFormValid,
       passwordChanging,
-      showCurrentPassword,
-      showNewPassword,
-      showConfirmPassword,
-      passwordRules,
+      // Sessions data
+      sessions,
+      sessionsLoading,
+      terminatingSessionId,
+      highlightedSessionId,
       // Methods
       showSnackbar,
       markAsModified,
       saveProfile,
       validatePasswordForm,
-      changePassword
+      changePassword,
+      loadSessions,
+      terminateSession
     }
   }
 })

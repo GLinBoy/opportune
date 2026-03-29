@@ -13,6 +13,9 @@ export const useAuthStore = defineStore('auth', () => {
   const expiresAt = ref<number | null>(
     localStorage.getItem('expiresAt') ? Number(localStorage.getItem('expiresAt')) : null
   )
+  const refreshExpiresAt = ref<number | null>(
+    localStorage.getItem('refreshExpiresAt') ? Number(localStorage.getItem('refreshExpiresAt')) : null
+  )
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -35,15 +38,18 @@ export const useAuthStore = defineStore('auth', () => {
       refreshToken.value = response.refreshToken
       tokenType.value = response.tokenType
 
-      // Calculate expiration time (current time + expiresIn seconds)
+      // Calculate expiration times (current time + expiresIn seconds)
       const expirationTime = Date.now() + response.expiresIn * 1000
       expiresAt.value = expirationTime
+      const refreshExpirationTime = Date.now() + response.refreshExpiresIn * 1000
+      refreshExpiresAt.value = refreshExpirationTime
 
       // Persist to localStorage
       localStorage.setItem('accessToken', response.accessToken)
       localStorage.setItem('refreshToken', response.refreshToken)
       localStorage.setItem('tokenType', response.tokenType)
       localStorage.setItem('expiresAt', expirationTime.toString())
+      localStorage.setItem('refreshExpiresAt', refreshExpirationTime.toString())
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Login failed'
       throw err
@@ -64,9 +70,25 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function refreshAccessToken(): Promise<void> {
+    if (!refreshToken.value || (refreshExpiresAt.value && Date.now() >= refreshExpiresAt.value)) {
+      clearAuth()
+      throw new Error('No refresh token available')
+    }
+
     try {
-      await authService.refreshToken()
-      // Token refresh will update the cookie/header automatically
+      const response: IAccessTokenResponse = await authService.refreshToken({ refreshToken: refreshToken.value })
+
+      // Update access token (refresh token is not rotated, so keep its expiry unchanged)
+      accessToken.value = response.accessToken
+      tokenType.value = response.tokenType
+
+      const expirationTime = Date.now() + response.expiresIn * 1000
+      expiresAt.value = expirationTime
+
+      // Persist to localStorage
+      localStorage.setItem('accessToken', response.accessToken)
+      localStorage.setItem('tokenType', response.tokenType)
+      localStorage.setItem('expiresAt', expirationTime.toString())
     } catch (err) {
       console.error('Token refresh failed:', err)
       clearAuth()
@@ -79,12 +101,14 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken.value = null
     tokenType.value = null
     expiresAt.value = null
+    refreshExpiresAt.value = null
     error.value = null
 
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('tokenType')
     localStorage.removeItem('expiresAt')
+    localStorage.removeItem('refreshExpiresAt')
   }
 
 

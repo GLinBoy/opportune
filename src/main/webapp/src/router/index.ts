@@ -129,6 +129,31 @@ const router = createRouter({
           path: '',
           name: 'profile-settings',
           component: ProfileView,
+          meta: { tab: 'info' }
+        },
+        {
+          path: 'security',
+          name: 'profile-security',
+          component: ProfileView,
+          meta: { tab: 'password' }
+        },
+        {
+          path: 'sessions',
+          name: 'profile-sessions',
+          component: ProfileView,
+          meta: { tab: 'sessions' }
+        },
+        {
+          path: 'sessions/:sessionId',
+          name: 'profile-session-detail',
+          component: ProfileView,
+          meta: { tab: 'sessions' }
+        },
+        {
+          path: 'api',
+          name: 'profile-api',
+          component: ProfileView,
+          meta: { tab: 'api' }
         },
       ],
     },
@@ -152,18 +177,36 @@ const router = createRouter({
 })
 
 // Navigation guard to protect routes
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const accessToken = localStorage.getItem('accessToken')
   const expiresAt = localStorage.getItem('expiresAt')
 
   // Check if token exists and is not expired
-  const isAuthenticated = accessToken && expiresAt && Date.now() < Number(expiresAt)
+  let isAuthenticated = accessToken && expiresAt && Date.now() < Number(expiresAt)
 
   // Public routes that don't require authentication
   const publicRoutes = ['login', 'register', 'forgot-password', 'password-reset', 'password-reset-page', 'not-found', 'email-confirmation', 'email-confirmation-page']
 
   // Check if the route requires authentication
   const requiresAuth = !publicRoutes.includes(to.name as string)
+
+  // If access token expired but refresh token is still valid, try refreshing
+  if (requiresAuth && !isAuthenticated) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    const refreshExpiresAt = localStorage.getItem('refreshExpiresAt')
+    const canRefresh = refreshToken && refreshExpiresAt && Date.now() < Number(refreshExpiresAt)
+
+    if (canRefresh) {
+      try {
+        const { useAuthStore } = await import('../stores/auth.store')
+        const authStore = useAuthStore()
+        await authStore.refreshAccessToken()
+        isAuthenticated = true
+      } catch {
+        isAuthenticated = false
+      }
+    }
+  }
 
   if (requiresAuth && !isAuthenticated) {
     // Redirect to login if not authenticated

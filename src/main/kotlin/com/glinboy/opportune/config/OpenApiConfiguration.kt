@@ -43,7 +43,7 @@ class OpenApiConfiguration {
 					SecurityScheme()
 						.name(BEARER_AUTHENTICATION_NAME)
 						.type(SecurityScheme.Type.HTTP)
-						.scheme(SecurityUtils.TOKEN_TYPE_BEARER)
+						.scheme(SecurityUtils.TYPE_TOKEN_BEARER)
 						.bearerFormat("JWT")
 				)
 		)

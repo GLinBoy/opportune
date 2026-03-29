@@ -11,9 +11,9 @@ import java.util.*
 
 object SecurityUtils {
 	val JWT_ALGORITHM = MacAlgorithm.HS512
-	const val TOKEN_TYPE_BEARER = "Bearer"
-	const val TYPE_CLAIM = "typ"
+
 	const val CLIENT_ID_CLAIM = "azp"
+	const val TYPE_CLAIM = "typ"
 	const val SESSION_STATE_CLAIM = "session_state"
 	const val NAME_CLAIM = "name"
 	const val FORENAME_CLAIM = "forename"
@@ -21,6 +21,12 @@ object SecurityUtils {
 	const val EMAIL_CLAIM = "email"
 	const val AUTHORITIES_CLAIM = "roles"
 	const val EMAIL_VERIFIED_CLAIM = "email_verified"
+
+	const val AUDIENCE_ACCOUNT = "account"
+	const val AUDIENCE_SECURITY = "security"
+
+	const val TYPE_TOKEN_BEARER = "Bearer"
+	const val TYPE_TOKEN_REFRESH = "Refresh"
 
 	fun getCurrentUserLogin(): String? =
 		extractPrincipal(SecurityContextHolder.getContext().authentication)

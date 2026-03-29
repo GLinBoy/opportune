@@ -3,6 +3,7 @@ package com.glinboy.opportune.config
 import com.glinboy.opportune.security.SecurityUtils
 import com.nimbusds.jose.jwk.source.ImmutableSecret
 import com.nimbusds.jose.util.Base64
+import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -54,6 +55,12 @@ class SecurityJwtConfiguration(private val properties: ApplicationProperties) {
 
 	@Bean
 	fun jwtEncoder(): JwtEncoder = NimbusJwtEncoder(ImmutableSecret(getSecretKey()))
+
+	@Bean
+	fun userAgentAnalyzer(): UserAgentAnalyzer = UserAgentAnalyzer.newBuilder()
+		.withCache(10_000)
+		.withFields("DeviceClass", "OperatingSystemName", "AgentName")
+		.build()
 
 	private fun getSecretKey(): SecretKey {
 		val keyBytes: ByteArray = Base64.from(properties.security.authentication.jwt.base64Secret).decode()

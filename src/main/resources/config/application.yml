@@ -5,14 +5,73 @@ spring:
     name: opportune
   lifecycle:
     timeout-per-shutdown-phase: 30s
+  threads:
+    virtual:
+      enabled: true                   # Enable virtual threads (Java 21+) for better throughput
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: none                  # Flyway manages schema; never let Hibernate touch it
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 25              # Batch INSERTs/UPDATEs for better write performance
+        order_inserts: true           # Group inserts by entity type to maximise batching
+        order_updates: true           # Same for updates
+        generate_statistics: false    # Keep disabled in prod; enable per-request in dev when profiling
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false # Be lenient with incoming JSON (API evolution)
+    default-property-inclusion: non_null # Don't serialise null fields
+    time-zone: UTC                      # Canonical timezone for all date/time values
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=600s  # Tune per cache size expectations
+  transaction:
+    default-timeout: 30s              # Prevent runaway transactions
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 16
+        queue-capacity: 10000
+      thread-name-prefix: opportune-exec-
+    scheduling:
+      pool:
+        size: 2
+      thread-name-prefix: opportune-sched-
 
 server:
   shutdown: graceful
   include-stacktrace: never
+  compression:
+    enabled: true                     # gzip responses automatically
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml
+    min-response-size: 1024           # Only compress responses larger than 1 KB
+  tomcat:
+    connection-timeout: 5s            # Drop idle/slow connections quickly
+    threads:
+      max: 200
+      min-spare: 10
 
-springdoc:
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus  # Wildcard only in dev (see application-dev.yml)
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true                 # /actuator/health/liveness and /readiness for Kubernetes
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+springdoc:              # Don't expose actuator ops in Swagger UI
   swagger-ui:
     docExpansion: none
     tags-sorter: alpha
@@ -37,5 +96,6 @@ application:
     authentication:
       jwt:
         base64-secret: \${OPPORTUNE_JWT_SECRET}
-        token-validity-in-seconds: 86400
-        token-validity-in-seconds-for-remember-me: 2592000
+        token-validity-in-seconds: 86400                    # 1 day
+        token-validity-in-seconds-for-remember-me: 2592000  # 30 days
+        refresh-token-validity-in-seconds: 2592000          # 30 days

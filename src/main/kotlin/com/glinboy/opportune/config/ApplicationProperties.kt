@@ -33,6 +33,7 @@ class ApplicationProperties {
 	data class Jwt(
 		var base64Secret: String? = null,
 		var tokenValidityInSeconds: Long? = null,
-		var tokenValidityInSecondsForRememberMe: Long? = null
+		var tokenValidityInSecondsForRememberMe: Long? = null,
+		var refreshTokenValidityInSeconds: Long? = null
 	)
 }
