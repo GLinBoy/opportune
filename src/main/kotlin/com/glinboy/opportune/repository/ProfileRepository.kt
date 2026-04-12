@@ -1,6 +1,7 @@
 package com.glinboy.opportune.repository
 
 import com.glinboy.opportune.entity.Profile
+import com.glinboy.opportune.enums.AccountStatus
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
@@ -10,7 +11,11 @@ import java.util.*
 
 @Repository
 interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile> {
+	fun findOneByIdAndStatus(id: UUID, status: AccountStatus): Optional<Profile>
+
 	fun findOneByEmailIgnoreCase(email: String): Optional<Profile>
+
+	fun findOneByEmailIgnoreCaseAndStatus(email: String, status: AccountStatus): Optional<Profile>
 
 	@Modifying
 	@Query("UPDATE Profile p SET p.emailVerification = :emailVerification WHERE p.id = :id")
