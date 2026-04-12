@@ -42,7 +42,7 @@ class ProfileResource(profileService: ProfileService, private val sessionService
 	}
 
 	@DeleteMapping("/sessions/{refreshTokenId}")
-	fun terminateSession(@PathVariable refreshTokenId: UUID): ResponseEntity<Void> {
+	fun terminateSession(@PathVariable refreshTokenId: UUID): ResponseEntity<Unit> {
 		log.debug("REST request to terminate session with refresh token ID: {}", refreshTokenId)
 		sessionService.terminateSession(refreshTokenId)
 		return ResponseEntity.noContent().build()
@@ -51,19 +51,19 @@ class ProfileResource(profileService: ProfileService, private val sessionService
 	@PutMapping("/password/change")
 	fun changePassword(
 		@Valid @RequestBody passwordUpdateRequestDTO: PasswordUpdateRequestDTO
-	): ResponseEntity<Void> {
+	): ResponseEntity<Unit> {
 		service.changePassword(passwordUpdateRequestDTO)
 		return ResponseEntity.ok().build()
 	}
 
 	@PostMapping("/email/verify/request")
-	fun verifyEmail(): ResponseEntity<Void> {
+	fun verifyEmail(): ResponseEntity<Unit> {
 		// TODO: Implement resend activation email
 		return ResponseEntity.ok().build()
 	}
 
 	@PutMapping("/email/confirm")
-	fun confirmEmail(@RequestParam code: String): ResponseEntity<Void> {
+	fun confirmEmail(@RequestParam code: String): ResponseEntity<Unit> {
 			service.confirmEmail(code)
 			return ResponseEntity.ok().build()
 	}
