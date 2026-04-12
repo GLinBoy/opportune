@@ -1,8 +1,10 @@
 package com.glinboy.opportune.service.impl
 
+import com.glinboy.opportune.config.ApplicationProperties
 import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.enums.AccountStatus
+import com.glinboy.opportune.enums.RevocationReason
 import com.glinboy.opportune.enums.Role
 import com.glinboy.opportune.mapper.ProfileMapper
 import com.glinboy.opportune.repository.ProfileRepository
@@ -10,9 +12,11 @@ import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.JwtTokenService
 import com.glinboy.opportune.service.MailService
 import com.glinboy.opportune.service.ProfileService
+import com.glinboy.opportune.service.SessionService
 import com.glinboy.opportune.service.VerificationCodeService
 import com.glinboy.opportune.util.UUIDBase64
 import jakarta.transaction.Transactional
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
@@ -32,7 +36,9 @@ class ProfileServiceImpl(
 	private val jwtDecoder: JwtDecoder,
 	private val passwordEncoder: PasswordEncoder,
 	private val verificationCodeService: VerificationCodeService,
-	private val mailService: MailService
+	private val mailService: MailService,
+	private val sessionService: SessionService,
+	private val properties: ApplicationProperties
 ) :
 	GenericServiceImpl<UUID, Profile, ProfileDTO, ProfileRepository,
 		ProfileMapper>(profileRepository, mapper), ProfileService {
@@ -106,56 +112,86 @@ class ProfileServiceImpl(
 
 	@Transactional
 	override fun confirmEmail(code: String) {
-		verificationCodeService.findByEmailVerification(UUIDBase64.fromBase64(code))
+		val id: UUID = UUIDBase64.fromBase64(code)
+		verificationCodeService.findByEmailVerification(id)
 			.map { vk ->
-				repository.updateEmailVerification(vk.profileId!!, true)
-				verificationCodeService.deleteAllProfileEmailVerification(vk.profileId!!)
+				vk.createdDate?.let {
+					if (it.plus(properties.security.validationCodeDuration.emailVerify)
+							.isBefore(Date().toInstant())) {
+						verificationCodeService.delete(id)
+						throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code has expired")
+					}
+				} ?: throw IllegalStateException("createdDate must not be null on a verified reset token")
+				vk.profileId?.let { profileId ->
+					repository.updateEmailVerification(profileId, true)
+					verificationCodeService.deleteAllProfileEmailVerification(profileId)
+				} ?: throw IllegalStateException("profileId must not be null on a verified email token")
 			}
 			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code not found") }
 	}
 
+	@Transactional
 	override fun initiatePasswordReset(passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO) {
-		repository.findOneByEmailIgnoreCase(passwordResetInitiationRequestDTO.email)
+		repository.findOneByEmailIgnoreCaseAndStatus(passwordResetInitiationRequestDTO.email, AccountStatus.ACTIVE)
 			.map { profile ->
-				verificationCodeService.createPasswordResetCode(profile.id!!).let { vk ->
-					mailService.sendPasswordResetMail(
-						mapper.toDto(profile),
-						UUIDBase64.toBase64(vk!!.id!!)
-					)
-				}
+				profile.id?.let { profileId ->
+					verificationCodeService.createPasswordResetCode(profileId)?.let { vk ->
+							vk.id?.let { id ->
+								mailService.sendPasswordResetMail(mapper.toDto(profile),
+									UUIDBase64.toBase64(id))
+							} ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Password reset code not found")
+					} ?: throw IllegalStateException("Failed to create password reset code")
+				} ?: throw IllegalStateException("profileId must not be null on an active profile")
 			}
 	}
 
 	@Transactional
 	override fun finalizePasswordReset(passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO) {
-		verificationCodeService.findByPasswordReset(UUIDBase64.fromBase64(passwordResetFinalizationRequestDTO.code))
+		val id: UUID = UUIDBase64.fromBase64(passwordResetFinalizationRequestDTO.code)
+		verificationCodeService.findByPasswordReset(id)
 			.map { vk ->
+				vk.createdDate?.let {
+					if (it.plus(properties.security.validationCodeDuration.passwordReset)
+						.isBefore(Date().toInstant())) {
+						verificationCodeService.delete(id)
+						throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code has expired")
+					}
+				} ?: throw IllegalStateException("createdDate must not be null on a verified reset token")
 				vk.profileId?.let { profileId ->
 					repository.findById(profileId).map { profile ->
 						passwordEncoder.encode(passwordResetFinalizationRequestDTO.newPassword)?.let { enc ->
 							repository.updatePassword(profileId, enc)
 							verificationCodeService.deleteAllProfilePasswordReset(profileId)
+							sessionService.terminateAllSessionForProfile(profileId, RevocationReason.PASSWORD_RESET)
 							mailService.sendPasswordResetSuccessEmail(mapper.toDto(profile))
 						} ?: throw IllegalStateException("Failed to encode new password")
 					}
-				}?: throw IllegalStateException("profileId must not be null on a verified reset token")
+				} ?: throw IllegalStateException("profileId must not be null on a verified reset token")
 			}
+			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification code not found") }
 	}
 
 	@Transactional
 	override fun changePassword(passwordUpdateRequestDTO: PasswordUpdateRequestDTO) {
 		val currentUserId = UUID.fromString(SecurityUtils.getCurrentUserLogin())
-		repository.findById(currentUserId)
-			.filter {
-				passwordEncoder.matches(passwordUpdateRequestDTO.currentPassword, it.password)
+		SecurityUtils.getCurrentUserLogin()
+			?.let { UUID::fromString }
+			?.let { profileId ->
+				repository.findOneByIdAndStatus(currentUserId, AccountStatus.ACTIVE)
+					.filter {
+						passwordEncoder.matches(passwordUpdateRequestDTO.currentPassword, it.password)
+					}
+					.map { profile ->
+						if(passwordEncoder.matches(passwordUpdateRequestDTO.newPassword, profile.password)) {
+							throw ResponseStatusException(HttpStatus.BAD_REQUEST, "New password must be different from the current password")
+						}
+						repository.updatePassword(profile.id!!,
+							passwordEncoder.encode(passwordUpdateRequestDTO.newPassword)!!)
+						sessionService.terminateAllOtherSessions(RevocationReason.PASSWORD_CHANGE)
+						mailService.sendPasswordResetSuccessEmail(mapper.toDto(profile))
+					}
+					.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect") }
 			}
-			.map { profile ->
-				repository.updatePassword(
-					profile.id!!,
-					passwordEncoder.encode(passwordUpdateRequestDTO.newPassword)!!
-				)
-			}
-			.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect") }
 	}
 
 	override fun currentUserSpecification(): Specification<Profile> =
@@ -163,8 +199,10 @@ class ProfileServiceImpl(
 
 	override fun validateOwnership(profileDTO: ProfileDTO) {
 		if (profileDTO.id != null && profileDTO.id != UUID.fromString(SecurityUtils.getCurrentUserLogin())) {
-			throw ResponseStatusException(HttpStatus.FORBIDDEN,
-				"You do not have permission to access this resource")
+			throw ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"You do not have permission to access this resource"
+			)
 		}
 	}
 }
