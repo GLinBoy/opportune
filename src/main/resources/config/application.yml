@@ -93,6 +93,9 @@ application:
         description: Application URL
   security:
     content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' https://www.gravatar.com data:; font-src 'self' https://fonts.gstatic.com data:"
+    validation-code-duration:
+      email-verify: 30d
+      password-reset: 15m
     authentication:
       jwt:
         base64-secret: \${OPPORTUNE_JWT_SECRET}
