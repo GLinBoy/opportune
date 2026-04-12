@@ -56,7 +56,7 @@ CREATE TABLE session (
     login_at                  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     revoked_at                TIMESTAMP,
     revocation_reason         VARCHAR(50)  CHECK (revocation_reason IN (
-                                  'USER_INITIATED', 'USER_ALL_SESSIONS', 'PASSWORD_CHANGE',
+                                  'USER_INITIATED', 'USER_ALL_SESSIONS', 'PASSWORD_CHANGE', 'PASSWORD_RESET',
                                   'SUSPICIOUS_ACTIVITY', 'ADMIN_ACTION', 'ACCOUNT_SUSPENDED',
                                   'DEVICE_LOST_OR_STOLEN', 'SECURITY_INCIDENT', 'OTHER'
                               )),
