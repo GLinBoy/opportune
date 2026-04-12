@@ -40,7 +40,7 @@ class AuthResource(
 
 	@PostMapping("/auth/logout")
 	@SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
-	fun logout(): ResponseEntity<Void> {
+	fun logout(): ResponseEntity<Unit> {
 		log.debug("REST request to terminate current session")
 		sessionService.terminateCurrentSession()
 		return ResponseEntity.noContent().build()
@@ -49,7 +49,7 @@ class AuthResource(
 	@PostMapping("/auth/password/reset/init")
 	fun forgetPassword(
 		@Valid @RequestBody passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO
-	): ResponseEntity<Void> {
+	): ResponseEntity<Unit> {
 		profileService.initiatePasswordReset(passwordResetInitiationRequestDTO)
 		return ResponseEntity.ok().build()
 	}
@@ -57,7 +57,7 @@ class AuthResource(
 	@PutMapping("/auth/password/reset/finish")
 	fun resetPassword(
 		@Valid @RequestBody passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO
-	): ResponseEntity<Void> {
+	): ResponseEntity<Unit> {
 		profileService.finalizePasswordReset(passwordResetFinalizationRequestDTO)
 		return ResponseEntity.ok().build()
 	}
