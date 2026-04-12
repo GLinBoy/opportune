@@ -76,6 +76,20 @@ class SessionServiceImpl(
 		revokeSession(session)
 	}
 
+	override fun terminateAllOtherSessions(reason: RevocationReason) {
+		val jwt = SecurityContextHolder.getContext().authentication?.principal as? Jwt
+			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authenticated session found")
+		val accessTokenId = jwt.id?.let(UUID::fromString)
+			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access token carries no 'jti' claim")
+		val session = findByAccessTokenId(accessTokenId)
+			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "No active session found for the provided access token")
+		repository.revokeAllSessionsExcept(session.profileId!!, reason, session.refreshTokenId!!)
+	}
+
+	override fun terminateAllSessionForProfile(profileId: UUID, reason: RevocationReason) {
+		repository.revokeAllSessions(profileId, reason)
+	}
+
 	private fun revokeSession(session: SessionDTO) {
 		if (session.profileId != SecurityUtils.getCurrentUserLoginID()) {
 			throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to terminate this session")
