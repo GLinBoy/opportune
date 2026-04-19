@@ -6,6 +6,7 @@ import com.glinboy.opportune.dto.ProfileDTO
 import com.glinboy.opportune.dto.SessionDTO
 import com.glinboy.opportune.enums.SessionStatus
 import com.glinboy.opportune.security.SecurityUtils
+import com.glinboy.opportune.service.GeoLocationService
 import com.glinboy.opportune.service.JwtTokenService
 import com.glinboy.opportune.service.SessionService
 import jakarta.servlet.http.HttpServletRequest
@@ -27,7 +28,8 @@ class SymmetricJwtTokenServiceImpl(
 	private val properties: ApplicationProperties,
 	private val sessionService: SessionService,
 	private val request: HttpServletRequest,
-	private val userAgentAnalyzer: UserAgentAnalyzer
+	private val userAgentAnalyzer: UserAgentAnalyzer,
+	private val geoLocationService: GeoLocationService
 ): JwtTokenService {
 
 	override fun generateTokens(profileDTO: ProfileDTO, rememberMe: Boolean): AccessTokenResponseDTO {
@@ -43,11 +45,12 @@ class SymmetricJwtTokenServiceImpl(
 		val accessToken = encodeClaims(accessTokenClaims)
 		val refreshToken = encodeClaims(refreshTokenClaims)
 
-		val clientIp = request.getHeader("X-Forwarded-For")
+		val clientIp = request.getHeader(properties.web.forwardedForHeader)
 			?.split(",")?.firstOrNull()?.trim()
 			?: request.remoteAddr
 		val clientAgent = request.getHeader("User-Agent")
 		val deviceId = request.getHeader("X-Device-Id")
+		val clientGeo = geoLocationService.format(geoLocationService.lookup(clientIp))
 
 		val (deviceType, os, browser, isMobile) = clientAgent
 			?.let { userAgentAnalyzer.parse(it) }
@@ -69,6 +72,7 @@ class SymmetricJwtTokenServiceImpl(
 				lastActiveAt = now,
 				clientAgent = clientAgent,
 				clientIp = clientIp,
+				clientGeo = clientGeo,
 				deviceId = deviceId,
 				deviceType = deviceType,
 				os = os,

@@ -772,3 +772,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/sbt,vim,java,emacs,linux,macos,maven,gradle,kotlin,eclipse,windows,intellij,netbeans,intellij+all,intellij+iml,visualstudiocode,vue,vuejs,node
+
+
+/src/main/resources/GeoLite2-City.mmdb

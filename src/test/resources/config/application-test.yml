@@ -34,6 +34,8 @@ application:
         base64-secret: dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLXB1cnBvc2VzLW9ubHktbXVzdC1iZS1hdC1sZWFzdC01MTItYml0cy1sb25n
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
+  geoip:
+    enabled: false
 
 logging:
   level:

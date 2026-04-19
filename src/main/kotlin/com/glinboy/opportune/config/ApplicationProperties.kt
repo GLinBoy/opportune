@@ -8,6 +8,17 @@ class ApplicationProperties {
 	var info: Info = Info()
 	var security: Security = Security()
 	var files: Files = Files()
+	var geoip: GeoIp = GeoIp()
+	var web: Web = Web()
+
+	data class Web(
+		var forwardedForHeader: String = "X-Forwarded-For"
+	)
+
+	data class GeoIp(
+		var dbPath: String = "classpath:GeoLite2-City.mmdb",
+		var enabled: Boolean = true
+	)
 
 	data class Files(var basePath: String = "./uploads")
 

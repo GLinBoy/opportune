@@ -76,6 +76,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.0")
 	implementation("nl.basjes.parse.useragent:yauaa:7.28.1")
+	implementation("com.maxmind.geoip2:geoip2:4.2.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
