@@ -83,10 +83,7 @@
                   <v-icon icon="mdi-ip-network" size="x-small" class="mr-1" />
                   {{ session.clientIp }}
                 </span>
-                <span v-if="session.clientGeo" class="ml-3">
-                  <v-icon icon="mdi-map-marker" size="x-small" class="mr-1" />
-                  {{ session.clientGeo }}
-                </span>
+                <span v-if="session.clientGeo" class="ml-3">{{ session.clientGeo }}</span>
               </div>
               <div class="text-body-2 text-medium-emphasis mt-1">
                 <span v-if="session.loginAt">
