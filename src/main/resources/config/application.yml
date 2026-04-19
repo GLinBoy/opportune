@@ -80,6 +80,11 @@ springdoc:              # Don't expose actuator ops in Swagger UI
 application:
   files:
     base-path: \${OPPORTUNE_FILES_PATH:./uploads}
+  geoip:
+    db-path: \${OPPORTUNE_GEOIP_DB_PATH:classpath:GeoLite2-City.mmdb}
+    enabled: true
+  web:
+    forwarded-for-header: \${OPPORTUNE_FORWARDED_FOR_HEADER:X-Forwarded-For}
   info:
     name: \${spring.application.name}
     version: ${version}
