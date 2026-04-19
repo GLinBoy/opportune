@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import type { AxiosResponse } from 'axios'
 import type { IProfile, ILoginRequest, IAccessTokenResponse, IRefreshTokenRequest, IPasswordResetInitiationRequest, IPasswordResetFinalizationRequest } from '../models'
+import { getDeviceId } from '../utils/fingerprint'
 
 const AUTH_API_URL = '/api/auth'
 
@@ -16,10 +17,11 @@ const authClient = axios.create({
 
 export default class AuthService {
 
-  login(payload: ILoginRequest): Promise<IAccessTokenResponse> {
+  async login(payload: ILoginRequest): Promise<IAccessTokenResponse> {
+    const deviceId = await getDeviceId()
     return new Promise<IAccessTokenResponse>((resolve, reject) => {
       authClient
-        .post(`${AUTH_API_URL}/login`, payload)
+        .post(`${AUTH_API_URL}/login`, payload, { headers: { 'X-Device-Id': deviceId } })
         .then((res: AxiosResponse<IAccessTokenResponse>) => { resolve(res.data) })
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
