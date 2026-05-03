@@ -15,8 +15,6 @@ import com.glinboy.opportune.service.ProfileService
 import com.glinboy.opportune.service.SessionService
 import com.glinboy.opportune.service.VerificationCodeService
 import com.glinboy.opportune.util.UUIDBase64
-import jakarta.transaction.Transactional
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
@@ -25,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
@@ -53,6 +52,7 @@ class ProfileServiceImpl(
 			.map { UserSecurityDTO(it) }
 			.orElseThrow { UsernameNotFoundException("User not found") }
 
+	@Transactional
 	override fun register(profileDTO: ProfileDTO) {
 		repository.findOneByEmailIgnoreCase(profileDTO.email!!.lowercase())
 			.ifPresentOrElse(
