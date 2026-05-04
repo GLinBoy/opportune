@@ -14,14 +14,15 @@
       </v-breadcrumbs>
 
       <!-- Page Header -->
-      <v-row class="mb-6" align="center">
-        <v-col>
-          <h1 class="text-h4 font-weight-bold">Profile Settings</h1>
-          <p class="text-subtitle-1 text-medium-emphasis ma-0">
-            Manage your account settings and profile information
-          </p>
-        </v-col>
-      </v-row>
+      <div class="d-flex align-center mb-6" style="gap: 12px">
+        <v-icon icon="mdi-account-cog" size="48" />
+        <div class="d-flex flex-column">
+          <span class="text-headline-small font-weight-bold">Profile Settings</span>
+          <span class="text-label-medium text-medium-emphasis"
+            >Manage your account settings and profile information</span
+          >
+        </div>
+      </div>
 
       <!-- Settings Layout (GitHub Style) -->
       <v-row>

@@ -2,9 +2,12 @@
   <div>
     <!-- Page Header -->
     <div class="d-flex justify-space-between align-center mb-6">
-      <div>
-        <h1 class="text-h4 font-weight-bold">Applications</h1>
-        <p class="text-subtitle-1 text-medium-emphasis">Manage your job applications</p>
+      <div class="d-flex align-center" style="gap: 12px">
+        <v-icon icon="mdi-briefcase" size="48" />
+        <div class="d-flex flex-column">
+          <span class="text-headline-small font-weight-bold">Applications</span>
+          <span class="text-label-medium text-medium-emphasis">Manage your job applications</span>
+        </div>
       </div>
       <div class="d-flex align-self-center" style="gap: 16px">
         <v-autocomplete
@@ -26,11 +29,7 @@
           @update:model-value="handleApplicationSelect"
         >
           <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :title="item.name"
-              :subtitle="item.status"
-            >
+            <v-list-item v-bind="props" :title="item.name" :subtitle="item.status">
               <template v-slot:prepend>
                 <v-icon
                   :color="getSearchResultStatusColor(item.status)"
@@ -77,7 +76,6 @@
         class="elevation-1 primary-header"
         @click:row="handleRowClick"
       >
-
         <!-- Title Column -->
         <template v-slot:[`item.title`]="{ item }">
           <v-container fluid class="pa-0">
@@ -152,7 +150,8 @@
             :color="getApplicationStatusColor(value)"
             :text="getApplicationStatusDisplay(value)"
             size="x-small"
-            :prepend-icon="getApplicationStatusIcon(value)" />
+            :prepend-icon="getApplicationStatusIcon(value)"
+          />
         </template>
 
         <!-- Actions Column -->
@@ -189,16 +188,13 @@
     </v-snackbar>
 
     <!-- Confirm Delete Dialog -->
-    <v-dialog
-      v-model="confirmDeleteDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>{{ applicationToDelete?.title }}</strong>?
-          This action cannot be undone.
+          <strong>{{ applicationToDelete?.title }}</strong
+          >? This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
