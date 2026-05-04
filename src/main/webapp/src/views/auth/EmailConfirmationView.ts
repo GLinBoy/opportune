@@ -1,9 +1,13 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import ProfileService from '../../services/profile.service'
+import AppLogo from '@/components/AppLogo.vue'
 
 export default {
   name: 'EmailConfirmationView',
+  components: {
+    AppLogo,
+  },
   setup() {
     const router = useRouter()
     const route = useRoute()
