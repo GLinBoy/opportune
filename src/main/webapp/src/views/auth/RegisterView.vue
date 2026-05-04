@@ -1,170 +1,171 @@
 <template>
-  <div class="register-container">
-    <div class="register-card">
-      <div class="register-header">
-        <h1>Create Account</h1>
-        <p>Join us and start tracking your job applications</p>
-      </div>
+  <v-container class="d-flex align-center justify-center" fluid style="min-height: 100vh">
+    <v-row align="center" justify="center" class="w-100">
+      <v-col cols="12" sm="8" md="6" lg="5">
+        <v-card rounded="lg" elevation="8">
+          <v-card-text class="text-center pt-6 pb-0">
+            <AppLogo />
+          </v-card-text>
+          <v-card-title class="text-h5 font-weight-bold text-center"> Create Account </v-card-title>
+          <v-card-subtitle class="text-center pb-2" style="white-space: normal">
+            Join us and start tracking your job applications
+          </v-card-subtitle>
 
-      <form @submit.prevent="handleRegister" class="register-form">
-        <!-- Name Fields -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="forename">
-              First Name<span class="required">*</span>
-            </label>
-            <input
-              id="forename"
-              v-model="registerForm.forename"
-              type="text"
-              placeholder="Enter your first name"
-              required
-              :disabled="isLoading"
-              autocomplete="given-name"
-            />
-            <span v-if="errors.forename" class="error-message">{{ errors.forename }}</span>
-          </div>
+          <v-card-text>
+            <v-alert v-if="registerSuccess" type="success" variant="tonal" class="mb-4">
+              Account created successfully! Redirecting to login...
+            </v-alert>
 
-          <div class="form-group">
-            <label for="surname">
-              Last Name<span class="required">*</span>
-            </label>
-            <input
-              id="surname"
-              v-model="registerForm.surname"
-              type="text"
-              placeholder="Enter your last name"
-              required
-              :disabled="isLoading"
-              autocomplete="family-name"
-            />
-            <span v-if="errors.surname" class="error-message">{{ errors.surname }}</span>
-          </div>
-        </div>
+            <v-alert v-if="registerError" type="error" variant="tonal" class="mb-4">
+              {{ registerError }}
+            </v-alert>
 
-        <!-- Email -->
-        <div class="form-group">
-          <label for="email">
-            Email<span class="required">*</span>
-          </label>
-          <input
-            id="email"
-            v-model="registerForm.email"
-            type="email"
-            placeholder="Enter your email"
-            required
-            :disabled="isLoading"
-            autocomplete="email"
-          />
-          <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-        </div>
+            <v-form @submit.prevent="handleRegister">
+              <v-row dense>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="registerForm.forename"
+                    label="First Name *"
+                    type="text"
+                    placeholder="Enter your first name"
+                    :error-messages="errors.forename"
+                    :disabled="isLoading"
+                    autocomplete="given-name"
+                    variant="outlined"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-account-outline"
+                    required
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="registerForm.surname"
+                    label="Last Name *"
+                    type="text"
+                    placeholder="Enter your last name"
+                    :error-messages="errors.surname"
+                    :disabled="isLoading"
+                    autocomplete="family-name"
+                    variant="outlined"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-account-outline"
+                    required
+                  />
+                </v-col>
+              </v-row>
 
-        <!-- Optional Fields -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="jobTitle">
-              Job Title<span class="optional">(optional)</span>
-            </label>
-            <input
-              id="jobTitle"
-              v-model="registerForm.jobTitle"
-              type="text"
-              placeholder="e.g., Software Engineer"
-              :disabled="isLoading"
-              autocomplete="organization-title"
-            />
-          </div>
+              <v-text-field
+                v-model="registerForm.email"
+                label="Email *"
+                type="email"
+                placeholder="Enter your email"
+                :error-messages="errors.email"
+                :disabled="isLoading"
+                autocomplete="email"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-email-outline"
+                class="mb-1"
+                required
+              />
 
-          <div class="form-group">
-            <label for="location">
-              Location<span class="optional">(optional)</span>
-            </label>
-            <input
-              id="location"
-              v-model="registerForm.location"
-              type="text"
-              placeholder="e.g., New York, USA"
-              :disabled="isLoading"
-              autocomplete="address-level2"
-            />
-          </div>
-        </div>
+              <v-row dense>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="registerForm.jobTitle"
+                    label="Job Title"
+                    type="text"
+                    placeholder="e.g., Software Engineer"
+                    :disabled="isLoading"
+                    autocomplete="organization-title"
+                    variant="outlined"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-briefcase-outline"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="registerForm.location"
+                    label="Location"
+                    type="text"
+                    placeholder="e.g., New York, USA"
+                    :disabled="isLoading"
+                    autocomplete="address-level2"
+                    variant="outlined"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-map-marker-outline"
+                  />
+                </v-col>
+              </v-row>
 
-        <!-- Password Fields -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="password">
-              Password<span class="required">*</span>
-            </label>
-            <input
-              id="password"
-              v-model="registerForm.password"
-              type="password"
-              placeholder="Create a password"
-              required
-              :disabled="isLoading"
-              autocomplete="new-password"
-            />
-            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
-          </div>
+              <v-text-field
+                v-model="registerForm.password"
+                label="Password *"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Create a password"
+                :error-messages="errors.password"
+                :disabled="isLoading"
+                autocomplete="new-password"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-lock-outline"
+                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                @click:append-inner="showPassword = !showPassword"
+                class="mb-1"
+                required
+              />
 
-          <div class="form-group">
-            <label for="confirmPassword">
-              Confirm Password<span class="required">*</span>
-            </label>
-            <input
-              id="confirmPassword"
-              v-model="registerForm.confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              required
-              :disabled="isLoading"
-              autocomplete="new-password"
-            />
-            <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>
-          </div>
-        </div>
+              <v-text-field
+                v-model="registerForm.confirmPassword"
+                label="Confirm Password *"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                placeholder="Confirm your password"
+                :error-messages="errors.confirmPassword"
+                :disabled="isLoading"
+                autocomplete="new-password"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-lock-check-outline"
+                :append-inner-icon="showConfirmPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                @click:append-inner="showConfirmPassword = !showConfirmPassword"
+                class="mb-1"
+                required
+              />
 
-        <!-- Password Requirements -->
-        <div class="password-requirements">
-          <strong>Password must contain:</strong>
-          <ul>
-            <li>At least 8 characters</li>
-            <li>At least one uppercase letter</li>
-            <li>At least one lowercase letter</li>
-            <li>At least one number</li>
-          </ul>
-        </div>
+              <v-card variant="tonal" color="surface-variant" rounded="lg" class="pa-3 mb-4">
+                <p class="text-body-2 font-weight-bold mb-1">Password must contain:</p>
+                <ul class="text-body-2 pl-4">
+                  <li>At least 8 characters</li>
+                  <li>At least one uppercase letter</li>
+                  <li>At least one lowercase letter</li>
+                  <li>At least one number</li>
+                </ul>
+              </v-card>
 
-        <!-- Success Message -->
-        <div v-if="registerSuccess" class="alert alert-success">
-          <span class="alert-icon">✓</span>
-          <span>Account created successfully! Redirecting to login...</span>
-        </div>
+              <v-btn
+                type="submit"
+                color="primary"
+                variant="elevated"
+                :loading="isLoading"
+                :disabled="registerSuccess"
+                block
+                size="large"
+              >
+                {{ registerSuccess ? 'Account Created!' : 'Create Account' }}
+              </v-btn>
+            </v-form>
+          </v-card-text>
 
-        <!-- Error Message -->
-        <div v-if="registerError" class="alert alert-error">
-          <span class="alert-icon">⚠</span>
-          <span>{{ registerError }}</span>
-        </div>
+          <v-divider />
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn-register" :disabled="isLoading || registerSuccess">
-          <span v-if="!isLoading && !registerSuccess">Create Account</span>
-          <span v-else-if="registerSuccess">Account Created!</span>
-          <span v-else>Creating Account...</span>
-        </button>
-      </form>
-
-      <!-- Footer -->
-      <div class="register-footer">
-        <span>Already have an account?</span>
-        <router-link to="/auth/login" class="link">Sign in</router-link>
-      </div>
-    </div>
-  </div>
+          <v-card-actions class="justify-center pa-4">
+            <span class="text-body-2 text-medium-emphasis mr-1">Already have an account?</span>
+            <v-btn variant="text" color="primary" size="small" :to="'/auth/login'"> Sign in </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts" src="./RegisterView.ts" />
-
-<style lang="css" scoped src="./RegisterView.css" />
