@@ -2,9 +2,13 @@ import { reactive, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AuthService from '../../services/auth.service'
 import { PasswordResetFinalizationRequest } from '../../models'
+import AppLogo from '@/components/AppLogo.vue'
 
 export default {
     name: 'ResetPasswordView',
+    components: {
+        AppLogo,
+    },
     setup() {
         const route = useRoute()
         const authService = new AuthService()
@@ -26,6 +30,8 @@ export default {
         const isLoading = ref(false)
         const invalidToken = ref(false)
         const resetCode = ref<string>('')
+        const showPassword = ref(false)
+        const showConfirmPassword = ref(false)
 
         // Password validation state
         const passwordValidation = computed(() => ({
@@ -113,6 +119,8 @@ export default {
             invalidToken,
             passwordValidation,
             isPasswordValid,
+            showPassword,
+            showConfirmPassword,
             validateForm,
             handleResetPassword
         }
