@@ -9,9 +9,12 @@
       <!-- Page Header -->
       <v-row class="mb-6" align="center">
         <v-col cols="auto">
-          <v-avatar size="64" class="pa-1" rounded="0">
-            <v-img :alt="company.name" :src="company.logo ? company.logo : defaultCompanyLogo" />
-          </v-avatar>
+          <CompanyLogo
+            :alt="company.name"
+            :logo="company.logo"
+            :website="company.website"
+            size="64"
+          />
         </v-col>
         <v-col>
           <h1 class="text-h4 font-weight-bold">{{ company.name }}</h1>
