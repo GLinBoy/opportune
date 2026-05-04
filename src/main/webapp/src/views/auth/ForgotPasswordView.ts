@@ -1,9 +1,13 @@
 import { reactive, ref } from 'vue'
 import AuthService from '../../services/auth.service'
 import { PasswordResetInitiationRequest } from '../../models'
+import AppLogo from '@/components/AppLogo.vue'
 
 export default {
     name: 'ForgotPasswordView',
+    components: {
+        AppLogo,
+    },
     setup() {
         const authService = new AuthService()
 
@@ -74,7 +78,6 @@ export default {
             resetError,
             resetSuccess,
             isLoading,
-            validateForm,
             handleForgotPassword,
             resetForm
         }
