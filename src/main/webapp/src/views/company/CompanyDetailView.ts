@@ -6,8 +6,7 @@ import CompanyService from '../../services/company.service'
 import CompanyMetadataService from '../../services/company-metadata.service'
 import CompanyApplicationService from '../../services/company-application.service'
 import CompanyForm from '../../components/CompanyForm.vue'
-
-import defaultCompanyLogo from '@/assets/images/office-building.png'
+import CompanyLogo from '../../components/company/CompanyLogo.vue'
 
 export interface Snackbar {
   show: boolean
@@ -19,7 +18,8 @@ export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyDetailView',
   components: {
-    CompanyForm
+    CompanyForm,
+    CompanyLogo
   },
   setup() {
     // Services and dependencies
@@ -278,7 +278,6 @@ export default defineComponent({
       metaDataHeaders,
       applicationHeaders,
       rules,
-      defaultCompanyLogo,
 
       // Dialog state
       showMetaDataDialog,

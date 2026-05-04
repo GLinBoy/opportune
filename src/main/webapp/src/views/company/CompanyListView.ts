@@ -4,14 +4,14 @@ import { type ICompany, type CompanyStatus, getCompanyStatusDisplay, getCompanyS
 import CompanyService from '../../services/company.service'
 import SearchService from '../../services/search.service'
 import CompanyForm from '../../components/CompanyForm.vue'
-
-import defaultCompanyLogo from '@/assets/images/office-building.png'
+import CompanyLogo from '../../components/company/CompanyLogo.vue'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyListView',
   components: {
-    CompanyForm
+    CompanyForm,
+    CompanyLogo
   },
   methods: {
     getCompanyStatusDisplay,
@@ -251,7 +251,6 @@ export default defineComponent({
       // Table configuration
       headers,
       itemsPerPageOptions,
-      defaultCompanyLogo,
 
       // Table state
       page,

@@ -82,9 +82,7 @@
           <v-container fluid class="pa-0">
             <v-row no-gutters align="center">
               <v-col cols="auto">
-                <v-avatar class="pa-1">
-                  <v-img :alt="item.name" :src="item.logo ? item.logo : defaultCompanyLogo" />
-                </v-avatar>
+                <CompanyLogo :alt="item.name" :logo="item.logo" :website="item.website" size="40" />
               </v-col>
               <v-col class="ps-2">
                 <span class="font-weight-bold">{{ item.name }}</span>
