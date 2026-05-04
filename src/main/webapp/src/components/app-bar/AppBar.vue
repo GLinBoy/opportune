@@ -1,7 +1,7 @@
 <template>
   <v-app-bar flat color="primary">
     <v-container class="mx-auto d-flex align-center justify-center" style="max-width: 1400px">
-      <v-btn icon to="/dashboard">
+      <v-btn icon @click="goToDashboard">
         <img src="@/assets/logo.png" alt="Opportune" width="32px" height="32px" />
       </v-btn>
 
@@ -15,8 +15,4 @@
   </v-app-bar>
 </template>
 
-<script setup lang="ts">
-import NavigationLinks from './NavigationLinks.vue'
-import ProfileMenu from '@/components/profile-menu/ProfileMenu.vue'
-import SearchBar from './SearchBar.vue'
-</script>
+<script lang="ts" src="./AppBar.ts" />
