@@ -1,13 +1,13 @@
 <template>
-  <v-layout class="rounded rounded-md border">
-    <v-main>
-      <v-container class="mx-auto" style="max-width: 1400px">
-        <router-view />
-      </v-container>
+  <v-layout class="blank-layout">
+    <v-main class="fill-height">
+      <router-view />
     </v-main>
   </v-layout>
 </template>
 
 <script setup lang="ts">
-// Blank layout without AppBar for error pages and other minimal content
+// Blank layout — used for auth and error pages (no AppBar)
 </script>
+
+<style src="./BlankLayout.css" />
