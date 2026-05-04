@@ -8,9 +8,9 @@
     <div v-if="!loading && application">
       <!-- Page Header -->
       <div class="d-flex justify-space-between align-center mb-6">
-        <div>
-          <h1 class="text-h4 font-weight-bold">{{ application.title }}</h1>
-          <div class="d-flex align-center text-subtitle-1 text-medium-emphasis">
+        <div class="app-header-info">
+          <span class="text-headline-small font-weight-bold">{{ application.title }}</span>
+          <div class="d-flex align-center text-label-medium text-medium-emphasis">
             <span>{{ application?.company?.name }}</span>
             <span v-if="application.url" class="mx-2">•</span>
             <v-btn
@@ -27,7 +27,7 @@
               Go to the Job Description
             </v-btn>
           </div>
-          <div class="d-flex align-center text-subtitle-2 text-medium-emphasis">
+          <div class="d-flex align-center text-label-medium text-medium-emphasis">
             <span class="mr-2">Applied on: </span>
             <span class="font-weight-bold" v-if="application.appliedAt">{{
               formatDate(application.appliedAt)
