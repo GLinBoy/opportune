@@ -6,13 +6,6 @@
     </v-overlay>
 
     <div v-if="!loading && application">
-      <!-- Breadcrumbs -->
-      <v-breadcrumbs :items="breadcrumbs" class="pa-0 mb-4">
-        <template #prepend>
-          <v-icon icon="mdi-home" />
-        </template>
-      </v-breadcrumbs>
-
       <!-- Page Header -->
       <div class="d-flex justify-space-between align-center mb-6">
         <div>
@@ -36,19 +29,16 @@
           </div>
           <div class="d-flex align-center text-subtitle-2 text-medium-emphasis">
             <span class="mr-2">Applied on: </span>
-            <span class="font-weight-bold" v-if="application.appliedAt">{{formatDate(application.appliedAt) }}</span>
+            <span class="font-weight-bold" v-if="application.appliedAt">{{
+              formatDate(application.appliedAt)
+            }}</span>
             <span class="font-weight-bold" v-else>( You haven't applied yet. )</span>
           </div>
         </div>
         <div class="d-flex align-center" style="gap: 12px">
           <v-tooltip text="Applied for this job" v-if="!application.appliedAt">
             <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="secondary"
-                icon="mdi-send-check"
-                @click="appliedJob"
-              />
+              <v-btn v-bind="props" color="secondary" icon="mdi-send-check" @click="appliedJob" />
             </template>
           </v-tooltip>
           <v-tooltip text="Upload resume for this application">
@@ -233,7 +223,8 @@
                 color="primary"
                 icon="mdi-tag-plus"
                 size="small"
-                @click="showAddMetaDataDialog" />
+                @click="showAddMetaDataDialog"
+              />
             </template>
           </v-tooltip>
         </v-card-title>
@@ -363,15 +354,13 @@
     </v-dialog>
 
     <!-- Confirm Delete Dialog -->
-    <v-dialog
-      v-model="confirmDeleteDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>{{ application?.title }}</strong>?
+          <strong>{{ application?.title }}</strong
+          >?
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
@@ -394,16 +383,12 @@
     </v-dialog>
 
     <!-- Confirm Delete Meta Data Dialog -->
-    <v-dialog
-      v-model="confirmDeleteMetaDataDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteMetaDataDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>"{{ metaDataToDelete?.metaName }}"</strong>?
-          This action cannot be undone.
+          <strong>"{{ metaDataToDelete?.metaName }}"</strong>? This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
@@ -424,10 +409,7 @@
     </v-dialog>
 
     <!-- Raw Content Dialog -->
-    <RawContentDialog
-      v-model="rawContentDialog"
-      :content="application?.rawContent || ''"
-    />
+    <RawContentDialog v-model="rawContentDialog" :content="application?.rawContent || ''" />
   </div>
 </template>
 

@@ -10,7 +10,3 @@
 :deep(.v-data-table__tr) {
   cursor: pointer;
 }
-
-:deep(.v-breadcrumbs) {
-  background: transparent;
-}
