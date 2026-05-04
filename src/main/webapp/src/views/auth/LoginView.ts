@@ -2,9 +2,13 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth.store'
 import { LoginRequest } from '../../models'
+import AppLogo from '@/components/AppLogo.vue'
 
 export default {
   name: 'LoginView',
+  components: {
+    AppLogo,
+  },
   setup() {
     const router = useRouter()
     const route = useRoute()
@@ -26,6 +30,7 @@ export default {
     const loginError = ref<string | null>(null)
     const isLoading = ref(false)
     const registrationSuccess = ref(false)
+    const showPassword = ref(false)
 
     // Validation
     function validateForm(): boolean {
@@ -103,7 +108,7 @@ export default {
       loginError,
       isLoading,
       registrationSuccess,
-      validateForm,
+      showPassword,
       handleLogin
     }
   }
