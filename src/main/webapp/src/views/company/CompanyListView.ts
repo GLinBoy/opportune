@@ -55,7 +55,6 @@ export default defineComponent({
       { title: 'Location', key: 'location', sortable: true },
       { title: 'Last Modified', key: 'lastModifiedDate', sortable: true },
       { title: 'Status', key: 'status', sortable: true },
-      { title: 'Description', key: 'description', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
     ])
 

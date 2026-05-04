@@ -2,9 +2,14 @@
   <div>
     <!-- Page Header -->
     <div class="d-flex justify-space-between align-center mb-6">
-      <div>
-        <h1 class="text-h4 font-weight-bold">Companies</h1>
-        <p class="text-subtitle-1 text-medium-emphasis">Manage companies and your interest level</p>
+      <div class="d-flex align-center" style="gap: 12px">
+        <v-icon icon="mdi-domain" size="48" />
+        <div class="d-flex flex-column">
+          <span class="text-headline-small font-weight-bold">Companies</span>
+          <span class="text-label-medium text-medium-emphasis"
+            >Manage companies and your interest level</span
+          >
+        </div>
       </div>
       <div class="d-flex align-self-center" style="gap: 16px">
         <v-autocomplete
@@ -26,11 +31,7 @@
           @update:model-value="handleCompanySelect"
         >
           <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :title="item.name"
-              :subtitle="item.status"
-            >
+            <v-list-item v-bind="props" :title="item.name" :subtitle="item.status">
               <template v-slot:prepend>
                 <v-icon
                   :color="getSearchResultStatusColor(item.status)"
@@ -54,7 +55,8 @@
               color="primary"
               icon="mdi-briefcase-plus"
               size="small"
-              @click="addNewCompany" />
+              @click="addNewCompany"
+            />
           </template>
         </v-tooltip>
       </div>
@@ -76,83 +78,90 @@
         class="elevation-1 primary-header"
         @click:row="handleRowClick"
       >
+        <template v-slot:[`item.name`]="{ item }">
+          <v-container fluid class="pa-0">
+            <v-row no-gutters align="center">
+              <v-col cols="auto">
+                <v-avatar class="pa-1">
+                  <v-img :alt="item.name" :src="item.logo ? item.logo : defaultCompanyLogo" />
+                </v-avatar>
+              </v-col>
+              <v-col class="ps-2">
+                <span class="font-weight-bold">{{ item.name }}</span>
+              </v-col>
+              <v-col cols="auto" v-if="item.note">
+                <v-tooltip :text="item.note" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      class="ms-1"
+                      color="primary"
+                      size="small"
+                      icon="mdi-information-outline"
+                      v-bind="props"
+                    />
+                  </template>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
 
-      <template v-slot:[`item.name`]="{ item }">
-        <v-container fluid class="pa-0">
-          <v-row no-gutters align="center">
-            <v-col cols="auto">
-              <v-avatar class="pa-1">
-                <v-img :alt="item.name" :src="item.logo ? item.logo : defaultCompanyLogo" />
-              </v-avatar>
-            </v-col>
-            <v-col class="ps-2">
-              <span class="font-weight-bold">{{ item.name }}</span>
-            </v-col>
-            <v-col cols="auto" v-if="item.note">
-              <v-tooltip :text="item.note" location="top">
-                <template v-slot:activator="{ props }">
-                  <v-icon
-                    class="ms-1"
-                    color="primary"
-                    size="small"
-                    icon="mdi-information-outline"
-                    v-bind="props"
-                  />
-                </template>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
+        <template v-slot:[`item.lastModifiedDate`]="{ item }">
+          <v-container fluid class="pa-0">
+            <v-row no-gutters align="center">
+              <v-col>
+                {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
+              </v-col>
+              <v-col
+                cols="auto"
+                v-if="
+                  item.createdDate &&
+                  item.lastModifiedDate &&
+                  formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)
+                "
+              >
+                <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      class="ms-1"
+                      color="info"
+                      size="small"
+                      icon="mdi-update"
+                      v-bind="props"
+                    />
+                  </template>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
 
-      <template v-slot:[`item.lastModifiedDate`]="{ item }">
-        <v-container fluid class="pa-0">
-          <v-row no-gutters align="center">
-            <v-col>
-              {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
-            </v-col>
-            <v-col cols="auto" v-if="item.createdDate && item.lastModifiedDate && formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)">
-              <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
-                <template v-slot:activator="{ props }">
-                  <v-icon
-                    class="ms-1"
-                    color="info"
-                    size="small"
-                    icon="mdi-update"
-                    v-bind="props"
-                  />
-                </template>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
+        <template v-slot:[`item.status`]="{ value }">
+          <v-chip
+            :border="`${getCompanyStatusColor(value)} thin opacity-25`"
+            :color="getCompanyStatusColor(value)"
+            :text="getCompanyStatusDisplay(value)"
+            size="x-small"
+            :prepend-icon="getCompanyStatusIcon(value)"
+          />
+        </template>
 
-      <template v-slot:[`item.status`]="{ value }">
-        <v-chip
-          :border="`${getCompanyStatusColor(value)} thin opacity-25`"
-          :color="getCompanyStatusColor(value)"
-          :text="getCompanyStatusDisplay(value)"
-          size="x-small"
-          :prepend-icon="getCompanyStatusIcon(value)" />
-      </template>
-
-      <template v-slot:[`item.actions`]="{ item }">
-        <div class="d-flex justify-end" style="gap: 4px">
-          <v-tooltip text="Delete" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                size="x-small"
-                variant="text"
-                color="error"
-                icon="mdi-delete-outline"
-                @click.stop="confirmDelete(item)"
-              />
-            </template>
-          </v-tooltip>
-        </div>
-      </template>
+        <template v-slot:[`item.actions`]="{ item }">
+          <div class="d-flex justify-end" style="gap: 4px">
+            <v-tooltip text="Delete" location="top">
+              <template #activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  size="x-small"
+                  variant="text"
+                  color="error"
+                  icon="mdi-delete-outline"
+                  @click.stop="confirmDelete(item)"
+                />
+              </template>
+            </v-tooltip>
+          </div>
+        </template>
       </v-data-table-server>
     </v-card>
 
@@ -161,32 +170,22 @@
       <v-progress-circular color="primary" indeterminate size="64" />
     </v-overlay>
 
-    <v-dialog
-      v-model="addNewCompanyDialog"
-      transition="dialog-bottom-transition"
-      fullscreen
-    >
+    <v-dialog v-model="addNewCompanyDialog" transition="dialog-bottom-transition" fullscreen>
       <v-card>
         <v-toolbar color="secondary" dark>
-          <v-btn
-            icon="mdi-close"
-            @click="closeDialog"
-          ></v-btn>
+          <v-btn icon="mdi-close" @click="closeDialog"></v-btn>
           <v-toolbar-title>Add New Company</v-toolbar-title>
         </v-toolbar>
 
         <v-container class="d-flex justify-center pa-8">
-          <div style="max-width: 800px; width: 100%;">
-            <CompanyForm
-              v-model="newCompany"
-              class="mb-6"
-            />
+          <div style="max-width: 800px; width: 100%">
+            <CompanyForm v-model="newCompany" class="mb-6" />
 
             <!-- Action buttons at the bottom -->
             <v-card>
               <v-card-actions class="justify-end pa-4">
                 <v-btn
-                text="Cancel"
+                  text="Cancel"
                   variant="outlined"
                   prepend-icon="mdi-close"
                   @click="closeDialog"
@@ -208,16 +207,13 @@
     </v-dialog>
 
     <!-- Confirm Delete Dialog -->
-    <v-dialog
-      v-model="confirmDeleteDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>{{ companyToDelete?.name }}</strong>?
-          This action cannot be undone.
+          <strong>{{ companyToDelete?.name }}</strong
+          >? This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
