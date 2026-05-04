@@ -17,8 +17,8 @@
           />
         </v-col>
         <v-col>
-          <h1 class="text-h4 font-weight-bold">{{ company.name }}</h1>
-          <div class="d-flex align-center text-subtitle-1 text-medium-emphasis">
+          <span class="text-headline-small font-weight-bold">{{ company.name }}</span>
+          <div class="d-flex align-center text-label-medium text-medium-emphasis">
             <span>{{ company.industry }}</span>
             <span v-if="company.website" class="mx-2">•</span>
             <v-btn

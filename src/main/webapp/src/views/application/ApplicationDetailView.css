@@ -8,3 +8,8 @@
 }
 
 /* Add your styles here */
+
+.app-header-info {
+  padding-left: 16px;
+  border-left: 8px solid rgb(var(--v-theme-primary));
+}
