@@ -6,13 +6,6 @@
     </v-overlay>
 
     <div v-if="!loading && company">
-      <!-- Breadcrumbs -->
-      <v-breadcrumbs :items="breadcrumbs" class="pa-0 mb-4">
-        <template #prepend>
-          <v-icon icon="mdi-home" />
-        </template>
-      </v-breadcrumbs>
-
       <!-- Page Header -->
       <v-row class="mb-6" align="center">
         <v-col cols="auto">
@@ -41,12 +34,7 @@
           </div>
         </v-col>
         <v-col cols="auto" class="d-flex align-center" style="gap: 12px">
-          <v-btn
-            color="error"
-            variant="flat"
-            icon="mdi-delete"
-            @click="confirmDelete"
-          />
+          <v-btn color="error" variant="flat" icon="mdi-delete" @click="confirmDelete" />
           <v-btn
             color="success"
             variant="flat"
@@ -58,11 +46,7 @@
       </v-row>
 
       <!-- 1. Company Details -->
-      <CompanyForm
-        v-model="company"
-        @change="markAsModified"
-        class="mb-6"
-      />
+      <CompanyForm v-model="company" @change="markAsModified" class="mb-6" />
 
       <!-- 2. Meta Data -->
       <v-card class="mb-6">
@@ -78,7 +62,8 @@
                 color="primary"
                 icon="mdi-tag-plus"
                 size="small"
-                @click="showAddMetaDataDialog" />
+                @click="showAddMetaDataDialog"
+              />
             </template>
           </v-tooltip>
         </v-card-title>
@@ -180,16 +165,13 @@
     </v-dialog>
 
     <!-- Confirm Delete Company Dialog -->
-    <v-dialog
-      v-model="confirmDeleteDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>
           Are you sure you want to delete
-          <strong>{{ company?.name }}</strong>?
-          This action cannot be undone.
+          <strong>{{ company?.name }}</strong
+          >? This action cannot be undone.
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
@@ -212,10 +194,7 @@
     </v-dialog>
 
     <!-- Confirm Delete Meta Data Dialog -->
-    <v-dialog
-      v-model="confirmDeleteMetaDataDialog"
-      max-width="420"
-    >
+    <v-dialog v-model="confirmDeleteMetaDataDialog" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Confirm Deletion</v-card-title>
         <v-card-text>

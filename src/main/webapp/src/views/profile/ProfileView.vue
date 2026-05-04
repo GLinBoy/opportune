@@ -6,13 +6,6 @@
     </v-overlay>
 
     <div v-if="!loading">
-      <!-- Breadcrumbs -->
-      <v-breadcrumbs :items="breadcrumbs" class="pa-0 mb-4">
-        <template #prepend>
-          <v-icon icon="mdi-home" />
-        </template>
-      </v-breadcrumbs>
-
       <!-- Page Header -->
       <div class="d-flex align-center mb-6" style="gap: 12px">
         <v-icon icon="mdi-account-cog" size="48" />
