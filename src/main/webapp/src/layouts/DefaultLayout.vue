@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="rounded rounded-md border">
+  <v-layout class="default-layout">
     <AppBar />
 
     <v-main>
@@ -12,7 +12,6 @@
   </v-layout>
 </template>
 
-<script setup lang="ts">
-import AppBar from '@/components/app-bar/AppBar.vue'
-import GoToTopButton from '@/components/GoToTopButton.vue'
-</script>
+<script lang="ts" src="./DefaultLayout.ts" />
+
+<style src="./DefaultLayout.css" />
