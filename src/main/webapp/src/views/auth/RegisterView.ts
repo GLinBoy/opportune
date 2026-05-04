@@ -2,11 +2,15 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthService from '../../services/auth.service'
 import { Profile } from '../../models'
+import AppLogo from '@/components/AppLogo.vue'
 
 const authService = new AuthService()
 
 export default {
     name: 'RegisterView',
+    components: {
+        AppLogo,
+    },
     setup() {
         const router = useRouter()
 
@@ -33,6 +37,8 @@ export default {
         const registerError = ref<string | null>(null)
         const registerSuccess = ref(false)
         const isLoading = ref(false)
+        const showPassword = ref(false)
+        const showConfirmPassword = ref(false)
 
         // Validation
         function validateForm(): boolean {
@@ -144,7 +150,8 @@ export default {
             registerError,
             registerSuccess,
             isLoading,
-            validateForm,
+            showPassword,
+            showConfirmPassword,
             handleRegister
         }
     }
