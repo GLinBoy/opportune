@@ -23,7 +23,7 @@ export default defineComponent({
     const isDark = computed(() => vuetifyTheme.global.current.value.dark)
 
     // ── Breakpoints ───────────────────────────────────────────────────────────
-    const { smOnly, smAndDown } = useDisplay()
+    const { sm, smAndDown } = useDisplay()
 
     function toggleTheme() {
       vuetifyTheme.global.name.value =
@@ -74,6 +74,6 @@ export default defineComponent({
       notifications.value.forEach((n) => (n.read = true))
     }
 
-    return { isDark, toggleTheme, notifOpen, notifications, unreadCount, markRead, markAllRead, smOnly, smAndDown }
+    return { isDark, toggleTheme, notifOpen, notifications, unreadCount, markRead, markAllRead, sm, smAndDown }
   },
 })

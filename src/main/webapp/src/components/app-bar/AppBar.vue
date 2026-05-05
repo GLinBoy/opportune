@@ -14,7 +14,7 @@
       <!-- Search: hidden on xs -->
       <div
         class="d-none d-sm-flex align-center me-1"
-        :style="{ width: smOnly ? '200px' : '400px', minWidth: 0 }"
+        :style="{ width: sm ? '200px' : '400px', minWidth: 0 }"
       >
         <SearchBar />
       </div>
