@@ -5,7 +5,6 @@
         v-show="showButton"
         icon="mdi-chevron-up"
         color="primary"
-        size="large"
         @click="scrollToTop"
         class="go-to-top-btn"
         :style="{ opacity: scrollOpacity }"
@@ -32,13 +31,13 @@ const handleScroll = () => {
   // Calculate opacity based on scroll position (0.7 to 1.0)
   const maxScroll = scrollHeight - clientHeight
   const scrollPercentage = Math.min(scrollTop / maxScroll, 1)
-  scrollOpacity.value = 0.7 + (scrollPercentage * 0.3)
+  scrollOpacity.value = 0.7 + scrollPercentage * 0.3
 }
 
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth'
+    behavior: 'smooth',
   })
 }
 

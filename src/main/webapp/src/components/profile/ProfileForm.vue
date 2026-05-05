@@ -12,10 +12,7 @@
             <v-card-text>
               <div class="d-flex flex-column align-center">
                 <v-avatar size="80" class="mb-4">
-                  <v-img
-                    :src="avatarUrl"
-                    :alt="fullName"
-                  />
+                  <v-img :src="avatarUrl" :alt="fullName" />
                 </v-avatar>
 
                 <div class="w-100">
@@ -44,7 +41,11 @@
                     </v-btn>
                     <v-spacer />
                     <p class="text-caption text-medium-emphasis ma-0">
-                      {{ isUsingGravatar ? 'Using Gravatar based on email' : 'Using custom uploaded image' }}
+                      {{
+                        isUsingGravatar
+                          ? 'Using Gravatar based on email'
+                          : 'Using custom uploaded image'
+                      }}
                     </p>
                   </div>
 
@@ -180,7 +181,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { type IProfile, ProfileStatus } from '../models'
+import { type IProfile, ProfileStatus } from '../../models'
 import CryptoJS from 'crypto-js'
 import ProfileResumeField from './ProfileResumeField.vue'
 // import { AvatarService } from '../services' // Uncomment when avatar endpoint is ready
@@ -233,9 +234,9 @@ const lastLoginFormatted = computed(() => {
 })
 
 const statusOptions = computed(() => {
-  return Object.values(ProfileStatus).map(status => ({
-    title: status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-    value: status
+  return Object.values(ProfileStatus).map((status) => ({
+    title: status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+    value: status,
   }))
 })
 
@@ -245,14 +246,14 @@ const rules = {
   email: (value: string) => {
     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return pattern.test(value) || 'Invalid email format'
-  }
+  },
 }
 
 // Methods
 const updateField = (field: keyof IProfile, value: string | boolean | undefined | null) => {
   const updatedProfile = {
     ...props.modelValue,
-    [field]: value
+    [field]: value,
   }
   emit('update:modelValue', updatedProfile)
   emit('change')
@@ -297,7 +298,7 @@ const handleAvatarUpload = async (files: File | File[]) => {
     // updateField('avatar', result.avatarPath)
 
     // SIMULATION CODE (remove when real endpoint is ready)
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     const timestamp = new Date().getTime()
     const fileName = `avatar_${props.modelValue.id}_${timestamp}.${file.name.split('.').pop()}`
     const avatarPath = `/uploads/avatars/${fileName}`
@@ -307,9 +308,8 @@ const handleAvatarUpload = async (files: File | File[]) => {
       originalFile: file.name,
       size: file.size,
       type: file.type,
-      simulatedPath: avatarPath
+      simulatedPath: avatarPath,
     })
-
   } catch (error) {
     console.error('Failed to upload avatar:', error)
     alert('Failed to upload avatar. Please try again.')

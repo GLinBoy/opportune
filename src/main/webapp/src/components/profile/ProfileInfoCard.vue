@@ -34,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { IProfile } from '../../models'
-import ProfileForm from '../ProfileForm.vue'
+import ProfileForm from './ProfileForm.vue'
 
 export default defineComponent({
   name: 'ProfileInfoCard',
@@ -42,17 +42,17 @@ export default defineComponent({
   props: {
     profile: {
       type: Object as () => IProfile | null,
-      default: null
+      default: null,
     },
     saving: {
       type: Boolean,
-      default: false
+      default: false,
     },
     hasChanges: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  emits: ['save', 'change', 'update:profile']
+  emits: ['save', 'change', 'update:profile'],
 })
 </script>

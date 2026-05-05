@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import { type ICompany, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import CompanyService from '../../services/company.service'
 import SearchService from '../../services/search.service'
-import CompanyForm from '../../components/CompanyForm.vue'
+import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 
 export default defineComponent({

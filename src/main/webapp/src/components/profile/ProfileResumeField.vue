@@ -82,17 +82,15 @@
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="showDeleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" variant="flat" :loading="deleting" @click="deleteResume">Delete</v-btn>
+          <v-btn color="error" variant="flat" :loading="deleting" @click="deleteResume"
+            >Delete</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Snackbar for notifications -->
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-    >
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       {{ snackbar.message }}
       <template #actions>
         <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
@@ -103,8 +101,8 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, reactive } from 'vue'
-import { type IProfileResume } from '../models'
-import ProfileResumeService from '../services/profile-resume.service'
+import { type IProfileResume } from '../../models'
+import ProfileResumeService from '../../services/profile-resume.service'
 
 // Import Vue FilePond
 import vueFilePond from 'vue-filepond'
@@ -120,10 +118,7 @@ import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import type { FilePondFile, FilePondErrorDescription } from 'filepond'
 
 // Create FilePond component with plugins
-const FilePond = vueFilePond(
-  FilePondPluginFileValidateType,
-  FilePondPluginFileValidateSize
-)
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize)
 
 const props = defineProps<{
   profileId?: string
@@ -140,7 +135,7 @@ const resumeService = new ProfileResumeService()
 const acceptedFileTypes = [
   'application/pdf',
   'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ]
 const maxFileSize = '10MB'
 const labelIdle = `
@@ -167,23 +162,30 @@ const snackbar = reactive({
   show: false,
   message: '',
   color: 'success',
-  timeout: 3000
+  timeout: 3000,
 })
 
-const showNotification = (message: string, color: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+const showNotification = (
+  message: string,
+  color: 'success' | 'error' | 'warning' | 'info' = 'success'
+) => {
   snackbar.message = message
   snackbar.color = color
   snackbar.show = true
 }
 
 // Fetch resume info when resumeId changes
-watch(() => props.resumeId, async (newResumeId) => {
-  if (newResumeId) {
-    await fetchResumeInfo(newResumeId)
-  } else {
-    resumeInfo.value = null
-  }
-}, { immediate: true })
+watch(
+  () => props.resumeId,
+  async (newResumeId) => {
+    if (newResumeId) {
+      await fetchResumeInfo(newResumeId)
+    } else {
+      resumeInfo.value = null
+    }
+  },
+  { immediate: true }
+)
 
 onMounted(async () => {
   if (props.resumeId) {
@@ -303,7 +305,7 @@ const formatDate = (date?: Date): string => {
   return new Date(date).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 </script>
@@ -346,7 +348,7 @@ const formatDate = (date?: Date): string => {
   text-decoration: underline;
 }
 
-.filepond-wrapper :deep(.filepond--root[data-hopper-state="waiting"] .filepond--panel-root) {
+.filepond-wrapper :deep(.filepond--root[data-hopper-state='waiting'] .filepond--panel-root) {
   border-color: rgb(var(--v-theme-primary));
   background-color: rgba(var(--v-theme-primary), 0.05);
 }
