@@ -14,6 +14,12 @@
   font-weight: 500 !important;
   letter-spacing: 0 !important;
   border-radius: 4px !important;
+  min-height: 40px !important;
+}
+
+// Keep icon-only buttons square
+.v-btn--icon {
+  min-width: 40px !important;
 }
 
 // ── Text field / input field ──────────────────────────────────────────────────
@@ -86,7 +92,7 @@
 // ── List items ────────────────────────────────────────────────────────────────
 .v-list-item {
   border-radius: 4px !important;
-  min-height: 36px !important;
+  min-height: 44px !important;
 }
 
 // ── Typography helpers ────────────────────────────────────────────────────────
@@ -95,4 +101,41 @@
   font-size: 15px !important;
   line-height: 1.5 !important;
   letter-spacing: 0 !important;
+}
+
+// ── Responsive typography scaling ─────────────────────────────────────────────
+h1,
+.text-h4 {
+  font-size: clamp(1.2rem, 3vw, 1.75rem) !important;
+}
+
+.v-card-title {
+  font-size: clamp(0.875rem, 2vw, 1rem) !important;
+}
+
+.text-h5,
+.text-h6 {
+  font-size: clamp(0.85rem, 2vw, 1rem) !important;
+}
+
+// ── Touch targets ─────────────────────────────────────────────────────────────
+// Tappable list items (nav links, clickable rows)
+.v-list-item--link,
+.v-list-item[role='option'],
+.v-list-item.cursor-pointer {
+  min-height: 44px !important;
+}
+
+// ── Images ────────────────────────────────────────────────────────────────────
+img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+// ── Chart wrappers ────────────────────────────────────────────────────────────
+.chart-wrapper,
+[class*='chart-'] {
+  width: 100% !important;
+  overflow: hidden !important;
+  aspect-ratio: 16 / 9;
 }

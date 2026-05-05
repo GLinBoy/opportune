@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="4" md="4">
+    <v-col cols="12" sm="6" lg="3">
       <DashboardCard
         title="Total Applications"
         icon="mdi-briefcase-variant-outline"
@@ -8,7 +8,7 @@
         description="Tracked in your pipeline"
       />
     </v-col>
-    <v-col cols="4" md="4">
+    <v-col cols="12" sm="6" lg="3">
       <DashboardCard
         title="In Progress"
         icon="mdi-chart-bar"
@@ -16,7 +16,7 @@
         description="Actively in an interview process"
       />
     </v-col>
-    <v-col cols="4" md="4">
+    <v-col cols="12" sm="6" lg="3">
       <DashboardCard
         title="Offer Received"
         icon="mdi-check-circle-outline"
@@ -24,10 +24,18 @@
         description="You've received offers from"
       />
     </v-col>
-    <v-col cols="6">
+    <v-col cols="12" sm="6" lg="3">
+      <DashboardCard
+        title="Rejected"
+        icon="mdi-close-circle-outline"
+        value="0"
+        description="Applications marked as rejected"
+      />
+    </v-col>
+    <v-col cols="12" md="6">
       <DashboardApplicationCard />
     </v-col>
-    <v-col cols="6">
+    <v-col cols="12" md="6">
       <DashboardCompanyCard />
     </v-col>
   </v-row>

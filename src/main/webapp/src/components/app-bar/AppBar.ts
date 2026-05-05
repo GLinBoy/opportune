@@ -1,5 +1,5 @@
 import { ref, computed, defineComponent } from 'vue'
-import { useTheme } from 'vuetify'
+import { useTheme, useDisplay } from 'vuetify'
 import NavigationLinks from './NavigationLinks.vue'
 import ProfileMenu from '@/components/profile-menu/ProfileMenu.vue'
 import SearchBar from './SearchBar.vue'
@@ -21,6 +21,9 @@ export default defineComponent({
     // ── Theme ─────────────────────────────────────────────────────────────────
     const vuetifyTheme = useTheme()
     const isDark = computed(() => vuetifyTheme.global.current.value.dark)
+
+    // ── Breakpoints ───────────────────────────────────────────────────────────
+    const { smOnly, smAndDown } = useDisplay()
 
     function toggleTheme() {
       vuetifyTheme.global.name.value =
@@ -71,6 +74,6 @@ export default defineComponent({
       notifications.value.forEach((n) => (n.read = true))
     }
 
-    return { isDark, toggleTheme, notifOpen, notifications, unreadCount, markRead, markAllRead }
+    return { isDark, toggleTheme, notifOpen, notifications, unreadCount, markRead, markAllRead, smOnly, smAndDown }
   },
 })

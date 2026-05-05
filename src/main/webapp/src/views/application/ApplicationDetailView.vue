@@ -7,7 +7,9 @@
 
     <div v-if="!loading && application">
       <!-- Page Header -->
-      <div class="d-flex justify-space-between align-center mb-6">
+      <div
+        class="d-flex flex-column flex-md-row justify-space-between align-md-center mb-4 mb-md-6 ga-3"
+      >
         <div class="app-header-info">
           <span class="text-headline-small font-weight-bold">{{ application.title }}</span>
           <div class="d-flex align-center text-label-medium text-medium-emphasis">
@@ -35,7 +37,7 @@
             <span class="font-weight-bold" v-else>( You haven't applied yet. )</span>
           </div>
         </div>
-        <div class="d-flex align-center" style="gap: 12px">
+        <div class="d-flex align-center ga-3 flex-wrap">
           <v-tooltip text="Applied for this job" v-if="!application.appliedAt">
             <template #activator="{ props }">
               <v-btn v-bind="props" color="secondary" icon="mdi-send-check" @click="appliedJob" />
@@ -260,31 +262,35 @@
           </v-tooltip>
         </v-card-title>
         <v-card-text>
-          <v-data-table
+          <div
             v-if="applicationMetadata && applicationMetadata.length > 0"
-            :headers="metaDataHeaders"
-            :items="applicationMetadata"
-            hide-default-footer
-            density="compact"
+            style="overflow-x: auto"
           >
-            <template v-slot:[`item.metaName`]="{ item }">
-              <span class="font-weight-medium">{{ item.metaName }}</span>
-            </template>
-            <template v-slot:[`item.metaValue`]="{ item }">
-              <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
-                {{ item.metaValue }}
-              </div>
-            </template>
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-btn
-                color="error"
-                variant="text"
-                icon="mdi-delete"
-                size="small"
-                @click="removeMetaData(item.id)"
-              />
-            </template>
-          </v-data-table>
+            <v-data-table
+              :headers="metaDataHeaders"
+              :items="applicationMetadata"
+              hide-default-footer
+              density="compact"
+            >
+              <template v-slot:[`item.metaName`]="{ item }">
+                <span class="font-weight-medium">{{ item.metaName }}</span>
+              </template>
+              <template v-slot:[`item.metaValue`]="{ item }">
+                <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
+                  {{ item.metaValue }}
+                </div>
+              </template>
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn
+                  color="error"
+                  variant="text"
+                  icon="mdi-delete"
+                  size="small"
+                  @click="removeMetaData(item.id)"
+                />
+              </template>
+            </v-data-table>
+          </div>
           <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-information" size="48" class="mb-2" />
             <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>

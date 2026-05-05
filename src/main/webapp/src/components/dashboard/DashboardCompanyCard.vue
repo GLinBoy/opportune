@@ -48,6 +48,7 @@ const handleCompanyClick = (company: Company) => {
       <v-list-item
         v-for="(company, index) in companies"
         :key="company.id"
+        :ripple="true"
         @click="handleCompanyClick(company)"
         class="cursor-pointer"
         :class="{ 'border-b': index < companies.length - 1 }"
