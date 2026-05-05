@@ -196,18 +196,18 @@
                   variant="outlined"
                   color="secondary"
                   rounded="md"
-                  prepend-icon="mdi-close"
+                  min-width="120"
                   :disabled="isCreating"
                   @click="closeDialog"
                 />
                 <v-btn
-                  text="Create"
+                  text="Save"
                   color="primary"
                   variant="flat"
                   rounded="md"
                   min-width="120"
-                  prepend-icon="mdi-content-save"
                   :loading="isCreating"
+                  :disabled="!newCompany.name || isCreating"
                   @click="createCompany"
                 />
               </template>
