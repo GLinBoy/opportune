@@ -84,7 +84,7 @@
           <!-- Title Column -->
           <template v-slot:[`item.title`]="{ item }">
             <v-container fluid class="pa-0">
-              <v-row no-gutters align="center">
+              <v-row density="compact" align="center">
                 <v-col>
                   <span class="font-weight-bold">{{ item.title }}</span>
                 </v-col>
@@ -114,7 +114,7 @@
           <template #[`item.lastModifiedDate`]="{ item }">
             <template v-if="item.createdDate && item.lastModifiedDate">
               <v-container fluid class="pa-0">
-                <v-row no-gutters align="center">
+                <v-row density="compact" align="center">
                   <v-col>
                     {{ formatDate(item.lastModifiedDate) || '-' }}
                   </v-col>
@@ -139,7 +139,7 @@
             </template>
             <template v-else>
               <v-container fluid class="pa-0">
-                <v-row no-gutters align="center">
+                <v-row density="compact" align="center">
                   <v-col>
                     {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
                   </v-col>
@@ -194,33 +194,20 @@
     </v-snackbar>
 
     <!-- Confirm Delete Dialog -->
-    <v-dialog v-model="confirmDeleteDialog" max-width="420">
-      <v-card>
-        <v-card-title class="text-h6">Confirm Deletion</v-card-title>
-        <v-card-text>
-          Are you sure you want to delete
-          <strong>{{ applicationToDelete?.title }}</strong
-          >? This action cannot be undone.
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn
-            text="Cancel"
-            variant="outlined"
-            prepend-icon="mdi-close"
-            :disabled="isDeleting"
-            @click="closeDeleteDialog"
-          />
-          <v-btn
-            text="Delete"
-            color="error"
-            variant="flat"
-            prepend-icon="mdi-delete"
-            :loading="isDeleting"
-            @click="performDelete"
-          />
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      v-model="confirmDeleteDialog"
+      title="Confirm Deletion"
+      variant="error"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :loading="isDeleting"
+      @confirm="performDelete"
+      @cancel="closeDeleteDialog"
+    >
+      Are you sure you want to delete
+      <strong>{{ applicationToDelete?.title }}</strong
+      >? This action cannot be undone.
+    </ConfirmDialog>
 
     <!-- Add Application Dialog - Full Screen -->
     <v-dialog v-model="addDialog.show" fullscreen transition="dialog-bottom-transition">

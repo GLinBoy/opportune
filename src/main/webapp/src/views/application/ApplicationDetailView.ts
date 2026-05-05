@@ -5,6 +5,7 @@ import { ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusCol
 import { ApplicationService, ApplicationMetaDataService } from '../../services'
 import RawContentDialog from '../../components/application/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 export interface Snackbar {
   show: boolean
@@ -18,7 +19,8 @@ export default defineComponent({
   name: 'ApplicationDetailView',
   components: {
     RawContentDialog,
-    CompanyAutocomplete
+    CompanyAutocomplete,
+    ConfirmDialog,
   },
   computed: {
     statusOptions() {
