@@ -1,136 +1,160 @@
 <template>
-  <v-card flat>
-    <v-card-text>
-      <v-form ref="formRef" v-model="isValid" @submit.prevent="handleSubmit">
-        <v-alert
-          v-if="props.initialUrl"
-          type="warning"
-          variant="tonal"
-          class="mb-4"
-          closable
-        >
-          <div class="text-body-2">
-            <v-icon icon="mdi-alert-circle" size="small" class="mr-2" />
-            Automatic fetch failed for the provided URL. Please fill in the job details manually.
-          </div>
-        </v-alert>
+  <FormCard>
+    <template #title>
+      <v-icon icon="mdi-briefcase-plus" class="mr-2" />
+      Add Application Manually
+    </template>
 
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-              v-model="formData.url"
-              label="Job Posting URL"
-              placeholder="https://company.com/careers/job-posting"
-              variant="outlined"
-              prepend-inner-icon="mdi-link"
-              :rules="[rules.url]"
-              hint="Optional: Link to the original job posting"
-              persistent-hint
-            />
-          </v-col>
+    <v-form ref="formRef" v-model="isValid" @submit.prevent="handleSubmit">
+      <v-alert v-if="props.initialUrl" type="warning" variant="tonal" class="mb-5" closable>
+        <div class="text-body-2">
+          <v-icon icon="mdi-alert-circle" size="small" class="mr-2" />
+          Automatic fetch failed for the provided URL. Please fill in the job details manually.
+        </div>
+      </v-alert>
 
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="formData.title"
-              label="Job Title"
-              placeholder="e.g., Senior Software Engineer"
-              variant="outlined"
-              prepend-inner-icon="mdi-briefcase"
-              :rules="[rules.required]"
-              required
-            />
-          </v-col>
+      <v-row>
+        <v-col cols="12">
+          <FieldLabel label="Job Posting URL" input-id="manual-url" :optional="true" />
+          <v-text-field
+            id="manual-url"
+            v-model="formData.url"
+            placeholder="https://company.com/careers/job-posting"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            prepend-inner-icon="mdi-link"
+            :rules="[rules.url]"
+            hint="Optional: Link to the original job posting"
+            persistent-hint
+          />
+        </v-col>
 
-          <v-col cols="12" md="6">
-            <CompanyAutocomplete
-              v-model="selectedCompany"
-              label="Company"
-              prepend-inner-icon="mdi-office-building"
-              clearable
-            >
-              <template #append>
-                <v-tooltip text="You can assign a company later" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-icon v-bind="props" icon="mdi-information-outline" size="small" />
-                  </template>
-                </v-tooltip>
-              </template>
-            </CompanyAutocomplete>
-          </v-col>
+        <v-col cols="12" md="6">
+          <FieldLabel label="Job Title" input-id="manual-title" />
+          <v-text-field
+            id="manual-title"
+            v-model="formData.title"
+            placeholder="e.g., Senior Software Engineer"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            hide-details="auto"
+            prepend-inner-icon="mdi-briefcase"
+            :rules="[rules.required]"
+            required
+          />
+        </v-col>
 
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="formData.location"
-              label="Location"
-              placeholder="e.g., San Francisco, CA or Remote"
-              variant="outlined"
-              prepend-inner-icon="mdi-map-marker"
-            />
-          </v-col>
+        <v-col cols="12" md="6">
+          <FieldLabel label="Company" input-id="manual-company" :optional="true" />
+          <CompanyAutocomplete
+            id="manual-company"
+            v-model="selectedCompany"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            hide-details="auto"
+            prepend-inner-icon="mdi-domain"
+            clearable
+          >
+            <template #append>
+              <v-tooltip text="You can assign a company later" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" icon="mdi-information-outline" size="small" />
+                </template>
+              </v-tooltip>
+            </template>
+          </CompanyAutocomplete>
+        </v-col>
 
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="formData.salary"
-              label="Salary Range"
-              placeholder="e.g., $100k - $150k"
-              variant="outlined"
-              prepend-inner-icon="mdi-currency-usd"
-            />
-          </v-col>
+        <v-col cols="12" md="6">
+          <FieldLabel label="Location" input-id="manual-location" :optional="true" />
+          <v-text-field
+            id="manual-location"
+            v-model="formData.location"
+            placeholder="e.g., San Francisco, CA or Remote"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            hide-details="auto"
+            prepend-inner-icon="mdi-map-marker"
+          />
+        </v-col>
 
-          <v-col cols="12">
-            <v-textarea
-              v-model="formData.rawContent"
-              label="Job Description"
-              placeholder="Paste the complete job description here..."
-              variant="outlined"
-              prepend-inner-icon="mdi-text-box-outline"
-              :rules="[rules.required]"
-              rows="10"
-              required
-              hint="This is the most important field - paste the full job description"
-              persistent-hint
-            />
-          </v-col>
-        </v-row>
+        <v-col cols="12" md="6">
+          <FieldLabel label="Salary Range" input-id="manual-salary" :optional="true" />
+          <v-text-field
+            id="manual-salary"
+            v-model="formData.salary"
+            placeholder="e.g., $100k - $150k"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            hide-details="auto"
+            prepend-inner-icon="mdi-currency-usd"
+          />
+        </v-col>
 
-        <v-alert
-          type="warning"
-          variant="tonal"
-          class="mt-4"
-        >
-          <div class="text-body-2">
-            <v-icon icon="mdi-alert" size="small" class="mr-2" />
-            Make sure to include the complete job description in the "Job Description" field for better tracking and analysis.
-          </div>
-        </v-alert>
-      </v-form>
-    </v-card-text>
+        <v-col cols="12">
+          <FieldLabel label="Job Description" input-id="manual-raw-content" />
+          <v-textarea
+            id="manual-raw-content"
+            v-model="formData.rawContent"
+            placeholder="Paste the complete job description here..."
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            prepend-inner-icon="mdi-text-box-outline"
+            :rules="[rules.required]"
+            rows="10"
+            required
+            hint="This is the most important field - paste the full job description"
+            persistent-hint
+          />
+        </v-col>
+      </v-row>
 
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        variant="text"
-        @click="handleCancel"
-      >
+      <v-alert type="warning" variant="tonal" class="mt-5">
+        <div class="text-body-2">
+          <v-icon icon="mdi-alert" size="small" class="mr-2" />
+          Make sure to include the complete job description in the "Job Description" field for
+          better tracking and analysis.
+        </div>
+      </v-alert>
+    </v-form>
+
+    <template #actions>
+      <v-btn variant="outlined" color="secondary" rounded="md" @click="handleCancel">
         Cancel
       </v-btn>
       <v-btn
         color="primary"
+        variant="flat"
+        rounded="md"
+        min-width="120"
         :loading="loading"
         :disabled="!isValid"
         @click="handleSubmit"
       >
         Create Application
       </v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+  </FormCard>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, watch } from 'vue'
 import type { ICompany } from '../../models'
 import CompanyAutocomplete from '../company/CompanyAutocomplete.vue'
+import FormCard from '../forms/FormCard.vue'
+import FieldLabel from '../forms/FieldLabel.vue'
 
 // Props
 export interface ManualFormProps {
@@ -140,7 +164,7 @@ export interface ManualFormProps {
 
 const props = withDefaults(defineProps<ManualFormProps>(), {
   loading: false,
-  initialUrl: ''
+  initialUrl: '',
 })
 
 // Emits
@@ -170,7 +194,7 @@ const formData = reactive<ManualFormData>({
   location: '',
   salary: '',
   rawContent: '',
-  companyId: ''
+  companyId: '',
 })
 
 // Watch for company selection changes
@@ -179,11 +203,14 @@ watch(selectedCompany, (newCompany) => {
 })
 
 // Watch for initialUrl changes and update formData
-watch(() => props.initialUrl, (newUrl) => {
-  if (newUrl) {
-    formData.url = newUrl
+watch(
+  () => props.initialUrl,
+  (newUrl) => {
+    if (newUrl) {
+      formData.url = newUrl
+    }
   }
-})
+)
 
 // Validation rules
 const rules = {
@@ -192,7 +219,7 @@ const rules = {
     if (!value) return true
     const pattern = /^https?:\/\/.+/
     return pattern.test(value) || 'Please enter a valid URL starting with http:// or https://'
-  }
+  },
 }
 
 // Methods
@@ -220,6 +247,6 @@ const reset = () => {
 }
 
 defineExpose({
-  reset
+  reset,
 })
 </script>
