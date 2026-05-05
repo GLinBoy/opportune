@@ -25,17 +25,23 @@ export function getApplicationStatusDisplay(status: ApplicationStatus): string {
   return statusMap[status];
 }
 
-export function getApplicationStatusColor(status: ApplicationStatus): string {
-  if (status === ApplicationStatus.AI_PROCESSING) return 'purple'
-  if (status === ApplicationStatus.READY_TO_APPLY) return 'teal'
-  if (status === ApplicationStatus.ACCEPTED || status === ApplicationStatus.OFFER_RECEIVED) return 'green'
-  if (status === ApplicationStatus.REJECTED || status === ApplicationStatus.DECLINED) return 'red'
-  if (status === ApplicationStatus.IN_PROGRESS) return 'blue'
-  if (status === ApplicationStatus.APPLIED) return 'orange'
-  return 'gray'
+export function getApplicationStatusColor(status: ApplicationStatus | keyof typeof ApplicationStatus | null | undefined): string {
+  if (!status) return 'default'
+  const colorMap: Record<ApplicationStatus, string> = {
+    [ApplicationStatus.INITIATED]: 'info',
+    [ApplicationStatus.AI_PROCESSING]: 'purple',
+    [ApplicationStatus.READY_TO_APPLY]: 'teal',
+    [ApplicationStatus.APPLIED]: 'orange',
+    [ApplicationStatus.IN_PROGRESS]: 'blue',
+    [ApplicationStatus.REJECTED]: 'error',
+    [ApplicationStatus.OFFER_RECEIVED]: 'green',
+    [ApplicationStatus.ACCEPTED]: 'success',
+    [ApplicationStatus.DECLINED]: 'grey',
+  }
+  return colorMap[status] ?? 'default'
 }
 
-export function getApplicationStatusIcon(status: ApplicationStatus): string {
+export function getApplicationStatusIcon(status: ApplicationStatus | keyof typeof ApplicationStatus | null | undefined): string {
   if (status === ApplicationStatus.INITIATED) return 'mdi-play-circle-outline'
   if (status === ApplicationStatus.AI_PROCESSING) return 'mdi-robot'
   if (status === ApplicationStatus.READY_TO_APPLY) return 'mdi-clipboard-check-outline'
