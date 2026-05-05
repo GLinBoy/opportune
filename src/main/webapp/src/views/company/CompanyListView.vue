@@ -1,8 +1,10 @@
 <template>
   <div>
     <!-- Page Header -->
-    <div class="d-flex justify-space-between align-center mb-6">
-      <div class="d-flex align-center" style="gap: 12px">
+    <div
+      class="d-flex flex-column flex-sm-row justify-space-between align-sm-center mb-4 mb-md-6 ga-3"
+    >
+      <div class="d-flex align-center ga-3">
         <v-icon icon="mdi-domain" size="48" />
         <div class="d-flex flex-column">
           <span class="text-headline-small font-weight-bold">Companies</span>
@@ -11,7 +13,7 @@
           >
         </div>
       </div>
-      <div class="d-flex align-self-center" style="gap: 16px">
+      <div class="d-flex align-center ga-3">
         <v-autocomplete
           v-model="selectedCompany"
           v-model:search="searchQuery"
@@ -23,7 +25,9 @@
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
+          class="flex-grow-1"
           style="min-width: 300px"
+          hide-details
           clearable
           no-filter
           return-object
@@ -64,103 +68,110 @@
 
     <!-- Data Table -->
     <v-card>
-      <v-data-table-server
-        striped="odd"
-        :show-current-page="true"
-        :items-per-page="itemsPerPage"
-        :page="page"
-        :headers="headers"
-        :items="companies"
-        :items-length="totalItems"
-        :loading="isFetching"
-        :items-per-page-options="itemsPerPageOptions"
-        @update:options="handleUpdateOptions"
-        class="elevation-1 primary-header"
-        @click:row="handleRowClick"
-      >
-        <template v-slot:[`item.name`]="{ item }">
-          <v-container fluid class="pa-0">
-            <v-row no-gutters align="center">
-              <v-col cols="auto">
-                <CompanyLogo :alt="item.name" :logo="item.logo" :website="item.website" size="40" />
-              </v-col>
-              <v-col class="ps-2">
-                <span class="font-weight-bold">{{ item.name }}</span>
-              </v-col>
-              <v-col cols="auto" v-if="item.note">
-                <v-tooltip :text="item.note" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="ms-1"
-                      color="primary"
-                      size="small"
-                      icon="mdi-information-outline"
-                      v-bind="props"
-                    />
-                  </template>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
+      <div style="overflow-x: auto">
+        <v-data-table-server
+          striped="odd"
+          :show-current-page="true"
+          :items-per-page="itemsPerPage"
+          :page="page"
+          :headers="headers"
+          :items="companies"
+          :items-length="totalItems"
+          :loading="isFetching"
+          :items-per-page-options="itemsPerPageOptions"
+          @update:options="handleUpdateOptions"
+          class="elevation-1 primary-header"
+          @click:row="handleRowClick"
+        >
+          <template v-slot:[`item.name`]="{ item }">
+            <v-container fluid class="pa-0">
+              <v-row no-gutters align="center">
+                <v-col cols="auto">
+                  <CompanyLogo
+                    :alt="item.name"
+                    :logo="item.logo"
+                    :website="item.website"
+                    size="40"
+                  />
+                </v-col>
+                <v-col class="ps-2">
+                  <span class="font-weight-bold">{{ item.name }}</span>
+                </v-col>
+                <v-col cols="auto" v-if="item.note">
+                  <v-tooltip :text="item.note" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-icon
+                        class="ms-1"
+                        color="primary"
+                        size="small"
+                        icon="mdi-information-outline"
+                        v-bind="props"
+                      />
+                    </template>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-container>
+          </template>
 
-        <template v-slot:[`item.lastModifiedDate`]="{ item }">
-          <v-container fluid class="pa-0">
-            <v-row no-gutters align="center">
-              <v-col>
-                {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
-              </v-col>
-              <v-col
-                cols="auto"
-                v-if="
-                  item.createdDate &&
-                  item.lastModifiedDate &&
-                  formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)
-                "
-              >
-                <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="ms-1"
-                      color="info"
-                      size="small"
-                      icon="mdi-update"
-                      v-bind="props"
-                    />
-                  </template>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
+          <template v-slot:[`item.lastModifiedDate`]="{ item }">
+            <v-container fluid class="pa-0">
+              <v-row no-gutters align="center">
+                <v-col>
+                  {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
+                </v-col>
+                <v-col
+                  cols="auto"
+                  v-if="
+                    item.createdDate &&
+                    item.lastModifiedDate &&
+                    formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)
+                  "
+                >
+                  <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-icon
+                        class="ms-1"
+                        color="info"
+                        size="small"
+                        icon="mdi-update"
+                        v-bind="props"
+                      />
+                    </template>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-container>
+          </template>
 
-        <template v-slot:[`item.status`]="{ value }">
-          <v-chip
-            :border="`${getCompanyStatusColor(value)} thin opacity-25`"
-            :color="getCompanyStatusColor(value)"
-            :text="getCompanyStatusDisplay(value)"
-            size="x-small"
-            :prepend-icon="getCompanyStatusIcon(value)"
-          />
-        </template>
+          <template v-slot:[`item.status`]="{ value }">
+            <v-chip
+              :border="`${getCompanyStatusColor(value)} thin opacity-25`"
+              :color="getCompanyStatusColor(value)"
+              :text="getCompanyStatusDisplay(value)"
+              size="x-small"
+              :prepend-icon="getCompanyStatusIcon(value)"
+            />
+          </template>
 
-        <template v-slot:[`item.actions`]="{ item }">
-          <div class="d-flex justify-end" style="gap: 4px">
-            <v-tooltip text="Delete" location="top">
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  size="x-small"
-                  variant="text"
-                  color="error"
-                  icon="mdi-delete-outline"
-                  @click.stop="confirmDelete(item)"
-                />
-              </template>
-            </v-tooltip>
-          </div>
-        </template>
-      </v-data-table-server>
+          <template v-slot:[`item.actions`]="{ item }">
+            <div class="d-flex justify-end" style="gap: 4px">
+              <v-tooltip text="Delete" location="top">
+                <template #activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    size="x-small"
+                    variant="text"
+                    color="error"
+                    icon="mdi-delete-outline"
+                    @click.stop="confirmDelete(item)"
+                  />
+                </template>
+              </v-tooltip>
+            </div>
+          </template>
+        </v-data-table-server>
+      </div>
     </v-card>
 
     <!-- Loading overlay -->

@@ -36,7 +36,7 @@
             </v-btn>
           </div>
         </v-col>
-        <v-col cols="auto" class="d-flex align-center" style="gap: 12px">
+        <v-col cols="auto" class="d-flex align-center ga-3">
           <v-btn color="error" variant="flat" icon="mdi-delete" @click="confirmDelete" />
           <v-btn
             color="success"
@@ -71,31 +71,32 @@
           </v-tooltip>
         </v-card-title>
         <v-card-text>
-          <v-data-table
-            v-if="companyMetadata && companyMetadata.length > 0"
-            :headers="metaDataHeaders"
-            :items="companyMetadata"
-            hide-default-footer
-            density="compact"
-          >
-            <template v-slot:[`item.metaName`]="{ item }">
-              <span class="font-weight-medium">{{ item.metaName }}</span>
-            </template>
-            <template v-slot:[`item.value`]="{ item }">
-              <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
-                {{ item.metaValue }}
-              </div>
-            </template>
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-btn
-                color="error"
-                variant="text"
-                icon="mdi-delete"
-                size="small"
-                @click="removeMetaData(item.id)"
-              />
-            </template>
-          </v-data-table>
+          <div v-if="companyMetadata && companyMetadata.length > 0" style="overflow-x: auto">
+            <v-data-table
+              :headers="metaDataHeaders"
+              :items="companyMetadata"
+              hide-default-footer
+              density="compact"
+            >
+              <template v-slot:[`item.metaName`]="{ item }">
+                <span class="font-weight-medium">{{ item.metaName }}</span>
+              </template>
+              <template v-slot:[`item.value`]="{ item }">
+                <div class="text-wrap" style="max-width: 400px; white-space: pre-wrap">
+                  {{ item.metaValue }}
+                </div>
+              </template>
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-btn
+                  color="error"
+                  variant="text"
+                  icon="mdi-delete"
+                  size="small"
+                  @click="removeMetaData(item.id)"
+                />
+              </template>
+            </v-data-table>
+          </div>
           <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-tag-hidden" size="48" class="mb-2" />
             <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
@@ -110,14 +111,18 @@
           Associated Applications
         </v-card-title>
         <v-card-text>
-          <v-data-table
+          <div
             v-if="associatedApplications && associatedApplications.length > 0"
-            :headers="applicationHeaders"
-            :items="associatedApplications"
-            hide-default-footer
-            density="compact"
+            style="overflow-x: auto"
           >
-          </v-data-table>
+            <v-data-table
+              :headers="applicationHeaders"
+              :items="associatedApplications"
+              hide-default-footer
+              density="compact"
+            >
+            </v-data-table>
+          </div>
           <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-briefcase-outline" size="48" class="mb-2" />
             <p>No applications found for this company.</p>

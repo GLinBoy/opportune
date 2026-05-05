@@ -7,7 +7,7 @@
 
     <div v-if="!loading">
       <!-- Page Header -->
-      <div class="d-flex align-center mb-6" style="gap: 12px">
+      <div class="d-flex align-center mb-4 mb-md-6 ga-3">
         <v-icon icon="mdi-account-cog" size="48" />
         <div class="d-flex flex-column">
           <span class="text-headline-small font-weight-bold">Profile Settings</span>
@@ -30,6 +30,7 @@
                 :prepend-icon="tab.icon"
                 :title="tab.title"
                 :active="activeTab === tab.value"
+                :ripple="true"
                 @click="activeTab = tab.value"
               />
             </v-list>

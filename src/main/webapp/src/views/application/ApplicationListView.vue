@@ -1,15 +1,17 @@
 <template>
   <div>
     <!-- Page Header -->
-    <div class="d-flex justify-space-between align-center mb-6">
-      <div class="d-flex align-center" style="gap: 12px">
+    <div
+      class="d-flex flex-column flex-sm-row justify-space-between align-sm-center mb-4 mb-md-6 ga-3"
+    >
+      <div class="d-flex align-center ga-3">
         <v-icon icon="mdi-briefcase" size="48" />
         <div class="d-flex flex-column">
           <span class="text-headline-small font-weight-bold">Applications</span>
           <span class="text-label-medium text-medium-emphasis">Manage your job applications</span>
         </div>
       </div>
-      <div class="d-flex align-self-center" style="gap: 16px">
+      <div class="d-flex align-center ga-3">
         <v-autocomplete
           v-model="selectedApplication"
           v-model:search="searchQuery"
@@ -21,7 +23,9 @@
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
+          class="flex-grow-1"
           style="min-width: 300px"
+          hide-details
           clearable
           no-filter
           return-object
@@ -62,68 +66,36 @@
 
     <!-- Data Table -->
     <v-card>
-      <v-data-table-server
-        striped="odd"
-        :show-current-page="true"
-        :items-per-page="itemsPerPage"
-        :page="page"
-        :headers="headers"
-        :items="applications"
-        :items-length="totalItems"
-        :loading="isFetching"
-        :items-per-page-options="itemsPerPageOptions"
-        @update:options="handleUpdateOptions"
-        class="elevation-1 primary-header"
-        @click:row="handleRowClick"
-      >
-        <!-- Title Column -->
-        <template v-slot:[`item.title`]="{ item }">
-          <v-container fluid class="pa-0">
-            <v-row no-gutters align="center">
-              <v-col>
-                <span class="font-weight-bold">{{ item.title }}</span>
-              </v-col>
-              <v-col cols="auto" v-if="item.note">
-                <v-tooltip :text="item.note" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="ms-1"
-                      color="primary"
-                      size="small"
-                      icon="mdi-information-outline"
-                      v-bind="props"
-                    />
-                  </template>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
-
-        <!-- Date Applied Column -->
-        <template #[`item.appliedAt`]="{ item }">
-          {{ item.appliedAt ? formatDate(item.appliedAt) : '-' }}
-        </template>
-
-        <!-- Last Modified Date Column -->
-        <template #[`item.lastModifiedDate`]="{ item }">
-          <template v-if="item.createdDate && item.lastModifiedDate">
+      <div style="overflow-x: auto">
+        <v-data-table-server
+          striped="odd"
+          :show-current-page="true"
+          :items-per-page="itemsPerPage"
+          :page="page"
+          :headers="headers"
+          :items="applications"
+          :items-length="totalItems"
+          :loading="isFetching"
+          :items-per-page-options="itemsPerPageOptions"
+          @update:options="handleUpdateOptions"
+          class="elevation-1 primary-header"
+          @click:row="handleRowClick"
+        >
+          <!-- Title Column -->
+          <template v-slot:[`item.title`]="{ item }">
             <v-container fluid class="pa-0">
               <v-row no-gutters align="center">
                 <v-col>
-                  {{ formatDate(item.lastModifiedDate) || '-' }}
+                  <span class="font-weight-bold">{{ item.title }}</span>
                 </v-col>
-                <v-col
-                  cols="auto"
-                  v-if="formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)"
-                >
-                  <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
+                <v-col cols="auto" v-if="item.note">
+                  <v-tooltip :text="item.note" location="top">
                     <template v-slot:activator="{ props }">
                       <v-icon
                         class="ms-1"
-                        color="info"
+                        color="primary"
                         size="small"
-                        icon="mdi-update"
+                        icon="mdi-information-outline"
                         v-bind="props"
                       />
                     </template>
@@ -132,46 +104,80 @@
               </v-row>
             </v-container>
           </template>
-          <template v-else>
-            <v-container fluid class="pa-0">
-              <v-row no-gutters align="center">
-                <v-col>
-                  {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
-                </v-col>
-              </v-row>
-            </v-container>
+
+          <!-- Date Applied Column -->
+          <template #[`item.appliedAt`]="{ item }">
+            {{ item.appliedAt ? formatDate(item.appliedAt) : '-' }}
           </template>
-        </template>
 
-        <!-- Status Column -->
-        <template v-slot:[`item.status`]="{ value }">
-          <v-chip
-            :border="`${getApplicationStatusColor(value)} thin opacity-25`"
-            :color="getApplicationStatusColor(value)"
-            :text="getApplicationStatusDisplay(value)"
-            size="x-small"
-            :prepend-icon="getApplicationStatusIcon(value)"
-          />
-        </template>
+          <!-- Last Modified Date Column -->
+          <template #[`item.lastModifiedDate`]="{ item }">
+            <template v-if="item.createdDate && item.lastModifiedDate">
+              <v-container fluid class="pa-0">
+                <v-row no-gutters align="center">
+                  <v-col>
+                    {{ formatDate(item.lastModifiedDate) || '-' }}
+                  </v-col>
+                  <v-col
+                    cols="auto"
+                    v-if="formatDate(item.createdDate) !== formatDate(item.lastModifiedDate)"
+                  >
+                    <v-tooltip :text="`Created: ${formatDate(item.createdDate)}`" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-icon
+                          class="ms-1"
+                          color="info"
+                          size="small"
+                          icon="mdi-update"
+                          v-bind="props"
+                        />
+                      </template>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </template>
+            <template v-else>
+              <v-container fluid class="pa-0">
+                <v-row no-gutters align="center">
+                  <v-col>
+                    {{ item.lastModifiedDate ? formatDate(item.lastModifiedDate) : '-' }}
+                  </v-col>
+                </v-row>
+              </v-container>
+            </template>
+          </template>
 
-        <!-- Actions Column -->
-        <template v-slot:[`item.actions`]="{ item }">
-          <div class="d-flex justify-end" style="gap: 4px">
-            <v-tooltip text="Delete" location="top">
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  size="x-small"
-                  variant="text"
-                  color="error"
-                  icon="mdi-delete-outline"
-                  @click.stop="confirmDelete(item)"
-                />
-              </template>
-            </v-tooltip>
-          </div>
-        </template>
-      </v-data-table-server>
+          <!-- Status Column -->
+          <template v-slot:[`item.status`]="{ value }">
+            <v-chip
+              :border="`${getApplicationStatusColor(value)} thin opacity-25`"
+              :color="getApplicationStatusColor(value)"
+              :text="getApplicationStatusDisplay(value)"
+              size="x-small"
+              :prepend-icon="getApplicationStatusIcon(value)"
+            />
+          </template>
+
+          <!-- Actions Column -->
+          <template v-slot:[`item.actions`]="{ item }">
+            <div class="d-flex justify-end" style="gap: 4px">
+              <v-tooltip text="Delete" location="top">
+                <template #activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    size="x-small"
+                    variant="text"
+                    color="error"
+                    icon="mdi-delete-outline"
+                    @click.stop="confirmDelete(item)"
+                  />
+                </template>
+              </v-tooltip>
+            </div>
+          </template>
+        </v-data-table-server>
+      </div>
     </v-card>
 
     <!-- Loading overlay -->
