@@ -132,7 +132,7 @@
                 required
               />
 
-              <v-card variant="tonal" color="surface-variant" rounded="lg" class="pa-3 mb-4">
+              <v-card variant="tonal" color="info" rounded="lg" class="pa-3 mb-4">
                 <p class="text-body-2 font-weight-bold mb-1">Password must contain:</p>
                 <ul class="text-body-2 pl-4">
                   <li>At least 8 characters</li>
