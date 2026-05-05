@@ -73,21 +73,18 @@
     </div>
 
     <!-- Delete confirmation dialog -->
-    <v-dialog v-model="showDeleteDialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h6">Delete Resume</v-card-title>
-        <v-card-text>
-          Are you sure you want to delete this resume? This action cannot be undone.
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn variant="text" @click="showDeleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" variant="flat" :loading="deleting" @click="deleteResume"
-            >Delete</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      v-model="showDeleteDialog"
+      title="Delete Resume"
+      variant="error"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :loading="deleting"
+      @confirm="deleteResume"
+      @cancel="showDeleteDialog = false"
+    >
+      Are you sure you want to delete this resume? This action cannot be undone.
+    </ConfirmDialog>
 
     <!-- Snackbar for notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
@@ -103,6 +100,7 @@
 import { ref, watch, onMounted, reactive } from 'vue'
 import { type IProfileResume } from '../../models'
 import ProfileResumeService from '../../services/profile-resume.service'
+import ConfirmDialog from '../ConfirmDialog.vue'
 
 // Import Vue FilePond
 import vueFilePond from 'vue-filepond'
