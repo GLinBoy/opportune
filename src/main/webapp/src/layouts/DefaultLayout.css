@@ -1,4 +1,4 @@
-.default-layout {
+.tabler-main {
+  background-color: rgb(var(--v-theme-background));
   min-height: 100vh;
-  background-color: #F9FAFB;
 }

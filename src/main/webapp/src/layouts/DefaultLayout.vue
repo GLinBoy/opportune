@@ -1,17 +1,17 @@
 <template>
-  <v-layout class="default-layout">
+  <v-app :theme="currentTheme">
     <AppBar />
 
-    <v-main>
-      <v-container class="mx-auto" style="max-width: 1400px">
+    <v-main class="tabler-main">
+      <v-container class="mx-auto pa-6" style="max-width: 1400px">
         <router-view />
       </v-container>
     </v-main>
 
     <GoToTopButton />
-  </v-layout>
+  </v-app>
 </template>
 
 <script lang="ts" src="./DefaultLayout.ts" />
 
-<style src="./DefaultLayout.css" />
+<style lang="css" scoped src="./DefaultLayout.css" />

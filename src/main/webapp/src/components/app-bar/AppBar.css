@@ -1,0 +1,12 @@
+.brand-link {
+  gap: 8px;
+}
+
+.notif-item {
+  border-radius: 4px;
+  margin: 2px 4px;
+}
+
+.notif-unread {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
