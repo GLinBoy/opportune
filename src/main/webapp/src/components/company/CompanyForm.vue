@@ -119,7 +119,7 @@ import {
   getCompanyStatusDisplay,
   getCompanyStatusColor,
   getCompanyStatusIcon,
-} from '../models'
+} from '../../models'
 
 export default defineComponent({
   name: 'CompanyForm',

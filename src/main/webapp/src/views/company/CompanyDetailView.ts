@@ -5,7 +5,7 @@ import { type IApplication } from '../../models/application.model'
 import CompanyService from '../../services/company.service'
 import CompanyMetadataService from '../../services/company-metadata.service'
 import CompanyApplicationService from '../../services/company-application.service'
-import CompanyForm from '../../components/CompanyForm.vue'
+import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 
 export interface Snackbar {

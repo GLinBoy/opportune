@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon } from '../../models/enumerations/application-status.model'
 import { ApplicationService, ApplicationMetaDataService } from '../../services'
-import RawContentDialog from '../../components/RawContentDialog.vue'
+import RawContentDialog from '../../components/application/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 
 export interface Snackbar {
