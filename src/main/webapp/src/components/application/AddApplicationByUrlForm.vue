@@ -1,54 +1,61 @@
 <template>
-  <v-card flat>
-    <v-card-text>
-      <v-form ref="formRef" v-model="isValid" @submit.prevent="handleSubmit">
-        <v-text-field
-          v-model="formData.url"
-          label="Job Posting URL"
-          placeholder="https://company.com/careers/job-posting"
-          variant="outlined"
-          prepend-inner-icon="mdi-link"
-          :rules="[rules.required, rules.url]"
-          hint="Paste the URL of the job posting to automatically fetch job details"
-          persistent-hint
-          class="mb-4"
-        />
+  <FormCard>
+    <template #title>
+      <v-icon icon="mdi-link-plus" class="mr-2" />
+      Add Application by URL
+    </template>
 
-        <v-alert
-          type="info"
-          variant="tonal"
-          class="mb-4"
-        >
-          <div class="text-body-2">
-            <v-icon icon="mdi-information" size="small" class="mr-2" />
-            The system will automatically fetch and parse the job details from the provided URL.
-          </div>
-        </v-alert>
-      </v-form>
-    </v-card-text>
+    <v-form ref="formRef" v-model="isValid" @submit.prevent="handleSubmit">
+      <v-row>
+        <v-col cols="12">
+          <FieldLabel label="Job Posting URL" input-id="url-field" />
+          <v-text-field
+            id="url-field"
+            v-model="formData.url"
+            placeholder="https://company.com/careers/job-posting"
+            variant="outlined"
+            density="compact"
+            bg-color="surface"
+            rounded="md"
+            prepend-inner-icon="mdi-link"
+            :rules="[rules.required, rules.url]"
+            hint="Paste the URL of the job posting to automatically fetch job details"
+            persistent-hint
+          />
+        </v-col>
+      </v-row>
 
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        variant="text"
-        @click="handleCancel"
-      >
+      <v-alert type="info" variant="tonal" class="mt-5">
+        <div class="text-body-2">
+          <v-icon icon="mdi-information" size="small" class="mr-2" />
+          The system will automatically fetch and parse the job details from the provided URL.
+        </div>
+      </v-alert>
+    </v-form>
+
+    <template #actions>
+      <v-btn variant="outlined" color="secondary" rounded="md" @click="handleCancel">
         Cancel
       </v-btn>
       <v-btn
         color="primary"
+        variant="flat"
+        rounded="md"
+        min-width="120"
         :loading="loading"
         :disabled="!isValid"
         @click="handleSubmit"
       >
-        Fetch & Create Application
+        Fetch &amp; Create Application
       </v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+  </FormCard>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
+import FormCard from '../forms/FormCard.vue'
+import FieldLabel from '../forms/FieldLabel.vue'
 
 // Props
 export interface UrlFormProps {
@@ -56,7 +63,7 @@ export interface UrlFormProps {
 }
 
 withDefaults(defineProps<UrlFormProps>(), {
-  loading: false
+  loading: false,
 })
 
 // Emits
@@ -71,7 +78,7 @@ const isValid = ref(false)
 
 // Form data
 const formData = reactive({
-  url: ''
+  url: '',
 })
 
 // Validation rules
@@ -81,7 +88,7 @@ const rules = {
     if (!value) return true
     const pattern = /^https?:\/\/.+/
     return pattern.test(value) || 'Please enter a valid URL starting with http:// or https://'
-  }
+  },
 }
 
 // Methods
@@ -103,6 +110,6 @@ const reset = () => {
 }
 
 defineExpose({
-  reset
+  reset,
 })
 </script>

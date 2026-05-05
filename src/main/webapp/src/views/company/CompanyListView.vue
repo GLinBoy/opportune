@@ -180,36 +180,38 @@
     </v-overlay>
 
     <v-dialog v-model="addNewCompanyDialog" transition="dialog-bottom-transition" fullscreen>
-      <v-card>
-        <v-toolbar color="secondary" dark>
+      <v-card class="d-flex flex-column">
+        <v-toolbar color="primary" dark>
           <v-btn icon="mdi-close" @click="closeDialog"></v-btn>
           <v-toolbar-title>Add New Company</v-toolbar-title>
+          <v-spacer />
         </v-toolbar>
 
-        <v-container class="d-flex justify-center pa-8">
+        <v-container class="d-flex justify-center pa-8 flex-grow-1 overflow-y-auto">
           <div style="max-width: 800px; width: 100%">
-            <CompanyForm v-model="newCompany" class="mb-6" />
-
-            <!-- Action buttons at the bottom -->
-            <v-card>
-              <v-card-actions class="justify-end pa-4">
+            <CompanyForm v-model="newCompany">
+              <template #actions>
                 <v-btn
                   text="Cancel"
                   variant="outlined"
+                  color="secondary"
+                  rounded="md"
                   prepend-icon="mdi-close"
-                  @click="closeDialog"
                   :disabled="isCreating"
+                  @click="closeDialog"
                 />
                 <v-btn
                   text="Create"
                   color="primary"
                   variant="flat"
+                  rounded="md"
+                  min-width="120"
                   prepend-icon="mdi-content-save"
                   :loading="isCreating"
                   @click="createCompany"
                 />
-              </v-card-actions>
-            </v-card>
+              </template>
+            </CompanyForm>
           </div>
         </v-container>
       </v-card>
