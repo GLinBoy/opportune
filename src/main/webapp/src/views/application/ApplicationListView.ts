@@ -5,6 +5,7 @@ import ApplicationService from '../../services/application.service'
 import SearchService from '../../services/search.service'
 import AddApplicationByUrlForm from '../../components/application/AddApplicationByUrlForm.vue'
 import AddApplicationManualForm from '../../components/application/AddApplicationManualForm.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 export interface Snackbar {
   show: boolean
@@ -24,7 +25,8 @@ export default defineComponent({
   name: 'ApplicationListView',
   components: {
     AddApplicationByUrlForm,
-    AddApplicationManualForm
+    AddApplicationManualForm,
+    ConfirmDialog,
   },
   methods: {
     getApplicationStatusDisplay,
