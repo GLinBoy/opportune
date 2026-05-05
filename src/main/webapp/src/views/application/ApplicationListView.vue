@@ -55,7 +55,7 @@
             <v-btn
               v-bind="props"
               color="primary"
-              icon="mdi-plus-box"
+              icon="mdi-briefcase-plus"
               size="small"
               @click="addNewApplication"
             />
