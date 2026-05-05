@@ -177,7 +177,7 @@ const router = createRouter({
 })
 
 // Navigation guard to protect routes
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   const accessToken = localStorage.getItem('accessToken')
   const expiresAt = localStorage.getItem('expiresAt')
 
@@ -210,12 +210,10 @@ router.beforeEach(async (to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     // Redirect to login if not authenticated
-    next({ name: 'login', query: { redirect: to.fullPath } })
+    return { name: 'login', query: { redirect: to.fullPath } }
   } else if (to.name === 'login' && isAuthenticated) {
     // Redirect to dashboard if already authenticated and trying to access login
-    next({ name: 'dashboard-home' })
-  } else {
-    next()
+    return { name: 'dashboard-home' }
   }
 })
 
