@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 const links = [
-  { title: 'Dashboard', path: '/dashboard', icon: 'mdi-view-dashboard' },
-  { title: 'Applications', path: '/applications', icon: 'mdi-briefcase' },
+  { title: 'Dashboard', path: '/dashboard', icon: 'mdi-view-dashboard-outline' },
   { title: 'Companies', path: '/companies', icon: 'mdi-domain' },
+  { title: 'Applications', path: '/applications', icon: 'mdi-briefcase-outline' },
 ]
 </script>

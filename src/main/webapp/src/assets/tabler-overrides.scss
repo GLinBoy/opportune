@@ -1,0 +1,98 @@
+// ── Tabler-style overrides for Vuetify 3 components ─────────────────────────
+// Loaded AFTER vuetify/styles in main.ts so these rules win.
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.v-card {
+  border: 1px solid rgba(101, 109, 119, 0.14) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+// ── Button ────────────────────────────────────────────────────────────────────
+.v-btn {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  border-radius: 4px !important;
+}
+
+// ── Text field / input field ──────────────────────────────────────────────────
+.v-field,
+.v-text-field .v-field {
+  border-radius: 4px !important;
+}
+
+// ── Navigation drawer ────────────────────────────────────────────────────────
+.v-navigation-drawer {
+  border-right: 1px solid rgba(101, 109, 119, 0.14) !important;
+  box-shadow: none !important;
+}
+
+// ── Data table ────────────────────────────────────────────────────────────────
+.v-data-table {
+  // Subtle row borders like Tabler's compact tables
+  .v-data-table__tr {
+    border-bottom: 1px solid rgba(101, 109, 119, 0.10);
+  }
+
+  .v-data-table-header__content {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(101, 109, 119, 0.8);
+  }
+}
+
+// ── Divider ───────────────────────────────────────────────────────────────────
+.v-divider {
+  border-color: rgba(101, 109, 119, 0.14) !important;
+}
+
+// ── Elevation overrides: keep everything flat ─────────────────────────────────
+// Override Vuetify's box-shadow scale to keep shadows very subtle
+.v-sheet.elevation-2,
+.v-sheet.elevation-3,
+.v-sheet.elevation-4,
+.v-sheet.elevation-5,
+.v-sheet.elevation-6,
+.v-sheet.elevation-7,
+.v-sheet.elevation-8,
+.v-sheet.elevation-9,
+.v-sheet.elevation-10,
+.v-sheet.elevation-11,
+.v-sheet.elevation-12,
+.v-sheet.elevation-13,
+.v-sheet.elevation-14,
+.v-sheet.elevation-15,
+.v-sheet.elevation-16,
+.v-sheet.elevation-17,
+.v-sheet.elevation-18,
+.v-sheet.elevation-19,
+.v-sheet.elevation-20,
+.v-sheet.elevation-21,
+.v-sheet.elevation-22,
+.v-sheet.elevation-23,
+.v-sheet.elevation-24 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+// ── App bar ───────────────────────────────────────────────────────────────────
+.v-app-bar {
+  box-shadow: none !important;
+  border-bottom: 1px solid rgba(101, 109, 119, 0.14) !important;
+}
+
+// ── List items ────────────────────────────────────────────────────────────────
+.v-list-item {
+  border-radius: 4px !important;
+  min-height: 36px !important;
+}
+
+// ── Typography helpers ────────────────────────────────────────────────────────
+.v-application {
+  font-family: var(--v-font-family, 'Inter', sans-serif) !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+}
