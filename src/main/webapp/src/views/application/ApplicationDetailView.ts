@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
-import { ApplicationStatus, getApplicationStatusDisplay } from '../../models/enumerations/application-status.model'
+import { ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon } from '../../models/enumerations/application-status.model'
 import { ApplicationService, ApplicationMetaDataService } from '../../services'
 import RawContentDialog from '../../components/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
@@ -24,9 +24,15 @@ export default defineComponent({
     statusOptions() {
       return Object.values(ApplicationStatus).map(status => ({
         title: getApplicationStatusDisplay(status),
-        value: status
+        value: status,
+        color: getApplicationStatusColor(status),
+        icon: getApplicationStatusIcon(status),
       }))
     }
+  },
+  methods: {
+    getApplicationStatusColor,
+    getApplicationStatusIcon,
   },
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
@@ -101,23 +107,6 @@ export default defineComponent({
         month: 'short',
         day: 'numeric',
       })
-    }
-
-    const getStatusColor = (status: keyof typeof ApplicationStatus | null | undefined): string => {
-      if (!status) return 'default'
-
-      const colorMap: Record<keyof typeof ApplicationStatus, string> = {
-        INITIATED: 'info',
-        AI_PROCESSING: 'purple',
-        READY_TO_APPLY: 'teal',
-        APPLIED: 'blue',
-        IN_PROGRESS: 'orange',
-        REJECTED: 'error',
-        OFFER_RECEIVED: 'green',
-        ACCEPTED: 'success',
-        DECLINED: 'grey',
-      }
-      return colorMap[status] || 'default'
     }
 
     const markAsModified = () => {
@@ -446,7 +435,7 @@ export default defineComponent({
 
       // Utility methods
       formatDate,
-      getStatusColor,
+      getStatusColor: getApplicationStatusColor,
       markAsModified,
 
       // Main actions

@@ -123,14 +123,45 @@
               />
             </v-col>
             <v-col cols="12" md="6">
+              <v-text-field
+                v-model="application.salary"
+                label="Salary"
+                variant="outlined"
+                prepend-inner-icon="mdi-currency-usd"
+                @input="markAsModified"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
               <v-select
                 v-model="application.status"
                 label="Status"
                 :items="statusOptions"
                 variant="outlined"
-                prepend-inner-icon="mdi-flag"
-                @input="markAsModified"
-              />
+                @update:model-value="markAsModified"
+              >
+                <template #selection="{ item }">
+                  <v-chip
+                    :color="item.color"
+                    :prepend-icon="item.icon"
+                    size="small"
+                    variant="tonal"
+                  >
+                    {{ item.title }}
+                  </v-chip>
+                </template>
+                <template #item="{ item, props }">
+                  <v-list-item v-bind="props" title="">
+                    <v-chip
+                      :color="item.color"
+                      :prepend-icon="item.icon"
+                      size="small"
+                      variant="tonal"
+                    >
+                      {{ item.title }}
+                    </v-chip>
+                  </v-list-item>
+                </template>
+              </v-select>
             </v-col>
             <v-col cols="12">
               <v-textarea

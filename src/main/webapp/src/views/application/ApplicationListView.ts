@@ -183,20 +183,6 @@ export default defineComponent({
       })
     }
 
-    const getStatusColor = (status: string): string => {
-      const colorMap: Record<string, string> = {
-        applied: 'blue',
-        under_review: 'orange',
-        interview_scheduled: 'purple',
-        interview_completed: 'indigo',
-        offer_received: 'green',
-        accepted: 'success',
-        rejected: 'error',
-        withdrawn: 'grey',
-      }
-      return colorMap[status] || 'default'
-    }
-
     const goToApplicationDetail = (event: Event | null, { item }: { item: IApplication }) => {
       router.push(`/applications/${item.id}`)
     }
@@ -378,7 +364,6 @@ export default defineComponent({
 
       // Methods
       formatDate,
-      getStatusColor,
       goToApplicationDetail,
       handleRowClick,
       addNewApplication,
