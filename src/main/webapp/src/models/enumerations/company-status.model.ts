@@ -13,14 +13,22 @@ export function getCompanyStatusDisplay(status: CompanyStatus): string {
   return statusMap[status];
 }
 
-export function getCompanyStatusColor(status: CompanyStatus): string {
-  if (status === CompanyStatus.INTERESTED) return 'green'
-  if (status === CompanyStatus.BLOCKED) return 'red'
-  return 'gray'
+export function getCompanyStatusColor(status: string | null | undefined): string {
+  if (!status) return 'default'
+  const colorMap: Record<CompanyStatus, string> = {
+    [CompanyStatus.INTERESTED]: 'green',
+    [CompanyStatus.NOT_INTERESTED]: 'grey',
+    [CompanyStatus.BLOCKED]: 'error',
+  }
+  return colorMap[status as CompanyStatus] ?? 'default'
 }
 
-export function getCompanyStatusIcon(status: CompanyStatus): string {
-  if (status === CompanyStatus.INTERESTED) return 'mdi-thumb-up'
-  if (status === CompanyStatus.BLOCKED) return 'mdi-thumb-down'
-  return 'mdi-alert-circle'
+export function getCompanyStatusIcon(status: string | null | undefined): string {
+  if (!status) return 'mdi-help-circle'
+  const iconMap: Record<CompanyStatus, string> = {
+    [CompanyStatus.INTERESTED]: 'mdi-thumb-up',
+    [CompanyStatus.NOT_INTERESTED]: 'mdi-minus-circle',
+    [CompanyStatus.BLOCKED]: 'mdi-thumb-down',
+  }
+  return iconMap[status as CompanyStatus] ?? 'mdi-help-circle'
 }

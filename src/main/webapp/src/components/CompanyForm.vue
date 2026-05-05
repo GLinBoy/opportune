@@ -69,9 +69,21 @@
             label="Status"
             :items="statusOptions"
             variant="outlined"
-            prepend-inner-icon="mdi-flag"
             @update:model-value="updateField('status', $event)"
-          />
+          >
+            <template #selection="{ item }">
+              <v-chip :color="item.color" :prepend-icon="item.icon" size="small" variant="tonal">
+                {{ item.title }}
+              </v-chip>
+            </template>
+            <template #item="{ item, props }">
+              <v-list-item v-bind="props" title="">
+                <v-chip :color="item.color" :prepend-icon="item.icon" size="small" variant="tonal">
+                  {{ item.title }}
+                </v-chip>
+              </v-list-item>
+            </template>
+          </v-select>
         </v-col>
         <v-col cols="12">
           <v-textarea
@@ -101,34 +113,42 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { type ICompany, CompanyStatus, getCompanyStatusDisplay } from '../models'
+import {
+  type ICompany,
+  CompanyStatus,
+  getCompanyStatusDisplay,
+  getCompanyStatusColor,
+  getCompanyStatusIcon,
+} from '../models'
 
 export default defineComponent({
   name: 'CompanyForm',
   props: {
     modelValue: {
       type: Object as () => ICompany,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['update:modelValue', 'change'],
   computed: {
     statusOptions() {
-      return Object.values(CompanyStatus).map(status => ({
+      return Object.values(CompanyStatus).map((status) => ({
         title: getCompanyStatusDisplay(status),
-        value: status
+        value: status,
+        color: getCompanyStatusColor(status),
+        icon: getCompanyStatusIcon(status),
       }))
-    }
+    },
   },
   methods: {
     updateField(field: keyof ICompany, value: string | undefined) {
       const updatedCompany = {
         ...this.modelValue,
-        [field]: value
+        [field]: value,
       }
       this.$emit('update:modelValue', updatedCompany)
       this.$emit('change')
-    }
-  }
+    },
+  },
 })
 </script>

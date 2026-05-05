@@ -34,8 +34,8 @@
             <v-list-item v-bind="props" :title="item.name" :subtitle="item.status">
               <template v-slot:prepend>
                 <v-icon
-                  :color="getSearchResultStatusColor(item.status)"
-                  :icon="getSearchResultStatusIcon(item.status)"
+                  :color="getCompanyStatusColor(item.status)"
+                  :icon="getCompanyStatusIcon(item.status)"
                 />
               </template>
             </v-list-item>

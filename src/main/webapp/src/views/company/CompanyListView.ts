@@ -1,6 +1,6 @@
 import { ref, defineComponent, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type ICompany, type CompanyStatus, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
+import { type ICompany, getCompanyStatusDisplay, getCompanyStatusColor, getCompanyStatusIcon, type IDataTableOptions, type ISortBy } from '../../models'
 import CompanyService from '../../services/company.service'
 import SearchService from '../../services/search.service'
 import CompanyForm from '../../components/CompanyForm.vue'
@@ -233,15 +233,6 @@ export default defineComponent({
       }
     }
 
-    // Helper methods for search results (to handle string to enum conversion)
-    const getSearchResultStatusColor = (status: string) => {
-      return getCompanyStatusColor(status as CompanyStatus)
-    }
-
-    const getSearchResultStatusIcon = (status: string) => {
-      return getCompanyStatusIcon(status as CompanyStatus)
-    }
-
     return {
       // Data
       companies,
@@ -288,8 +279,6 @@ export default defineComponent({
       // Snackbar
       snackbar,
       showSnackbar,
-      getSearchResultStatusColor,
-      getSearchResultStatusIcon,
       formatDate,
     }
   }
