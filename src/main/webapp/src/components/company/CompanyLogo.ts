@@ -51,6 +51,6 @@ export default defineComponent({
             }
         }
 
-        return { currentSrc, onError }
+        return { currentSrc, defaultLogo: defaultCompanyLogo, onError }
     },
 })
