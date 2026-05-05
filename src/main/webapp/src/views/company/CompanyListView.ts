@@ -5,13 +5,15 @@ import CompanyService from '../../services/company.service'
 import SearchService from '../../services/search.service'
 import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'CompanyListView',
   components: {
     CompanyForm,
-    CompanyLogo
+    CompanyLogo,
+    ConfirmDialog,
   },
   methods: {
     getCompanyStatusDisplay,
