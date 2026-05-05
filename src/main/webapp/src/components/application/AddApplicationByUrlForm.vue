@@ -26,10 +26,10 @@
       </v-row>
 
       <v-alert type="info" variant="tonal" class="mt-5">
-        <div class="text-body-2">
-          <v-icon icon="mdi-information" size="small" class="mr-2" />
-          The system will automatically fetch and parse the job details from the provided URL.
-        </div>
+        <p class="text-body-2">
+          The system will try to automatically fetch and parse the job details from the provided
+          URL.
+        </p>
       </v-alert>
     </v-form>
 

@@ -17,6 +17,8 @@
           rounded="md"
           hide-details="auto"
           prepend-inner-icon="mdi-domain"
+          :rules="[(v) => !!v || 'Company name is required']"
+          required
           @update:model-value="updateField('name', $event)"
         />
       </v-col>

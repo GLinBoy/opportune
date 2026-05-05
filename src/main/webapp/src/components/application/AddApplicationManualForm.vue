@@ -121,17 +121,22 @@
         </v-col>
       </v-row>
 
-      <v-alert type="warning" variant="tonal" class="mt-5">
-        <div class="text-body-2">
-          <v-icon icon="mdi-alert" size="small" class="mr-2" />
-          Make sure to include the complete job description in the "Job Description" field for
-          better tracking and analysis.
-        </div>
+      <v-alert type="info" variant="tonal" class="mt-5">
+        <p class="text-body-2">
+          Make sure to include the complete job description in the "<b>Job Description</b>" field
+          for better tracking and analysis.
+        </p>
       </v-alert>
     </v-form>
 
     <template #actions>
-      <v-btn variant="outlined" color="secondary" rounded="md" @click="handleCancel">
+      <v-btn
+        variant="outlined"
+        color="secondary"
+        rounded="md"
+        min-width="120"
+        @click="handleCancel"
+      >
         Cancel
       </v-btn>
       <v-btn
@@ -143,7 +148,7 @@
         :disabled="!isValid"
         @click="handleSubmit"
       >
-        Create Application
+        Save
       </v-btn>
     </template>
   </FormCard>
