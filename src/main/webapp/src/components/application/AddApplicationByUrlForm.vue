@@ -34,7 +34,13 @@
     </v-form>
 
     <template #actions>
-      <v-btn variant="outlined" color="secondary" rounded="md" @click="handleCancel">
+      <v-btn
+        variant="outlined"
+        color="secondary"
+        rounded="md"
+        min-width="120"
+        @click="handleCancel"
+      >
         Cancel
       </v-btn>
       <v-btn
@@ -46,7 +52,7 @@
         :disabled="!isValid"
         @click="handleSubmit"
       >
-        Fetch &amp; Create Application
+        Fetch
       </v-btn>
     </template>
   </FormCard>
