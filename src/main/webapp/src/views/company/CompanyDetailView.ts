@@ -7,6 +7,7 @@ import CompanyMetadataService from '../../services/company-metadata.service'
 import CompanyApplicationService from '../../services/company-application.service'
 import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 export interface Snackbar {
   show: boolean
@@ -19,7 +20,8 @@ export default defineComponent({
   name: 'CompanyDetailView',
   components: {
     CompanyForm,
-    CompanyLogo
+    CompanyLogo,
+    ConfirmDialog,
   },
   setup() {
     // Services and dependencies
