@@ -265,6 +265,7 @@
           <MetadataTable
             v-if="applicationMetadata && applicationMetadata.length > 0"
             :items="applicationMetadata"
+            @edit="showEditMetaDataDialog"
             @delete="removeMetaData"
           />
           <div v-else class="text-center py-8 text-medium-emphasis">

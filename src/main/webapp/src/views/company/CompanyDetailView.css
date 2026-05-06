@@ -2,11 +2,3 @@
   word-break: break-word;
   white-space: pre-wrap;
 }
-
-:deep(.v-data-table__tr:hover) {
-  background-color: rgb(var(--v-theme-grey-lighten-5)) !important;
-}
-
-:deep(.v-data-table__tr) {
-  cursor: pointer;
-}

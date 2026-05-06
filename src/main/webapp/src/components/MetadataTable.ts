@@ -9,7 +9,7 @@ export interface IMetadataItem {
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'MetadataTable',
-  emits: ['delete'],
+  emits: ['delete', 'edit'],
   props: {
     items: {
       type: Array as PropType<IMetadataItem[]>,
@@ -20,13 +20,17 @@ export default defineComponent({
       default: false,
     },
   },
-  setup() {
+  setup(props, { emit }) {
     const headers = [
       { title: 'Key', key: 'metaName', sortable: true },
       { title: 'Value', key: 'metaValue', sortable: false },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
     ]
 
-    return { headers }
+    const handleRowClick = (_event: Event, { item }: { item: IMetadataItem }) => {
+      emit('edit', item)
+    }
+
+    return { headers, handleRowClick }
   },
 })

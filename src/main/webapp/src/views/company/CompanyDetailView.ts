@@ -158,6 +158,11 @@ export default defineComponent({
       showMetaDataDialog.value = true
     }
 
+    const showEditMetaDataDialog = (item: ICompanyMetadata) => {
+      newMetaData.value = { ...item }
+      showMetaDataDialog.value = true
+    }
+
     const cancelAddMetaData = () => {
       showMetaDataDialog.value = false
       newMetaData.value = {}
@@ -172,18 +177,28 @@ export default defineComponent({
           companyMetadata.value = []
         }
         newMetaData.value.companyId = company.value?.id || ''
-        await companyMetadataService()
-          .create(company.value?.id || '', newMetaData.value)
-          .then(data => {
-            companyMetadata.value.push(data)
-          })
+        if (newMetaData.value.id) {
+          await companyMetadataService()
+            .update(company.value?.id || '', newMetaData.value)
+            .then(data => {
+              const index = companyMetadata.value.findIndex(item => item.id === data.id)
+              if (index !== -1) companyMetadata.value.splice(index, 1, data)
+            })
+          showSnackbar('Meta data updated successfully!', 'success')
+        } else {
+          await companyMetadataService()
+            .create(company.value?.id || '', newMetaData.value)
+            .then(data => {
+              companyMetadata.value.push(data)
+            })
+          showSnackbar('Meta data added successfully!', 'success')
+        }
 
         showMetaDataDialog.value = false
         newMetaData.value = {}
-        showSnackbar('Meta data added successfully!', 'success')
       } catch (error) {
-        console.error('Failed to add meta data:', error)
-        showSnackbar('Failed to add meta data. Please try again.', 'error')
+        console.error('Failed to save meta data:', error)
+        showSnackbar('Failed to save meta data. Please try again.', 'error')
       } finally {
         savingMetaData.value = false
       }
@@ -324,6 +339,7 @@ export default defineComponent({
 
       // Dialog actions
       showAddMetaDataDialog,
+      showEditMetaDataDialog,
       cancelAddMetaData,
       saveMetaData,
       removeMetaData,

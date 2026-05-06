@@ -8,6 +8,7 @@
       hide-default-footer
       density="compact"
       class="elevation-1"
+      @click:row="handleRowClick"
     >
       <!-- Key Column -->
       <template v-slot:[`item.metaName`]="{ item }">
@@ -24,6 +25,18 @@
       <!-- Actions Column -->
       <template v-slot:[`item.actions`]="{ item }">
         <div class="d-flex justify-end" style="gap: 4px">
+          <v-tooltip text="Edit" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                size="x-small"
+                variant="text"
+                color="primary"
+                icon="mdi-pencil-outline"
+                @click.stop="$emit('edit', item)"
+              />
+            </template>
+          </v-tooltip>
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props }">
               <v-btn
@@ -45,6 +58,14 @@
 <script lang="ts" src="./MetadataTable.ts" />
 
 <style scoped>
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+
+:deep(.v-data-table__tr:hover) {
+  background-color: rgb(var(--v-theme-grey-lighten-5)) !important;
+}
+
 :deep(thead) {
   background-color: rgb(var(--v-theme-primary)) !important;
 }

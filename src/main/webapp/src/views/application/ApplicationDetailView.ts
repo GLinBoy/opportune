@@ -260,6 +260,11 @@ export default defineComponent({
       metaDataDialog.value = true
     }
 
+    const showEditMetaDataDialog = (item: IApplicationMetaData) => {
+      newMetaData.value = { ...item }
+      metaDataDialog.value = true
+    }
+
     const saveMetaData = async () => {
       if (!metaDataForm.value || !application.value) return
 
@@ -275,26 +280,28 @@ export default defineComponent({
           applicationMetadata.value = []
         }
         newMetaData.value.applicationId = application.value?.id || ''
-        await applicationMetadataService()
-          .create(application.value?.id || '', newMetaData.value)
-          .then(data => {
-            applicationMetadata.value.push(data)
-          })
+        if (newMetaData.value.id) {
+          await applicationMetadataService()
+            .update(application.value?.id || '', newMetaData.value)
+            .then(data => {
+              const index = applicationMetadata.value.findIndex(item => item.id === data.id)
+              if (index !== -1) applicationMetadata.value.splice(index, 1, data)
+            })
+          snackbar.value = { show: true, message: 'Meta data updated successfully!', color: 'success' }
+        } else {
+          await applicationMetadataService()
+            .create(application.value?.id || '', newMetaData.value)
+            .then(data => {
+              applicationMetadata.value.push(data)
+            })
+          snackbar.value = { show: true, message: 'Meta data added successfully!', color: 'success' }
+        }
 
         metaDataDialog.value = false
         newMetaData.value = { metaName: '', metaValue: '' }
-        snackbar.value = {
-          show: true,
-          message: 'Meta data added successfully!',
-          color: 'success',
-        }
       } catch (error) {
-        console.error('Failed to add meta data:', error)
-        snackbar.value = {
-          show: true,
-          message: 'Failed to add meta data. Please try again.',
-          color: 'error',
-        }
+        console.error('Failed to save meta data:', error)
+        snackbar.value = { show: true, message: 'Failed to save meta data. Please try again.', color: 'error' }
       } finally {
         savingMetaData.value = false
       }
@@ -459,6 +466,7 @@ export default defineComponent({
 
       // Meta Data methods
       showAddMetaDataDialog,
+      showEditMetaDataDialog,
       saveMetaData,
       cancelAddMetaData,
       removeMetaData,

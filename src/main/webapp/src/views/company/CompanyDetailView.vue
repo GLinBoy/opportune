@@ -74,6 +74,7 @@
           <MetadataTable
             v-if="companyMetadata && companyMetadata.length > 0"
             :items="companyMetadata"
+            @edit="showEditMetaDataDialog"
             @delete="removeMetaData"
           />
           <div v-else class="text-center py-8 text-medium-emphasis">
