@@ -9,11 +9,7 @@ import com.glinboy.opportune.enums.Role
 import com.glinboy.opportune.mapper.ProfileMapper
 import com.glinboy.opportune.repository.ProfileRepository
 import com.glinboy.opportune.security.SecurityUtils
-import com.glinboy.opportune.service.JwtTokenService
-import com.glinboy.opportune.service.MailService
-import com.glinboy.opportune.service.ProfileService
-import com.glinboy.opportune.service.SessionService
-import com.glinboy.opportune.service.VerificationCodeService
+import com.glinboy.opportune.service.*
 import com.glinboy.opportune.util.UUIDBase64
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
@@ -75,7 +71,9 @@ class ProfileServiceImpl(
 						resume = null
 					)
 					repository.save(profile)
-					sendVerificationEmail(mapper.toDto(profile))
+					val profileDTO = mapper.toDto(profile)
+					mailService.sendWelcomeEmail(profileDTO)
+					sendVerificationEmail(profileDTO)
 				})
 	}
 

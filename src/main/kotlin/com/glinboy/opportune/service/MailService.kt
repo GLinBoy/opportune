@@ -9,4 +9,5 @@ interface MailService {
 	fun sendPasswordResetMail(profileDTO: ProfileDTO, code: String)
 	fun sendLoginNotificationEmail(profileDTO: ProfileDTO, sessionDTO: SessionDTO)
 	fun sendPasswordResetSuccessEmail(profileDTO: ProfileDTO)
+	fun sendWelcomeEmail(profileDTO: ProfileDTO)
 }

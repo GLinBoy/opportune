@@ -61,6 +61,16 @@ class MailServiceImpl(
 	}
 
 	@Async
+	override fun sendWelcomeEmail(profileDTO: ProfileDTO) {
+		val locale = Locale.forLanguageTag("en")
+		val ctx = Context(locale)
+		ctx.setVariable("profile", profileDTO)
+		ctx.setVariable("baseUrl", properties.info.website)
+		val content = templateEngine.process("mail/welcome", ctx)
+		sendEmailSync(profileDTO.email!!, "Welcome to Opportune!", content, false, true)
+	}
+
+	@Async
 	override fun sendLoginNotificationEmail(profileDTO: ProfileDTO, sessionDTO: SessionDTO) {
 		val locale = Locale.forLanguageTag("en")
 		val ctx = Context(locale)
