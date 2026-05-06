@@ -65,29 +65,31 @@
               />
 
               <!-- Password Requirements -->
-              <v-card variant="tonal" color="surface-variant" class="mb-4 pa-3" rounded="lg">
-                <div class="text-caption font-weight-bold mb-1">Password must contain:</div>
+              <v-card variant="outlined" class="mb-4 pa-3" rounded="lg">
+                <div class="text-caption font-weight-bold text-high-emphasis mb-1">
+                  Password must contain:
+                </div>
                 <div
-                  class="text-caption"
-                  :class="passwordValidation.minLength ? 'text-success' : 'text-medium-emphasis'"
+                  class="text-caption font-weight-medium"
+                  :class="passwordValidation.minLength ? 'text-success' : 'text-high-emphasis'"
                 >
                   {{ passwordValidation.minLength ? '✓' : '○' }} At least 8 characters
                 </div>
                 <div
-                  class="text-caption"
-                  :class="passwordValidation.hasUppercase ? 'text-success' : 'text-medium-emphasis'"
+                  class="text-caption font-weight-medium"
+                  :class="passwordValidation.hasUppercase ? 'text-success' : 'text-high-emphasis'"
                 >
                   {{ passwordValidation.hasUppercase ? '✓' : '○' }} At least one uppercase letter
                 </div>
                 <div
-                  class="text-caption"
-                  :class="passwordValidation.hasLowercase ? 'text-success' : 'text-medium-emphasis'"
+                  class="text-caption font-weight-medium"
+                  :class="passwordValidation.hasLowercase ? 'text-success' : 'text-high-emphasis'"
                 >
                   {{ passwordValidation.hasLowercase ? '✓' : '○' }} At least one lowercase letter
                 </div>
                 <div
-                  class="text-caption"
-                  :class="passwordValidation.hasNumber ? 'text-success' : 'text-medium-emphasis'"
+                  class="text-caption font-weight-medium"
+                  :class="passwordValidation.hasNumber ? 'text-success' : 'text-high-emphasis'"
                 >
                   {{ passwordValidation.hasNumber ? '✓' : '○' }} At least one number
                 </div>

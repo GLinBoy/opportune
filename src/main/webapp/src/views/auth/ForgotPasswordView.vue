@@ -53,9 +53,11 @@
                 </p>
               </v-alert>
 
-              <v-card variant="tonal" color="surface-variant" rounded="lg" class="pa-4 mb-2">
-                <p class="text-subtitle-2 font-weight-bold mb-2">Didn't receive the email?</p>
-                <ul class="text-body-2 pl-4 mb-4">
+              <v-card variant="outlined" rounded="lg" class="pa-4 mb-2">
+                <p class="text-subtitle-2 font-weight-bold text-high-emphasis mb-2">
+                  Didn't receive the email?
+                </p>
+                <ul class="text-body-2 text-high-emphasis pl-4 mb-4">
                   <li>Check your spam or junk folder</li>
                   <li>Make sure you entered the correct email address</li>
                   <li>Wait a few minutes and check again</li>
