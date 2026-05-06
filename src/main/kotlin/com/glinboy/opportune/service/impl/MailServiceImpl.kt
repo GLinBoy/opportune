@@ -42,12 +42,12 @@ class MailServiceImpl(
 
 	@Async
 	override fun sendActivationEmail(profileDTO: ProfileDTO, code: String) {
-		sendEmailFromTemplateSync(profileDTO, code, "mail/activationEmail")
+		sendEmailFromTemplateSync(profileDTO, code, "mail/activation")
 	}
 
 	@Async
 	override fun sendPasswordResetMail(profileDTO: ProfileDTO, code: String) {
-		sendEmailFromTemplateSync(profileDTO, code, "mail/passwordResetEmail")
+		sendEmailFromTemplateSync(profileDTO, code, "mail/passwordReset")
 	}
 
 	@Async
@@ -56,7 +56,7 @@ class MailServiceImpl(
 		val ctx = Context(locale)
 		ctx.setVariable("profile", profileDTO)
 		ctx.setVariable("baseUrl", properties.info.website)
-		val content = templateEngine.process("mail/passwordResetSuccessEmail", ctx)
+		val content = templateEngine.process("mail/passwordChanged", ctx)
 		sendEmailSync(profileDTO.email!!, "Opportune - Password Reset Successful", content, false, true)
 	}
 
@@ -69,7 +69,7 @@ class MailServiceImpl(
 		ctx.setVariable("baseUrl", properties.info.website)
 		val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss 'UTC'").withZone(ZoneId.of("UTC"))
 		ctx.setVariable("loginAt", sessionDTO.loginAt?.let(formatter::format) ?: "-")
-		val content = templateEngine.process("mail/loginEmail", ctx)
+		val content = templateEngine.process("mail/login", ctx)
 		sendEmailSync(profileDTO.email!!, "Opportune - New Login Detected", content, false, true)
 	}
 
@@ -89,7 +89,7 @@ class MailServiceImpl(
 		try {
 			val message = MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name())
 			message.setTo(to)
-			message.setFrom("info@opportune.app")
+			message.setFrom(properties.mail.from!!)
 			message.setSubject(subject)
 			message.setText(content, isHtml)
 			javaMailSender.send(mimeMessage)
