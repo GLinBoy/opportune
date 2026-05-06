@@ -1,0 +1,25 @@
+:deep(.v-data-table__tr:hover) {
+  background-color: rgb(var(--v-theme-grey-lighten-5)) !important;
+}
+
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+
+:deep(.v-data-table__td:last-child) {
+  position: relative;
+}
+
+:deep(.primary-header .v-data-table__thead) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+}
+
+:deep(.primary-header .v-data-table__thead .v-data-table__th) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+:deep(.primary-header .v-data-table__thead .v-data-table__th .v-data-table-header__content) {
+  color: rgb(var(--v-theme-on-primary)) !important;
+  font-weight: 600;
+}
