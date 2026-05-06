@@ -48,7 +48,7 @@ export default defineComponent({
     const companyHeader = { title: 'Company', key: 'companyName', sortable: true }
 
     const headers = props.showCompanyColumn
-      ? [baseHeaders[0], companyHeader, ...baseHeaders.slice(1)]
+      ? [...baseHeaders.slice(0, 1), companyHeader, ...baseHeaders.slice(1)]
       : baseHeaders
 
     const formatDate = (dateInput: string | Date): string => {
