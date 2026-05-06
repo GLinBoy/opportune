@@ -1,13 +1,15 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { type ICompany, type ICompanyMetadata } from '../../models'
-import { type IApplication } from '../../models/application.model'
+import { type IApplication, type IApplicationProjection } from '../../models/application.model'
 import CompanyService from '../../services/company.service'
 import CompanyMetadataService from '../../services/company-metadata.service'
 import CompanyApplicationService from '../../services/company-application.service'
+import ApplicationService from '../../services/application.service'
 import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import ApplicationTable from '../../components/application/ApplicationTable.vue'
 
 export interface Snackbar {
   show: boolean
@@ -22,12 +24,14 @@ export default defineComponent({
     CompanyForm,
     CompanyLogo,
     ConfirmDialog,
+    ApplicationTable,
   },
   setup() {
     // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
     const companyMetadataService = inject('companyMetadataService', () => new CompanyMetadataService())
     const companyApplicationService = inject('companyApplicationService', () => new CompanyApplicationService())
+    const applicationService = inject('applicationService', () => new ApplicationService())
     const route = useRoute()
     const router = useRouter()
 
@@ -49,6 +53,8 @@ export default defineComponent({
     const confirmDeleteDialog = ref(false)
     const confirmDeleteMetaDataDialog = ref(false)
     const metaDataToDelete = ref<ICompanyMetadata | null>(null)
+    const confirmDeleteApplicationDialog = ref(false)
+    const applicationToDelete = ref<IApplicationProjection | null>(null)
 
     // Snackbar state
     const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
@@ -65,13 +71,6 @@ export default defineComponent({
       { title: 'Key', value: 'metaName', sortable: false },
       { title: 'Value', value: 'metaValue', sortable: false },
       { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
-    ]
-
-    const applicationHeaders = [
-      { title: 'Title', value: 'title', sortable: true },
-      { title: 'Applied at', value: 'appliedAt', sortable: true },
-      { title: 'Status', value: 'status', sortable: true },
-      { title: 'Actions', value: 'actions', sortable: true, width: '80px' },
     ]
 
     const rules = {
@@ -224,6 +223,35 @@ export default defineComponent({
       }
     }
 
+    const confirmDeleteApplication = (item: IApplicationProjection) => {
+      applicationToDelete.value = item
+      confirmDeleteApplicationDialog.value = true
+    }
+
+    const closeDeleteApplicationDialog = () => {
+      confirmDeleteApplicationDialog.value = false
+      applicationToDelete.value = null
+    }
+
+    const performApplicationDelete = async () => {
+      const app = applicationToDelete.value
+      if (!app?.id) {
+        closeDeleteApplicationDialog()
+        return
+      }
+      try {
+        await applicationService().delete(app.id)
+        const index = associatedApplications.value.findIndex(a => a.id === app.id)
+        if (index !== -1) associatedApplications.value.splice(index, 1)
+        showSnackbar(`Deleted "${app.title}" successfully.`, 'success')
+      } catch (err) {
+        console.error('Failed to delete application:', err)
+        showSnackbar('Failed to delete application. Please try again.', 'error')
+      } finally {
+        closeDeleteApplicationDialog()
+      }
+    }
+
     // Delete company
     const confirmDelete = () => {
       confirmDeleteDialog.value = true
@@ -278,7 +306,6 @@ export default defineComponent({
 
       // Configuration
       metaDataHeaders,
-      applicationHeaders,
       rules,
 
       // Dialog state
@@ -288,6 +315,8 @@ export default defineComponent({
       confirmDeleteDialog,
       confirmDeleteMetaDataDialog,
       metaDataToDelete,
+      confirmDeleteApplicationDialog,
+      applicationToDelete,
 
       // Actions
       markAsModified,
@@ -303,6 +332,9 @@ export default defineComponent({
       confirmDelete,
       closeDeleteDialog,
       performDelete,
+      confirmDeleteApplication,
+      closeDeleteApplicationDialog,
+      performApplicationDelete,
     }
   }
 })

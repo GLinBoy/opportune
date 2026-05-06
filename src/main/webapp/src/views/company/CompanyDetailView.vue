@@ -107,22 +107,16 @@
       <!-- 3. Associated Applications -->
       <v-card>
         <v-card-title class="d-flex align-center">
-          <v-icon icon="mdi-briefcase-variant" class="mr-2" />
+          <v-icon icon="mdi-briefcase" class="mr-2" />
           Associated Applications
         </v-card-title>
         <v-card-text>
-          <div
+          <ApplicationTable
             v-if="associatedApplications && associatedApplications.length > 0"
-            style="overflow-x: auto"
-          >
-            <v-data-table
-              :headers="applicationHeaders"
-              :items="associatedApplications"
-              hide-default-footer
-              density="compact"
-            >
-            </v-data-table>
-          </div>
+            :items="associatedApplications"
+            :view-all-to="`/applications?companyId=${company?.id}`"
+            @delete="confirmDeleteApplication"
+          />
           <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-briefcase-outline" size="48" class="mb-2" />
             <p>No applications found for this company.</p>
@@ -171,6 +165,21 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Confirm Delete Application Dialog -->
+    <ConfirmDialog
+      v-model="confirmDeleteApplicationDialog"
+      title="Confirm Deletion"
+      variant="error"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      @confirm="performApplicationDelete"
+      @cancel="closeDeleteApplicationDialog"
+    >
+      Are you sure you want to delete
+      <strong>{{ applicationToDelete?.title }}</strong
+      >? This action cannot be undone.
+    </ConfirmDialog>
 
     <!-- Confirm Delete Company Dialog -->
     <ConfirmDialog
