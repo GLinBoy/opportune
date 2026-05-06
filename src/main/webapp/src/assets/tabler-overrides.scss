@@ -51,8 +51,12 @@
 }
 
 // ── Divider ───────────────────────────────────────────────────────────────────
+// Vuetify 3 applies opacity: var(--v-border-opacity) *and* bakes alpha into
+// border-color. Without this override the two multiply: 0.14 × 0.12 ≈ 0.017,
+// which is invisible. Setting opacity: 1 lets the border-color alpha do the job.
 .v-divider {
   border-color: rgba(101, 109, 119, 0.14) !important;
+  opacity: 1 !important;
 }
 
 // ── Elevation overrides: keep everything flat ─────────────────────────────────
