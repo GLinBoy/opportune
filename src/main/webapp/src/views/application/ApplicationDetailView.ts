@@ -7,6 +7,7 @@ import RawContentDialog from '../../components/application/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import FormDialog from '../../components/FormDialog.vue'
+import MetadataTable from '../../components/MetadataTable.vue'
 
 export interface Snackbar {
   show: boolean
@@ -23,6 +24,7 @@ export default defineComponent({
     CompanyAutocomplete,
     ConfirmDialog,
     FormDialog,
+    MetadataTable,
   },
   computed: {
     statusOptions() {
@@ -99,12 +101,6 @@ export default defineComponent({
     }
 
     const workTypeOptions = ['On-site', 'Remote', 'Hybrid']
-
-    const metaDataHeaders = [
-      { title: 'Key', value: 'metaName', sortable: false },
-      { title: 'Value', value: 'metaValue', sortable: false },
-      { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
-    ]
 
     // Utility functions
     const formatDate = (date: Date | undefined): string => {
@@ -438,7 +434,6 @@ export default defineComponent({
       // Configuration
       rules,
       workTypeOptions,
-      metaDataHeaders,
 
       // Utility methods
       formatDate,

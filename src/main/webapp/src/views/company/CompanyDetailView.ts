@@ -11,6 +11,7 @@ import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import FormDialog from '../../components/FormDialog.vue'
 import ApplicationTable from '../../components/application/ApplicationTable.vue'
+import MetadataTable from '../../components/MetadataTable.vue'
 
 export interface Snackbar {
   show: boolean
@@ -27,6 +28,7 @@ export default defineComponent({
     ConfirmDialog,
     FormDialog,
     ApplicationTable,
+    MetadataTable,
   },
   setup() {
     // Services and dependencies
@@ -71,13 +73,6 @@ export default defineComponent({
     const metaDataDialogTitle = computed(() =>
       newMetaData.value?.id ? 'Edit Meta Data' : 'Add Meta Data'
     )
-
-    // Configuration
-    const metaDataHeaders = [
-      { title: 'Key', value: 'metaName', sortable: false },
-      { title: 'Value', value: 'metaValue', sortable: false },
-      { title: 'Actions', value: 'actions', sortable: false, width: '80px' },
-    ]
 
     const rules = {
       required: (value: string) => !!value || 'This field is required',
@@ -311,8 +306,6 @@ export default defineComponent({
       breadcrumbs,
       metaDataDialogTitle,
 
-      // Configuration
-      metaDataHeaders,
       rules,
 
       // Dialog state
