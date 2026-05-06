@@ -6,6 +6,7 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 class ApplicationProperties {
 	var info: Info = Info()
+	var mail: Mail = Mail()
 	var security: Security = Security()
 	var files: Files = Files()
 	var geoip: GeoIp = GeoIp()
@@ -31,6 +32,10 @@ class ApplicationProperties {
 		var githubUrl: String? = null,
 		var licenseUrl: String? = null,
 		var servers: List<Server>? = null
+	)
+
+	data class Mail(
+		var from: String? = null,
 	)
 
 	data class Server(var url: String? = null, var description: String? = null)

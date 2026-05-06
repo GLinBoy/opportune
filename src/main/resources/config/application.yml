@@ -96,6 +96,8 @@ application:
     servers:
       - url: \${OPPORTUNE_WEB_ADDRESS:http://localhost:\${server.port}}
         description: Application URL
+  mail:
+    from: \${OPPORTUNE_MAIL_FROM:noreply@opportune.local}
   security:
     content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' https://www.gravatar.com data:; font-src 'self' https://fonts.gstatic.com data:"
     validation-code-duration:
