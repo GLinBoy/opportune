@@ -6,6 +6,7 @@ import { ApplicationService, ApplicationMetaDataService } from '../../services'
 import RawContentDialog from '../../components/application/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import FormDialog from '../../components/FormDialog.vue'
 
 export interface Snackbar {
   show: boolean
@@ -21,6 +22,7 @@ export default defineComponent({
     RawContentDialog,
     CompanyAutocomplete,
     ConfirmDialog,
+    FormDialog,
   },
   computed: {
     statusOptions() {
@@ -65,6 +67,9 @@ export default defineComponent({
     const newMetaData = ref<IApplicationMetaData>({})
     const confirmDeleteMetaDataDialog = ref(false)
     const metaDataToDelete = ref<IApplicationMetaData | null>(null)
+    const metaDataDialogTitle = computed(() =>
+      newMetaData.value?.id ? 'Edit Meta Data' : 'Add Meta Data'
+    )
 
     // Raw Content Dialog state
     const rawContentDialog = ref(false)
@@ -462,6 +467,7 @@ export default defineComponent({
       saveMetaData,
       cancelAddMetaData,
       removeMetaData,
+      metaDataDialogTitle,
       closeDeleteMetaDataDialog,
       performMetaDataDelete,
 

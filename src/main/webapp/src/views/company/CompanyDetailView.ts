@@ -9,6 +9,7 @@ import ApplicationService from '../../services/application.service'
 import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import FormDialog from '../../components/FormDialog.vue'
 import ApplicationTable from '../../components/application/ApplicationTable.vue'
 
 export interface Snackbar {
@@ -24,6 +25,7 @@ export default defineComponent({
     CompanyForm,
     CompanyLogo,
     ConfirmDialog,
+    FormDialog,
     ApplicationTable,
   },
   setup() {
@@ -65,6 +67,10 @@ export default defineComponent({
       { title: 'Companies', to: '/companies', disabled: false },
       { title: company.value?.name || 'Company Details', to: '', disabled: true },
     ])
+
+    const metaDataDialogTitle = computed(() =>
+      newMetaData.value?.id ? 'Edit Meta Data' : 'Add Meta Data'
+    )
 
     // Configuration
     const metaDataHeaders = [
@@ -303,6 +309,7 @@ export default defineComponent({
       // UI state
       snackbar,
       breadcrumbs,
+      metaDataDialogTitle,
 
       // Configuration
       metaDataHeaders,

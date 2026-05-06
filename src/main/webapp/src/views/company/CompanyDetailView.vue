@@ -126,45 +126,43 @@
     </div>
 
     <!-- Add Meta Data Dialog -->
-    <v-dialog v-model="showMetaDataDialog" max-width="600px">
-      <v-card>
-        <v-card-title>Add Meta Data</v-card-title>
-        <v-card-text>
-          <v-form ref="metaDataForm" v-model="metaDataFormValid">
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="newMetaData.metaName"
-                  label="Key"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-key"
-                  :rules="[rules.required]"
-                  placeholder="e.g., Contact Person, Revenue, Culture"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-textarea
-                  v-model="newMetaData.metaValue"
-                  label="Value"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-text"
-                  :rules="[rules.required]"
-                  rows="4"
-                  placeholder="Enter the value (supports multi-line text)"
-                />
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="grey" variant="text" @click="cancelAddMetaData"> Cancel </v-btn>
-          <v-btn color="primary" variant="flat" :loading="savingMetaData" @click="saveMetaData">
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <FormDialog
+      v-model="showMetaDataDialog"
+      icon="mdi-tag-plus"
+      :title="metaDataDialogTitle"
+      subtitle="Add a key-value pair to store additional information about this company."
+      confirm-text="Save"
+      cancel-text="Cancel"
+      :loading="savingMetaData"
+      :valid="metaDataFormValid"
+      @confirm="saveMetaData"
+      @cancel="cancelAddMetaData"
+    >
+      <v-form ref="metaDataForm" v-model="metaDataFormValid">
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              v-model="newMetaData.metaName"
+              label="Key"
+              variant="outlined"
+              prepend-inner-icon="mdi-key"
+              :rules="[rules.required]"
+              placeholder="e.g., Contact Person, Revenue, Culture"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              v-model="newMetaData.metaValue"
+              label="Value"
+              variant="outlined"
+              prepend-inner-icon="mdi-text"
+              rows="4"
+              placeholder="Enter the value (supports multi-line text)"
+            />
+          </v-col>
+        </v-row>
+      </v-form>
+    </FormDialog>
 
     <!-- Confirm Delete Application Dialog -->
     <ConfirmDialog
