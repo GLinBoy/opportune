@@ -5,6 +5,7 @@ import com.glinboy.opportune.dto.ApplicationDetailsDTO
 import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.enums.ApplicationStatus
+import com.glinboy.opportune.event.ApplicationSubmittedEvent
 import com.glinboy.opportune.mapper.ApplicationDetailsMapper
 import com.glinboy.opportune.mapper.ApplicationMapper
 import com.glinboy.opportune.projection.ApplicationProjection
@@ -13,6 +14,7 @@ import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.ApplicationService
 import com.glinboy.opportune.service.JobDescriptionFetcherService
 import jakarta.persistence.EntityManager
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -28,7 +30,8 @@ class ApplicationServiceImpl(
 	mapper: ApplicationMapper,
 	private val applicationDetailsMapper: ApplicationDetailsMapper,
 	private val entityManager: EntityManager,
-	private val jobDescriptionFetcherService: JobDescriptionFetcherService
+	private val jobDescriptionFetcherService: JobDescriptionFetcherService,
+	private val eventPublisher: ApplicationEventPublisher
 ) : GenericServiceImpl<UUID, Application, ApplicationDTO, ApplicationRepository,
 	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 
@@ -101,6 +104,15 @@ class ApplicationServiceImpl(
 			.findApplicationDetailsByProfileIdAndId(SecurityUtils.getCurrentUserLoginID(), id)
 			.map { applicationDetailsMapper.toDto(it) }
 
+	override fun save(applicationDTO: ApplicationDTO): ApplicationDTO {
+		val savedApplicationDTO = super.save(applicationDTO)
+		if (applicationDTO.id == null) {
+			eventPublisher.publishEvent(ApplicationSubmittedEvent(this, savedApplicationDTO.id!!))
+			log.info("Published ApplicationSubmittedEvent for application {}", savedApplicationDTO.id)
+		}
+		return savedApplicationDTO
+	}
+
 	@Transactional
 	override fun submitApplicationUrl(submission: ApplicationUrlSubmissionDTO): Optional<ApplicationDTO> {
 		return try {
@@ -144,6 +156,10 @@ class ApplicationServiceImpl(
 			// Save using the service's save method
 			val savedApplication = save(applicationDTO)
 			log.info("Created new application with ID {} from URL {}", savedApplication.id, submission.url)
+
+			// Publish event to trigger AI analysis asynchronously
+			eventPublisher.publishEvent(ApplicationSubmittedEvent(this, savedApplication.id!!))
+			log.info("Published ApplicationSubmittedEvent for application {}", savedApplication.id)
 
 			Optional.of(savedApplication)
 		} catch (e: ResponseStatusException) {
