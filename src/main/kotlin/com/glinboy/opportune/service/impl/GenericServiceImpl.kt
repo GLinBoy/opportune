@@ -72,6 +72,14 @@ abstract class GenericServiceImpl<ID : Any, E : BaseEntity, D : BaseDTO,
 		return savedEntities.map { mapper.toDto(it) }
 	}
 
+	@Transactional
+	override fun saveAllInternal(entities: List<D>): List<D> {
+		val entityList: List<E> = entities
+			.map { mapper.createEntity(it) }
+		val savedEntities: List<E> = repository.saveAll(entityList)
+		return savedEntities.map { mapper.toDto(it) }
+	}
+
 	override fun findById(id: ID): Optional<D> {
 		val entity: Optional<E> = repository.findById(id)
 		return entity.map { mapper.toDto(it) }
