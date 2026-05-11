@@ -79,6 +79,9 @@ export default defineComponent({
     // Delete confirmation dialog state
     const confirmDeleteDialog = ref(false)
 
+    // Delete company dialog state
+    const confirmDeleteCompanyDialog = ref(false)
+
     // Snackbar state
     const snackbar = ref<Snackbar>({
       show: false,
@@ -215,6 +218,23 @@ export default defineComponent({
         isDeleting.value = false
         closeDeleteDialog()
       }
+    }
+
+    // Delete company from application
+    const confirmDeleteCompany = () => {
+      confirmDeleteCompanyDialog.value = true
+    }
+
+    const closeDeleteCompanyDialog = () => {
+      confirmDeleteCompanyDialog.value = false
+    }
+
+    const performDeleteCompany = () => {
+      if (application.value) {
+        application.value.company = undefined
+        markAsModified()
+      }
+      closeDeleteCompanyDialog()
     }
 
     // AI Content Generation Methods
@@ -431,6 +451,9 @@ export default defineComponent({
       // Delete confirmation dialog state
       confirmDeleteDialog,
 
+      // Delete company dialog state
+      confirmDeleteCompanyDialog,
+
       // UI state
       snackbar,
 
@@ -457,6 +480,11 @@ export default defineComponent({
       confirmDelete,
       closeDeleteDialog,
       performDelete,
+
+      // Delete company actions
+      confirmDeleteCompany,
+      closeDeleteCompanyDialog,
+      performDeleteCompany,
 
       // AI methods
       regenerateJobDescription,
