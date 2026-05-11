@@ -32,7 +32,6 @@
                     :disabled="isLoading"
                     autocomplete="given-name"
                     variant="outlined"
-                    density="comfortable"
                     prepend-inner-icon="mdi-account-outline"
                     required
                   />
@@ -47,7 +46,6 @@
                     :disabled="isLoading"
                     autocomplete="family-name"
                     variant="outlined"
-                    density="comfortable"
                     prepend-inner-icon="mdi-account-outline"
                     required
                   />
@@ -63,7 +61,6 @@
                 :disabled="isLoading"
                 autocomplete="email"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-email-outline"
                 class="mb-1"
                 required
@@ -79,7 +76,6 @@
                     :disabled="isLoading"
                     autocomplete="organization-title"
                     variant="outlined"
-                    density="comfortable"
                     prepend-inner-icon="mdi-briefcase-outline"
                   />
                 </v-col>
@@ -92,7 +88,6 @@
                     :disabled="isLoading"
                     autocomplete="address-level2"
                     variant="outlined"
-                    density="comfortable"
                     prepend-inner-icon="mdi-map-marker-outline"
                   />
                 </v-col>
@@ -107,7 +102,6 @@
                 :disabled="isLoading"
                 autocomplete="new-password"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
                 :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                 @click:append-inner="showPassword = !showPassword"
@@ -124,7 +118,6 @@
                 :disabled="isLoading"
                 autocomplete="new-password"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-lock-check-outline"
                 :append-inner-icon="showConfirmPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                 @click:append-inner="showConfirmPassword = !showConfirmPassword"

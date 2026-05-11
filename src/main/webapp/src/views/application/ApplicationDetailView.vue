@@ -49,6 +49,7 @@
                 v-bind="props"
                 color="info"
                 variant="outlined"
+                density="compact"
                 icon="mdi-file-upload"
                 @click="uploadResume"
               />
@@ -60,6 +61,7 @@
                 v-bind="props"
                 color="secondary"
                 variant="outlined"
+                density="compact"
                 icon="mdi-code-tags"
                 @click="showRawContent"
               />
@@ -71,6 +73,7 @@
                 v-bind="props"
                 color="error"
                 variant="flat"
+                density="compact"
                 icon="mdi-delete"
                 @click="confirmDelete"
               />
@@ -82,6 +85,7 @@
                 v-bind="props"
                 color="success"
                 variant="flat"
+                density="compact"
                 icon="mdi-content-save"
                 :loading="saving"
                 @click="saveApplication"
@@ -282,7 +286,7 @@
           Application Timeline
         </v-card-title>
         <v-card-text>
-          <v-timeline side="end" density="compact">
+          <v-timeline side="end">
             <v-timeline-item
               v-for="event in application.timeline"
               :key="event.id"

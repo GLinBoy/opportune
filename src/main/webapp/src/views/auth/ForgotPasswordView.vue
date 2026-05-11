@@ -22,7 +22,6 @@
                 :disabled="isLoading"
                 autocomplete="email"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-email-outline"
                 class="mb-2"
                 required

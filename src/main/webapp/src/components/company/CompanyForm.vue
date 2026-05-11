@@ -7,12 +7,11 @@
 
     <v-row>
       <v-col cols="12" md="6">
-        <FieldLabel label="Company Name" input-id="company-name" />
         <v-text-field
           id="company-name"
           :model-value="modelValue.name"
+          label="Company Name"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -23,12 +22,11 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Industry" input-id="company-industry" :optional="true" />
         <v-text-field
           id="company-industry"
           :model-value="modelValue.industry"
+          label="Industry"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -37,13 +35,12 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Website" input-id="company-website" :optional="true" />
         <v-text-field
           id="company-website"
           :model-value="modelValue.website"
+          label="Website"
           type="url"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -52,12 +49,11 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Company Size" input-id="company-size" :optional="true" />
         <v-text-field
           id="company-size"
           :model-value="modelValue.companySize"
+          label="Company Size"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -67,12 +63,11 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Location" input-id="company-location" :optional="true" />
         <v-text-field
           id="company-location"
           :model-value="modelValue.location"
+          label="Location"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -81,13 +76,12 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Founded Year" input-id="company-founded-year" :optional="true" />
         <v-text-field
           id="company-founded-year"
           :model-value="modelValue.foundedYear"
+          label="Founded Year"
           type="number"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -96,13 +90,12 @@
         />
       </v-col>
       <v-col cols="12" md="6">
-        <FieldLabel label="Status" input-id="company-status" />
         <v-select
           id="company-status"
+          label="Status"
           :model-value="modelValue.status || 'INTERESTED'"
           :items="statusOptions"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -123,12 +116,11 @@
         </v-select>
       </v-col>
       <v-col cols="12">
-        <FieldLabel label="Description" input-id="company-description" :optional="true" />
         <v-textarea
           id="company-description"
           :model-value="modelValue.description"
+          label="Description"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -138,12 +130,11 @@
         />
       </v-col>
       <v-col cols="12">
-        <FieldLabel label="Note" input-id="company-note" :optional="true" />
         <v-textarea
           id="company-note"
           :model-value="modelValue.note"
+          label="Note"
           variant="outlined"
-          density="compact"
           bg-color="surface"
           rounded="md"
           hide-details="auto"
@@ -171,13 +162,11 @@ import {
   getCompanyStatusIcon,
 } from '../../models'
 import FormCard from '../forms/FormCard.vue'
-import FieldLabel from '../forms/FieldLabel.vue'
 
 export default defineComponent({
   name: 'CompanyForm',
   components: {
     FormCard,
-    FieldLabel,
   },
   props: {
     modelValue: {

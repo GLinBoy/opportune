@@ -8,13 +8,12 @@
     <v-form ref="formRef" v-model="isValid" @submit.prevent="handleSubmit">
       <v-row>
         <v-col cols="12">
-          <FieldLabel label="Job Posting URL" input-id="url-field" />
           <v-text-field
             id="url-field"
             v-model="formData.url"
+            label="Job Posting URL"
             placeholder="https://company.com/careers/job-posting"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             prepend-inner-icon="mdi-link"
@@ -61,7 +60,6 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import FormCard from '../forms/FormCard.vue'
-import FieldLabel from '../forms/FieldLabel.vue'
 
 // Props
 export interface UrlFormProps {

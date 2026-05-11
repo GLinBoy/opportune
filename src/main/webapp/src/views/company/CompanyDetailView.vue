@@ -37,10 +37,17 @@
           </div>
         </v-col>
         <v-col cols="auto" class="d-flex align-center ga-3">
-          <v-btn color="error" variant="flat" icon="mdi-delete" @click="confirmDelete" />
+          <v-btn
+            color="error"
+            variant="flat"
+            density="compact"
+            icon="mdi-delete"
+            @click="confirmDelete"
+          />
           <v-btn
             color="success"
             variant="flat"
+            density="compact"
             icon="mdi-content-save"
             :loading="saving"
             @click="saveCompany"
