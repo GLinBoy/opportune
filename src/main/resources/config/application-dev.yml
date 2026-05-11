@@ -10,6 +10,26 @@ spring:
       additional-exclude: static/**,.h2.server.properties
     livereload:
       enabled: true
+  ai:
+    openai:
+      base-url: https://integrate.api.nvidia.com/v1
+      api-key: \${OPPORTUNE_OPENAI_API_KEY}
+      chat:
+        completions-path: /chat/completions
+        options:
+          model: mistralai/mistral-nemotron
+          temperature: 0.3
+          max-tokens: 24000
+#  ai:
+#    openai:
+#      base-url: https://generativelanguage.googleapis.com/v1beta/openai
+#      api-key: \${OPPORTUNE_GOOGLE_API_KEY}
+#      chat:
+#        completions-path: /chat/completions
+#        options:
+#          model: gemini-2.5-flash
+#          temperature: 0.3
+#          max-tokens: 24000
   jackson:
     serialization:
       indent-output: true
