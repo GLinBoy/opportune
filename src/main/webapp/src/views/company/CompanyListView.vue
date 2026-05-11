@@ -52,7 +52,7 @@
             </v-list-item>
           </template>
         </v-autocomplete>
-        <v-tooltip text="Add new company" location="bottom">
+        <v-tooltip text="Add new company" location="top">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
