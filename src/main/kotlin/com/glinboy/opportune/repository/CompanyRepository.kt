@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface CompanyRepository : JpaRepository<Company, UUID>, JpaSpecificationExecutor<Company>
+interface CompanyRepository : JpaRepository<Company, UUID>, JpaSpecificationExecutor<Company> {
+	fun findByName(name: String): Optional<Company>
+	fun findByNameAndProfileId(name: String, currentUserLoginID: UUID): Optional<Company>
+}
 
