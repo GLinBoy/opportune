@@ -33,6 +33,8 @@ repositories {
 
 defaultTasks("bootRun")
 
+extra["springAiVersion"] = "2.0.0-M5"
+
 // Function to load environment variables from .env files
 fun loadEnvFile(profile: String, warnIfMissing: Boolean = false): Map<String, String> {
 	val envVars = mutableMapOf<String, String>()
@@ -69,6 +71,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.springframework.boot:spring-boot-starter-aspectj")
+	implementation("org.springframework.boot:spring-boot-restclient")
+	implementation("org.springframework.ai:spring-ai-starter-model-openai")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
@@ -77,6 +81,8 @@ dependencies {
 	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.0")
 	implementation("nl.basjes.parse.useragent:yauaa:7.28.1")
 	implementation("com.maxmind.geoip2:geoip2:4.2.0")
+	implementation("org.apache.pdfbox:pdfbox:3.0.7")
+	implementation("org.jsoup:jsoup:1.22.2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
@@ -94,6 +100,12 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+dependencyManagement {
+  imports {
+    mavenBom("org.springframework.ai:spring-ai-bom:${property("springAiVersion")}")
+  }
 }
 
 kotlin {
