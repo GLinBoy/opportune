@@ -25,4 +25,14 @@ class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMa
 				"You are not allowed to save or update company for another user")
 		}
 	}
+
+	override fun findByNameInternal(name: String): Optional<CompanyDTO> {
+		return repository.findByName(name)
+			.map(mapper::toDto)
+	}
+
+	override fun findByNameForCurrentUser(name: String): Optional<CompanyDTO> {
+		return repository.findByNameAndProfileId(name, SecurityUtils.getCurrentUserLoginID())
+			.map(mapper::toDto)
+	}
 }
