@@ -15,13 +15,12 @@
 
       <v-row>
         <v-col cols="12">
-          <FieldLabel label="Job Posting URL" input-id="manual-url" :optional="true" />
           <v-text-field
             id="manual-url"
             v-model="formData.url"
+            label="Job Posting URL"
             placeholder="https://company.com/careers/job-posting"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             prepend-inner-icon="mdi-link"
@@ -32,13 +31,12 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <FieldLabel label="Job Title" input-id="manual-title" />
           <v-text-field
             id="manual-title"
             v-model="formData.title"
+            label="Job Title"
             placeholder="e.g., Senior Software Engineer"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             hide-details="auto"
@@ -49,12 +47,10 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <FieldLabel label="Company" input-id="manual-company" :optional="true" />
           <CompanyAutocomplete
             id="manual-company"
             v-model="selectedCompany"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             hide-details="auto"
@@ -72,13 +68,12 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <FieldLabel label="Location" input-id="manual-location" :optional="true" />
           <v-text-field
             id="manual-location"
             v-model="formData.location"
+            label="Location"
             placeholder="e.g., San Francisco, CA or Remote"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             hide-details="auto"
@@ -87,13 +82,12 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <FieldLabel label="Salary Range" input-id="manual-salary" :optional="true" />
           <v-text-field
             id="manual-salary"
             v-model="formData.salary"
+            label="Salary Range"
             placeholder="e.g., $100k - $150k"
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             hide-details="auto"
@@ -102,13 +96,12 @@
         </v-col>
 
         <v-col cols="12">
-          <FieldLabel label="Job Description" input-id="manual-raw-content" />
           <v-textarea
             id="manual-raw-content"
             v-model="formData.rawContent"
+            label="Job Description"
             placeholder="Paste the complete job description here..."
             variant="outlined"
-            density="compact"
             bg-color="surface"
             rounded="md"
             prepend-inner-icon="mdi-text-box-outline"
@@ -159,7 +152,6 @@ import { ref, reactive, watch } from 'vue'
 import type { ICompany } from '../../models'
 import CompanyAutocomplete from '../company/CompanyAutocomplete.vue'
 import FormCard from '../forms/FormCard.vue'
-import FieldLabel from '../forms/FieldLabel.vue'
 
 // Props
 export interface ManualFormProps {

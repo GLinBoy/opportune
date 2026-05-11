@@ -22,11 +22,7 @@
     @update:model-value="handleItemSelect"
   >
     <template v-slot:item="{ props, item }">
-      <v-list-item
-        v-bind="props"
-        :title="item.name"
-        :subtitle="`${item.type} - ${item.status}`"
-      >
+      <v-list-item v-bind="props" :title="item.name" :subtitle="`${item.type} - ${item.status}`">
         <template v-slot:prepend>
           <v-icon
             :icon="getIconForType(item.type)"
@@ -53,7 +49,7 @@ import {
   getApplicationStatusColor,
   getCompanyStatusColor,
   type ApplicationStatus,
-  type CompanyStatus
+  type CompanyStatus,
 } from '../../models'
 
 const searchService = inject('searchService', () => new SearchService())
@@ -104,7 +100,9 @@ const handleSearchInput = (value: string) => {
 }
 
 // Handle item selection
-const handleItemSelect = (selected: { id: string; name: string; status: string; type: string } | null) => {
+const handleItemSelect = (
+  selected: { id: string; name: string; status: string; type: string } | null
+) => {
   console.log('Item selected:', selected)
   if (selected) {
     const itemType = selected.type.toUpperCase()

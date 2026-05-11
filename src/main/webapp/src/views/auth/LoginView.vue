@@ -30,7 +30,6 @@
                 :disabled="isLoading"
                 autocomplete="email"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-email-outline"
                 class="mb-2"
                 required
@@ -45,7 +44,6 @@
                 :disabled="isLoading"
                 autocomplete="current-password"
                 variant="outlined"
-                density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
                 :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                 @click:append-inner="showPassword = !showPassword"
