@@ -11,6 +11,8 @@ interface GenericService<ID, D : BaseDTO> {
 
 	fun saveAll(entities: List<D>): List<D>
 
+	fun saveAllInternal(entities: List<D>): List<D>
+
 	fun getById(id: ID): D
 
 	fun getByIdForCurrentUser(id: ID): D
