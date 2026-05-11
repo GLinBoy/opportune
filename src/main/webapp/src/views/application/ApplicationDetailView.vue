@@ -117,7 +117,22 @@
                 v-model="application.company"
                 :initial-company="application.company"
                 @update:model-value="markAsModified"
-              />
+              >
+                <template v-if="application.company" #append>
+                  <v-tooltip text="Remove company" location="top">
+                    <template #activator="{ props }">
+                      <v-btn
+                        v-bind="props"
+                        icon="mdi-domain-remove"
+                        color="error"
+                        variant="text"
+                        size="small"
+                        @click.stop="confirmDeleteCompany"
+                      />
+                    </template>
+                  </v-tooltip>
+                </template>
+              </CompanyAutocomplete>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
@@ -398,6 +413,21 @@
 
     <!-- Raw Content Dialog -->
     <RawContentDialog v-model="rawContentDialog" :content="application?.rawContent || ''" />
+
+    <!-- Confirm Delete Company Dialog -->
+    <ConfirmDialog
+      v-model="confirmDeleteCompanyDialog"
+      title="Remove Company"
+      variant="error"
+      confirm-text="Remove"
+      cancel-text="Cancel"
+      @confirm="performDeleteCompany"
+      @cancel="closeDeleteCompanyDialog"
+    >
+      Are you sure you want to remove
+      <strong>{{ application?.company?.name }}</strong> from this application? The change will take
+      effect when you save.
+    </ConfirmDialog>
   </div>
 </template>
 
