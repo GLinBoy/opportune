@@ -50,7 +50,7 @@
             </v-list-item>
           </template>
         </v-autocomplete>
-        <v-tooltip text="Add new application" location="bottom">
+        <v-tooltip text="Add new application" location="top">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"

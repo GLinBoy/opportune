@@ -65,7 +65,7 @@
             <v-icon icon="mdi-tag-multiple" class="mr-2" />
             Meta Data
           </div>
-          <v-tooltip text="Add new meta data" location="bottom">
+          <v-tooltip text="Add new meta data" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"

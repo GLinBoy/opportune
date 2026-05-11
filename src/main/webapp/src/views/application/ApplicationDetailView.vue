@@ -38,12 +38,12 @@
           </div>
         </div>
         <div class="d-flex align-center ga-3 flex-wrap">
-          <v-tooltip text="Applied for this job" v-if="!application.appliedAt">
+          <v-tooltip text="Applied for this job" location="top" v-if="!application.appliedAt">
             <template #activator="{ props }">
               <v-btn v-bind="props" color="secondary" icon="mdi-send-check" @click="appliedJob" />
             </template>
           </v-tooltip>
-          <v-tooltip text="Upload resume for this application">
+          <v-tooltip text="Upload resume for this application" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -55,7 +55,7 @@
               />
             </template>
           </v-tooltip>
-          <v-tooltip text="Show original Job Description content">
+          <v-tooltip text="Show original Job Description content" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -67,7 +67,7 @@
               />
             </template>
           </v-tooltip>
-          <v-tooltip text="Delete application">
+          <v-tooltip text="Delete application" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -79,7 +79,7 @@
               />
             </template>
           </v-tooltip>
-          <v-tooltip text="Save changes">
+          <v-tooltip text="Save changes" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -268,7 +268,7 @@
             <v-icon icon="mdi-tag-multiple" class="mr-2" />
             Meta Data
           </div>
-          <v-tooltip text="Add new meta data" location="bottom">
+          <v-tooltip text="Add new meta data" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
