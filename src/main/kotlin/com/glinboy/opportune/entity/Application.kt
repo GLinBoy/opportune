@@ -48,6 +48,41 @@ data class Application(
 	@Column(name = "resume_insights")
 	val resumeInsights: String? = null,
 
+	@Lob
+	@Column(name = "interview_introduction")
+	val interviewIntroduction: String? = null,
+
+	@Column(name = "resume_overall_score")
+	val resumeOverallScore: Int? = null,
+
+	@Column(name = "skill_match_score")
+	val skillMatchScore: Int? = null,
+
+	@Lob
+	@Column(name = "skill_match_rationale")
+	val skillMatchRationale: String? = null,
+
+	@Column(name = "experience_match_score")
+	val experienceMatchScore: Int? = null,
+
+	@Lob
+	@Column(name = "experience_match_rationale")
+	val experienceMatchRationale: String? = null,
+
+	@Column(name = "education_match_score")
+	val educationMatchScore: Int? = null,
+
+	@Lob
+	@Column(name = "education_match_rationale")
+	val educationMatchRationale: String? = null,
+
+	@Column(name = "keyword_match_score")
+	val keywordMatchScore: Int? = null,
+
+	@Lob
+	@Column(name = "keyword_match_rationale")
+	val keywordMatchRationale: String? = null,
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	val status: ApplicationStatus? = null,
