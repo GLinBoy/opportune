@@ -134,6 +134,16 @@ export default defineComponent({
         updateApplication.description = application.value?.description
         updateApplication.coverLetter = application.value?.coverLetter
         updateApplication.resumeInsights = application.value?.resumeInsights
+        updateApplication.interviewIntroduction = application.value?.interviewIntroduction
+        updateApplication.resumeOverallScore = application.value?.resumeOverallScore
+        updateApplication.skillMatchScore = application.value?.skillMatchScore
+        updateApplication.skillMatchRationale = application.value?.skillMatchRationale
+        updateApplication.experienceMatchScore = application.value?.experienceMatchScore
+        updateApplication.experienceMatchRationale = application.value?.experienceMatchRationale
+        updateApplication.educationMatchScore = application.value?.educationMatchScore
+        updateApplication.educationMatchRationale = application.value?.educationMatchRationale
+        updateApplication.keywordMatchScore = application.value?.keywordMatchScore
+        updateApplication.keywordMatchRationale = application.value?.keywordMatchRationale
         updateApplication.status = application.value?.status
         updateApplication.companyId = application.value?.company?.id
         updateApplication.resumeId = application.value?.resume?.id
