@@ -216,7 +216,7 @@
           AI Generated Content
         </v-card-title>
         <v-tabs v-model="activeTab" color="primary" grow>
-          <v-tab value="job-description">Job Description</v-tab>
+          <v-tab value="job-description">Job Description (summarized)</v-tab>
           <v-tab value="cover-letter">Cover Letter</v-tab>
           <v-tab value="resume-enhancer">Resume Enhancer</v-tab>
           <v-tab value="interview-details">Interview Details</v-tab>
@@ -229,7 +229,7 @@
                 v-model="application.description"
                 label="AI Job Description Analysis"
                 variant="outlined"
-                rows="6"
+                rows="16"
                 readonly
               />
             </v-card-text>
@@ -241,19 +241,20 @@
                 v-model="application.coverLetter"
                 label="AI Generated Cover Letter"
                 variant="outlined"
-                rows="8"
+                rows="16"
                 @input="markAsModified"
+                readonly
               />
             </v-card-text>
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="resume-enhancer">
+          <v-tabs-window-item value="resume-insights">
             <v-card-text>
               <v-textarea
                 v-model="application.resumeInsights"
-                label="Resume Enhancement Suggestions"
+                label="Resume Insights"
                 variant="outlined"
-                rows="6"
+                rows="16"
                 readonly
               />
             </v-card-text>
@@ -262,9 +263,10 @@
           <v-tabs-window-item value="interview-details">
             <v-card-text>
               <v-textarea
-                label="Interview Preparation Details"
+                v-model="application.interviewIntroduction"
+                label="Interview Introduction"
                 variant="outlined"
-                rows="6"
+                rows="16"
                 readonly
               />
             </v-card-text>
