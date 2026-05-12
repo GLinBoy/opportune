@@ -45,7 +45,13 @@
         <div class="d-flex align-center ga-3 flex-wrap">
           <v-tooltip text="Applied for this job" location="top" v-if="!application.appliedAt">
             <template #activator="{ props }">
-              <v-btn v-bind="props" color="secondary" icon="mdi-send-check" @click="appliedJob" />
+              <v-btn
+                v-bind="props"
+                color="secondary"
+                icon="mdi-send-check"
+                density="compact"
+                @click="appliedJob"
+              />
             </template>
           </v-tooltip>
           <v-tooltip text="Upload resume for this application" location="top">
