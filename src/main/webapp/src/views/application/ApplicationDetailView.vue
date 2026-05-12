@@ -26,15 +26,13 @@
               v-if="application.url"
               :href="application.url"
               target="_blank"
-              variant="text"
-              prepend-icon="mdi-open-in-new"
-              size="small"
-              color="primary"
-              class="pa-0"
+              rel="noopener noreferrer"
+              class="d-inline-flex align-center text-primary text-decoration-none text-caption pa-0"
               style="text-transform: none; justify-content: flex-start"
             >
+              <v-icon size="small" start>mdi-open-in-new</v-icon>
               Go to the Job Description
-            </v-btn>
+            </a>
           </div>
           <div class="d-flex align-center text-label-medium text-medium-emphasis">
             <span class="mr-2">Applied on: </span>
