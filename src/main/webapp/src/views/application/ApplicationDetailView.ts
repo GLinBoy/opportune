@@ -8,6 +8,7 @@ import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vu
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import FormDialog from '../../components/FormDialog.vue'
 import MetadataTable from '../../components/MetadataTable.vue'
+import ResumeScoreCard from '../../components/ResumeScoreCard.vue'
 
 export interface Snackbar {
   show: boolean
@@ -25,6 +26,7 @@ export default defineComponent({
     ConfirmDialog,
     FormDialog,
     MetadataTable,
+    ResumeScoreCard,
   },
   computed: {
     statusOptions() {
