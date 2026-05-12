@@ -297,6 +297,16 @@ export default defineComponent({
           undefined, // description
           undefined, // coverLetter
           undefined, // resumeInsights
+          undefined, // interviewIntroduction
+          undefined, // resumeOverallScore
+          undefined, // skillMatchScore
+          undefined, // skillMatchRationale
+          undefined, // experienceMatchScore
+          undefined, // experienceMatchRationale
+          undefined, // educationMatchScore
+          undefined, // educationMatchRationale
+          undefined, // keywordMatchScore
+          undefined, // keywordMatchRationale
           null, // status
           data.companyId || undefined,
           undefined, // profileId
