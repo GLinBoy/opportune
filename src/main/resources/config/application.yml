@@ -72,6 +72,7 @@ management:
       enabled: true
 
 springdoc:              # Don't expose actuator ops in Swagger UI
+  writer-with-order-by-keys: true
   swagger-ui:
     docExpansion: none
     tags-sorter: alpha
