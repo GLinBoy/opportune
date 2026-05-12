@@ -13,9 +13,16 @@
         <div class="app-header-info">
           <span class="text-headline-small font-weight-bold">{{ application.title }}</span>
           <div class="d-flex align-center text-label-medium text-medium-emphasis">
-            <span>{{ application?.company?.name }}</span>
-            <span v-if="application.url" class="mx-2">•</span>
-            <v-btn
+            <RouterLink
+              v-if="application?.company?.name"
+              :to="{ name: 'companies-detail', params: { id: application.company.id } }"
+              class="text-primary text-decoration-none"
+            >
+              {{ application.company.name }}
+            </RouterLink>
+            <span v-else class="text-italic">( No company )</span>
+            <span v-if="application.url" class="mx-2 my-1">•</span>
+            <a
               v-if="application.url"
               :href="application.url"
               target="_blank"
