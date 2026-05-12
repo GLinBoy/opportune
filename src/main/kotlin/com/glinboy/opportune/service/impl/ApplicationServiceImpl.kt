@@ -157,10 +157,6 @@ class ApplicationServiceImpl(
 			val savedApplication = save(applicationDTO)
 			log.info("Created new application with ID {} from URL {}", savedApplication.id, submission.url)
 
-			// Publish event to trigger AI analysis asynchronously
-			eventPublisher.publishEvent(ApplicationSubmittedEvent(this, savedApplication.id!!))
-			log.info("Published ApplicationSubmittedEvent for application {}", savedApplication.id)
-
 			Optional.of(savedApplication)
 		} catch (e: ResponseStatusException) {
 			// Re-throw ResponseStatusException as-is
