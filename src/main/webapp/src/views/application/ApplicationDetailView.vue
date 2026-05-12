@@ -218,8 +218,9 @@
         <v-tabs v-model="activeTab" color="primary" grow>
           <v-tab value="job-description">Job Description (summarized)</v-tab>
           <v-tab value="cover-letter">Cover Letter</v-tab>
-          <v-tab value="resume-enhancer">Resume Enhancer</v-tab>
-          <v-tab value="interview-details">Interview Details</v-tab>
+          <v-tab value="resume-insights">Resume Insights</v-tab>
+          <v-tab value="resume-scores">Resume Scores</v-tab>
+          <v-tab value="interview-introduction">Interview Introduction</v-tab>
         </v-tabs>
 
         <v-tabs-window v-model="activeTab">
@@ -260,7 +261,24 @@
             </v-card-text>
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="interview-details">
+          <v-tabs-window-item value="resume-scores">
+            <v-card-text>
+              <ResumeScoreCard
+                :key="application.id"
+                :resume-overall-score="application.resumeOverallScore"
+                :skill-match-score="application.skillMatchScore"
+                :skill-match-rationale="application.skillMatchRationale"
+                :experience-match-score="application.experienceMatchScore"
+                :experience-match-rationale="application.experienceMatchRationale"
+                :education-match-score="application.educationMatchScore"
+                :education-match-rationale="application.educationMatchRationale"
+                :keyword-match-score="application.keywordMatchScore"
+                :keyword-match-rationale="application.keywordMatchRationale"
+              />
+            </v-card-text>
+          </v-tabs-window-item>
+
+          <v-tabs-window-item value="interview-introduction">
             <v-card-text>
               <v-textarea
                 v-model="application.interviewIntroduction"
