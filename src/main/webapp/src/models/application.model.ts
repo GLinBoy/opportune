@@ -18,6 +18,16 @@ export interface IApplication {
   description?: string
   coverLetter?: string
   resumeInsights?: string
+  interviewIntroduction?: string
+  resumeOverallScore?: number
+  skillMatchScore?: number
+  skillMatchRationale?: string
+  experienceMatchScore?: number
+  experienceMatchRationale?: string
+  educationMatchScore?: number
+  educationMatchRationale?: string
+  keywordMatchScore?: number
+  keywordMatchRationale?: string
   status?: keyof typeof ApplicationStatus | null
   companyId?: string
   profileId?: string
@@ -39,6 +49,16 @@ export class Application implements IApplication {
     public description?: string,
     public coverLetter?: string,
     public resumeInsights?: string,
+    public interviewIntroduction?: string,
+    public resumeOverallScore?: number,
+    public skillMatchScore?: number,
+    public skillMatchRationale?: string,
+    public experienceMatchScore?: number,
+    public experienceMatchRationale?: string,
+    public educationMatchScore?: number,
+    public educationMatchRationale?: string,
+    public keywordMatchScore?: number,
+    public keywordMatchRationale?: string,
     public status?: keyof typeof ApplicationStatus | null,
     public companyId?: string,
     public profileId?: string,
@@ -75,6 +95,16 @@ export interface IApplicationDetails {
   description?: string
   coverLetter?: string
   resumeInsights?: string
+  interviewIntroduction?: string,
+  resumeOverallScore?: number,
+  skillMatchScore?: number,
+  skillMatchRationale?: string,
+  experienceMatchScore?: number,
+  experienceMatchRationale?: string,
+  educationMatchScore?: number,
+  educationMatchRationale?: string,
+  keywordMatchScore?: number,
+  keywordMatchRationale?: string,
   status?: keyof typeof ApplicationStatus | null
   company?: ICompany | null
   timeline?: IApplicationTimeline[] | null
