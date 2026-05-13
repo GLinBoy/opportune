@@ -189,7 +189,7 @@
 
         <v-container class="d-flex justify-center pa-8 flex-grow-1 overflow-y-auto">
           <div style="max-width: 800px; width: 100%">
-            <CompanyForm v-model="newCompany">
+            <CompanyForm v-model="newCompany" :show-toggle="false">
               <template #actions>
                 <v-btn
                   text="Cancel"
