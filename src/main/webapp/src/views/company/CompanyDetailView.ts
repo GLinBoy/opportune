@@ -12,6 +12,7 @@ import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import FormDialog from '../../components/FormDialog.vue'
 import ApplicationTable from '../../components/application/ApplicationTable.vue'
 import MetadataTable from '../../components/MetadataTable.vue'
+import FormCard from '@/components/forms/FormCard.vue'
 
 export interface Snackbar {
   show: boolean
@@ -29,6 +30,7 @@ export default defineComponent({
     FormDialog,
     ApplicationTable,
     MetadataTable,
+    FormCard,
   },
   setup() {
     // Services and dependencies
