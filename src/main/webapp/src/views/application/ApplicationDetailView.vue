@@ -107,12 +107,13 @@
       </div>
 
       <!-- 1. Application Details -->
-      <v-card class="mb-6">
-        <v-card-title class="d-flex align-center">
+      <FormCard class="mb-6" :collapsible="true" :default-open="true">
+        <template #title>
           <v-icon icon="mdi-briefcase" class="mr-2" />
           Application Details
-        </v-card-title>
-        <v-card-text>
+        </template>
+
+        <template #default>
           <v-row>
             <v-col cols="12" md="6">
               <v-text-field
@@ -206,63 +207,61 @@
               />
             </v-col>
           </v-row>
-        </v-card-text>
-      </v-card>
+        </template>
+      </FormCard>
 
       <!-- 2. AI Generated Content -->
-      <v-card class="mb-6">
-        <v-card-title class="d-flex align-center">
+      <FormCard class="mb-6" :collapsible="true" :default-open="true">
+        <template #title>
           <v-icon icon="mdi-robot" class="mr-2" />
           AI Generated Content
-        </v-card-title>
-        <v-tabs v-model="activeTab" color="primary" grow>
-          <v-tab value="job-description">Job Description (summarized)</v-tab>
-          <v-tab value="cover-letter">Cover Letter</v-tab>
-          <v-tab value="resume-insights">Resume Insights</v-tab>
-          <v-tab value="resume-scores">Resume Scores</v-tab>
-          <v-tab value="interview-introduction">Interview Introduction</v-tab>
-        </v-tabs>
+        </template>
 
-        <v-tabs-window v-model="activeTab">
-          <v-tabs-window-item value="job-description">
-            <v-card-text>
+        <template #default>
+          <v-tabs v-model="activeTab" color="primary" grow>
+            <v-tab value="job-description">Job Description (summarized)</v-tab>
+            <v-tab value="cover-letter">Cover Letter</v-tab>
+            <v-tab value="resume-insights">Resume Insights</v-tab>
+            <v-tab value="resume-scores">Resume Scores</v-tab>
+            <v-tab value="interview-introduction">Interview Introduction</v-tab>
+          </v-tabs>
+
+          <v-tabs-window v-model="activeTab">
+            <v-tabs-window-item value="job-description">
               <v-textarea
                 v-model="application.description"
                 label="AI Job Description Analysis"
                 variant="outlined"
                 rows="16"
                 readonly
+                class="mt-4"
               />
-            </v-card-text>
-          </v-tabs-window-item>
+            </v-tabs-window-item>
 
-          <v-tabs-window-item value="cover-letter">
-            <v-card-text>
+            <v-tabs-window-item value="cover-letter">
               <v-textarea
                 v-model="application.coverLetter"
                 label="AI Generated Cover Letter"
                 variant="outlined"
                 rows="16"
-                @input="markAsModified"
                 readonly
+                class="mt-4"
+                @input="markAsModified"
               />
-            </v-card-text>
-          </v-tabs-window-item>
+            </v-tabs-window-item>
 
-          <v-tabs-window-item value="resume-insights">
-            <v-card-text>
+            <v-tabs-window-item value="resume-insights">
               <v-textarea
                 v-model="application.resumeInsights"
                 label="Resume Insights"
                 variant="outlined"
                 rows="16"
                 readonly
+                class="mt-4"
               />
-            </v-card-text>
-          </v-tabs-window-item>
+            </v-tabs-window-item>
 
-          <v-tabs-window-item value="resume-scores">
-            <v-card-text>
+            <v-tabs-window-item value="resume-scores">
               <ResumeScoreCard
                 :key="application.id"
                 :resume-overall-score="application.resumeOverallScore"
@@ -274,44 +273,32 @@
                 :education-match-rationale="application.educationMatchRationale"
                 :keyword-match-score="application.keywordMatchScore"
                 :keyword-match-rationale="application.keywordMatchRationale"
+                class="mt-4"
               />
-            </v-card-text>
-          </v-tabs-window-item>
+            </v-tabs-window-item>
 
-          <v-tabs-window-item value="interview-introduction">
-            <v-card-text>
+            <v-tabs-window-item value="interview-introduction">
               <v-textarea
                 v-model="application.interviewIntroduction"
                 label="Interview Introduction"
                 variant="outlined"
                 rows="16"
                 readonly
+                class="mt-4"
               />
-            </v-card-text>
-          </v-tabs-window-item>
-        </v-tabs-window>
-      </v-card>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </template>
+      </FormCard>
 
       <!-- 3. Meta Data -->
-      <v-card class="mb-6">
-        <v-card-title class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <v-icon icon="mdi-tag-multiple" class="mr-2" />
-            Meta Data
-          </div>
-          <v-tooltip text="Add new meta data" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="primary"
-                icon="mdi-tag-plus"
-                size="small"
-                @click="showAddMetaDataDialog"
-              />
-            </template>
-          </v-tooltip>
-        </v-card-title>
-        <v-card-text>
+      <FormCard class="mb-6" :collapsible="true" :default-open="true">
+        <template #title>
+          <v-icon icon="mdi-tag-multiple" class="mr-2" />
+          Meta Data
+        </template>
+
+        <template #default>
           <MetadataTable
             v-if="applicationMetadata && applicationMetadata.length > 0"
             :items="applicationMetadata"
@@ -322,37 +309,90 @@
             <v-icon icon="mdi-information" size="48" class="mb-2" />
             <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
           </div>
-        </v-card-text>
-      </v-card>
+        </template>
 
-      <!-- 4. Application Timeline -->
-      <v-card>
-        <v-card-title class="d-flex align-center">
+        <template #actions>
+          <v-tooltip text="Add new meta data" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                text="Add Meta Data"
+                variant="text"
+                color="primary"
+                prepend-icon="mdi-tag-plus"
+                :disabled="loading"
+                min-width="120"
+                @click="showAddMetaDataDialog"
+              />
+            </template>
+          </v-tooltip>
+        </template>
+      </FormCard>
+
+      <!-- 4. Interview Notes-->
+      <FormCard class="mb-6" :collapsible="true" :default-open="true">
+        <template #title>
+          <v-icon icon="mdi-notebook-outline" class="mr-2" />
+          Interview Notes
+        </template>
+
+        <template #default>
+          <div class="text-center py-8 text-medium-emphasis">
+            <v-icon icon="mdi-notebook-edit-outline" size="48" class="mb-2" />
+            <p>No interview notes yet. This section will be available soon.</p>
+          </div>
+        </template>
+      </FormCard>
+
+      <!-- 5. Application Timeline -->
+      <FormCard :collapsible="true" :default-open="true">
+        <template #title>
           <v-icon icon="mdi-timeline" class="mr-2" />
           Application Timeline
-        </v-card-title>
-        <v-card-text>
-          <v-timeline side="end">
-            <v-timeline-item
-              v-for="event in application.timeline"
-              :key="event.id"
-              :dot-color="getStatusColor(event.status)"
-              size="small"
-            >
-              <template #opposite>
-                <div class="text-caption text-medium-emphasis text-right">
-                  <div class="font-weight-medium">{{ formatDate(event.occurredAt) }}</div>
-                  <div v-if="event.occurredAt" class="mt-1">{{ event.occurredAt }}</div>
+        </template>
+
+        <template #default>
+          <div v-if="application.timeline && application.timeline.length > 0" class="app-timeline">
+            <v-timeline side="end" density="compact" truncate-line="both">
+              <v-timeline-item
+                v-for="event in application.timeline"
+                :key="event.id"
+                :dot-color="getStatusColor(event.status)"
+                size="small"
+                class="app-timeline__item"
+              >
+                <template #opposite>
+                  <div class="app-timeline__date">
+                    <span class="app-timeline__date-day">{{ formatDate(event.occurredAt) }}</span>
+                  </div>
+                </template>
+
+                <div class="app-timeline__card">
+                  <div class="app-timeline__card-header">
+                    <v-chip
+                      :color="getStatusColor(event.status)"
+                      size="x-small"
+                      variant="tonal"
+                      class="app-timeline__badge"
+                    >
+                      {{ event.status }}
+                    </v-chip>
+                  </div>
+                  <div class="app-timeline__card-title">{{ event.title }}</div>
+                  <div v-if="event.description" class="app-timeline__card-desc">
+                    {{ event.description }}
+                  </div>
                 </div>
-              </template>
-              <div>
-                <div class="text-subtitle-2">{{ event.title }}</div>
-                <div class="text-body-2 text-medium-emphasis">{{ event.description }}</div>
-              </div>
-            </v-timeline-item>
-          </v-timeline>
-        </v-card-text>
-      </v-card>
+              </v-timeline-item>
+            </v-timeline>
+          </div>
+
+          <div v-else class="text-center py-8 text-medium-emphasis">
+            <v-icon icon="mdi-timeline-outline" size="48" class="mb-2" />
+            <p>No timeline events yet. Status changes will appear here.</p>
+          </div>
+        </template>
+      </FormCard>
     </div>
 
     <!-- Error state -->
