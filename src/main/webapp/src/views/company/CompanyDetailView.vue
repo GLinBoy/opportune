@@ -20,20 +20,18 @@
           <span class="text-headline-small font-weight-bold">{{ company.name }}</span>
           <div class="d-flex align-center text-label-medium text-medium-emphasis">
             <span>{{ company.industry }}</span>
-            <span v-if="company.website" class="mx-2">•</span>
-            <v-btn
+            <span v-if="company.website" class="mx-2 my-1">•</span>
+            <a
               v-if="company.website"
               :href="company.website"
               target="_blank"
-              variant="text"
-              prepend-icon="mdi-open-in-new"
-              size="small"
-              color="primary"
-              class="pa-0"
+              rel="noopener noreferrer"
+              class="d-inline-flex align-center text-primary text-decoration-none text-caption pa-0"
               style="text-transform: none; justify-content: flex-start"
             >
+              <v-icon size="small" start>mdi-open-in-new</v-icon>
               Visit Website
-            </v-btn>
+            </a>
           </div>
         </v-col>
         <v-col cols="auto" class="d-flex align-center ga-3">
@@ -59,25 +57,13 @@
       <CompanyForm v-model="company" @change="markAsModified" class="mb-6" />
 
       <!-- 2. Meta Data -->
-      <v-card class="mb-6">
-        <v-card-title class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <v-icon icon="mdi-tag-multiple" class="mr-2" />
-            Meta Data
-          </div>
-          <v-tooltip text="Add new meta data" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="primary"
-                icon="mdi-tag-plus"
-                size="small"
-                @click="showAddMetaDataDialog"
-              />
-            </template>
-          </v-tooltip>
-        </v-card-title>
-        <v-card-text>
+      <FormCard :collapsible="true" :default-open="true" class="mb-6">
+        <template #title>
+          <v-icon icon="mdi-tag-multiple" class="mr-2" />
+          Meta Data
+        </template>
+
+        <template #default>
           <MetadataTable
             v-if="companyMetadata && companyMetadata.length > 0"
             :items="companyMetadata"
@@ -88,16 +74,34 @@
             <v-icon icon="mdi-tag-hidden" size="48" class="mb-2" />
             <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
           </div>
-        </v-card-text>
-      </v-card>
+        </template>
+
+        <template #actions>
+          <v-tooltip text="Add new meta data" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                text="Add Meta Data"
+                variant="text"
+                color="primary"
+                prepend-icon="mdi-tag-plus"
+                :disabled="loading"
+                min-width="120"
+                @click="showAddMetaDataDialog"
+              />
+            </template>
+          </v-tooltip>
+        </template>
+      </FormCard>
 
       <!-- 3. Associated Applications -->
-      <v-card>
-        <v-card-title class="d-flex align-center">
+      <FormCard :collapsible="true" :default-open="true" class="mb-6">
+        <template #title>
           <v-icon icon="mdi-briefcase" class="mr-2" />
           Associated Applications
-        </v-card-title>
-        <v-card-text>
+        </template>
+
+        <template #default>
           <ApplicationTable
             v-if="associatedApplications && associatedApplications.length > 0"
             :items="associatedApplications"
@@ -108,8 +112,8 @@
             <v-icon icon="mdi-briefcase-outline" size="48" class="mb-2" />
             <p>No applications found for this company.</p>
           </div>
-        </v-card-text>
-      </v-card>
+        </template>
+      </FormCard>
     </div>
 
     <!-- Add Meta Data Dialog -->
