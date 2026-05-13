@@ -1,5 +1,5 @@
 <template>
-  <FormCard>
+  <FormCard :show-toggle="showToggle">
     <template #title>
       <v-icon icon="mdi-domain" class="mr-2" />
       Company Details
@@ -172,6 +172,10 @@ export default defineComponent({
     modelValue: {
       type: Object as () => ICompany,
       required: true,
+    },
+    showToggle: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ['update:modelValue', 'change'],
