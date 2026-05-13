@@ -1,22 +1,11 @@
 <template>
-  <v-card>
-    <v-card-title class="d-flex align-center justify-space-between">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-account" class="mr-2" />
-        Profile Information
-      </div>
-      <v-btn
-        color="primary"
-        variant="flat"
-        prepend-icon="mdi-content-save"
-        :loading="saving"
-        :disabled="!hasChanges"
-        @click="$emit('save')"
-      >
-        Save Changes
-      </v-btn>
-    </v-card-title>
-    <v-card-text>
+  <FormCard :collapsible="false">
+    <template #title>
+      <v-icon icon="mdi-account" class="mr-2" />
+      Profile Information
+    </template>
+
+    <template #default>
       <ProfileForm
         v-if="profile"
         :model-value="profile"
@@ -27,18 +16,32 @@
         <v-icon icon="mdi-account-off" size="48" class="mb-2" />
         <p>Unable to load profile information.</p>
       </div>
-    </v-card-text>
-  </v-card>
+    </template>
+
+    <template #actions>
+      <v-btn
+        text="Save Changes"
+        variant="text"
+        color="primary"
+        prepend-icon="mdi-content-save"
+        :loading="saving"
+        :disabled="!hasChanges"
+        min-width="120"
+        @click="$emit('save')"
+      />
+    </template>
+  </FormCard>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { IProfile } from '../../models'
 import ProfileForm from './ProfileForm.vue'
+import FormCard from '../forms/FormCard.vue'
 
 export default defineComponent({
   name: 'ProfileInfoCard',
-  components: { ProfileForm },
+  components: { ProfileForm, FormCard },
   props: {
     profile: {
       type: Object as () => IProfile | null,
