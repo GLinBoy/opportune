@@ -13,3 +13,60 @@
   padding-left: 16px;
   border-left: 8px solid rgb(var(--v-theme-primary));
 }
+
+/* ── Application Timeline ─────────────────────────────────────────────────── */
+.app-timeline {
+  padding: 4px 0;
+}
+
+:deep(.app-timeline__item .v-timeline-item__body) {
+  padding-bottom: 20px;
+}
+
+.app-timeline__date {
+  text-align: right;
+  padding-right: 8px;
+}
+
+.app-timeline__date-day {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(101, 109, 119, 0.8);
+  white-space: nowrap;
+}
+
+.app-timeline__card {
+  background: rgba(101, 109, 119, 0.04);
+  border: 1px solid rgba(101, 109, 119, 0.14);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-timeline__card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-timeline__badge {
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+}
+
+.app-timeline__card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+  line-height: 1.4;
+}
+
+.app-timeline__card-desc {
+  font-size: 0.8125rem;
+  color: rgba(101, 109, 119, 0.8);
+  line-height: 1.5;
+}
