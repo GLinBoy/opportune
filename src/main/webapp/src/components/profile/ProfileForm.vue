@@ -4,12 +4,13 @@
       <v-row>
         <!-- Avatar Section -->
         <v-col cols="12" md="4">
-          <v-card variant="outlined" class="mb-4">
-            <v-card-title class="text-subtitle-1">
+          <FormCard :collapsible="false">
+            <template #title>
               <v-icon icon="mdi-account-circle" class="mr-2" />
               Avatar
-            </v-card-title>
-            <v-card-text>
+            </template>
+
+            <template #default>
               <div class="d-flex flex-column align-center">
                 <v-avatar size="80" class="mb-4">
                   <v-img :src="avatarUrl" :alt="fullName" />
@@ -18,7 +19,6 @@
                 <div class="w-100">
                   <v-file-input
                     v-model="avatarFile"
-                    @update:model-value="handleAvatarUpload"
                     label="Upload Avatar"
                     variant="outlined"
                     prepend-inner-icon="mdi-camera"
@@ -26,6 +26,7 @@
                     density="compact"
                     :loading="uploadingAvatar"
                     clearable
+                    @update:model-value="handleAvatarUpload"
                   />
 
                   <div class="d-flex align-center mt-2">
@@ -56,7 +57,6 @@
                     Account Information
                   </h4>
 
-                  <!-- Account Status -->
                   <v-select
                     :model-value="modelValue.status"
                     :items="statusOptions"
@@ -68,7 +68,6 @@
                     class="mb-3"
                   />
 
-                  <!-- Last Login -->
                   <v-text-field
                     :model-value="lastLoginFormatted"
                     label="Last Login"
@@ -79,7 +78,6 @@
                     class="mb-3"
                   />
 
-                  <!-- Subscription Plan -->
                   <v-text-field
                     :model-value="modelValue.subscription"
                     label="Subscription Plan"
@@ -90,7 +88,6 @@
                     class="mb-3"
                   />
 
-                  <!-- Email Verified -->
                   <v-switch
                     :model-value="modelValue.emailVerification"
                     label="Email Verified"
@@ -99,68 +96,69 @@
                   />
                 </div>
               </div>
-            </v-card-text>
-          </v-card>
+            </template>
+          </FormCard>
         </v-col>
 
         <!-- Personal Information -->
         <v-col cols="12" md="8">
-          <v-card variant="outlined" class="mb-4">
-            <v-card-title class="text-subtitle-1">
+          <FormCard :collapsible="false">
+            <template #title>
               <v-icon icon="mdi-account-details" class="mr-2" />
-              Personal Information
-            </v-card-title>
-            <v-card-text>
+              Your Details
+            </template>
+
+            <template #default>
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
                     :model-value="modelValue.forename"
-                    @update:model-value="updateField('forename', $event)"
                     label="First Name"
                     variant="outlined"
                     prepend-inner-icon="mdi-account"
                     :rules="[rules.required]"
+                    @update:model-value="updateField('forename', $event)"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     :model-value="modelValue.surname"
-                    @update:model-value="updateField('surname', $event)"
                     label="Last Name"
                     variant="outlined"
                     prepend-inner-icon="mdi-account"
                     :rules="[rules.required]"
+                    @update:model-value="updateField('surname', $event)"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     :model-value="modelValue.email"
-                    @update:model-value="updateField('email', $event)"
                     label="Email Address"
                     variant="outlined"
                     prepend-inner-icon="mdi-email"
                     type="email"
                     :rules="[rules.required, rules.email]"
+                    @update:model-value="updateField('email', $event)"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     :model-value="modelValue.jobTitle"
-                    @update:model-value="updateField('jobTitle', $event)"
                     label="Job Title"
                     variant="outlined"
                     prepend-inner-icon="mdi-briefcase"
                     placeholder="e.g., Senior Software Engineer"
+                    @update:model-value="updateField('jobTitle', $event)"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     :model-value="modelValue.location"
-                    @update:model-value="updateField('location', $event)"
                     label="Location"
                     variant="outlined"
                     prepend-inner-icon="mdi-map-marker"
                     placeholder="e.g., San Francisco, CA"
+                    @update:model-value="updateField('location', $event)"
                   />
                 </v-col>
                 <v-col cols="12">
@@ -171,8 +169,8 @@
                   />
                 </v-col>
               </v-row>
-            </v-card-text>
-          </v-card>
+            </template>
+          </FormCard>
         </v-col>
       </v-row>
     </v-form>
@@ -184,6 +182,7 @@ import { computed, ref } from 'vue'
 import { type IProfile, ProfileStatus } from '../../models'
 import CryptoJS from 'crypto-js'
 import ProfileResumeField from './ProfileResumeField.vue'
+import FormCard from '../forms/FormCard.vue'
 // import { AvatarService } from '../services' // Uncomment when avatar endpoint is ready
 
 const props = defineProps<{
@@ -266,23 +265,16 @@ const useGravatar = () => {
 const handleAvatarUpload = async (files: File | File[]) => {
   const fileArray = Array.isArray(files) ? files : [files]
 
-  if (!fileArray || fileArray.length === 0) {
-    return
-  }
+  if (!fileArray || fileArray.length === 0) return
 
   const file = fileArray[0]
+  if (!file) return
 
-  if (!file) {
-    return
-  }
-
-  // Validate file type
   if (!file.type.startsWith('image/')) {
     alert('Please select an image file')
     return
   }
 
-  // Validate file size (max 5MB)
   const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
     alert('File size must be less than 5MB')
@@ -292,12 +284,6 @@ const handleAvatarUpload = async (files: File | File[]) => {
   uploadingAvatar.value = true
 
   try {
-    // When avatar upload endpoint is ready, replace the simulation below with:
-    // const avatarService = new AvatarService()
-    // const result = await avatarService.uploadAvatar(props.modelValue.id || '', file)
-    // updateField('avatar', result.avatarPath)
-
-    // SIMULATION CODE (remove when real endpoint is ready)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     const timestamp = new Date().getTime()
     const fileName = `avatar_${props.modelValue.id}_${timestamp}.${file.name.split('.').pop()}`
@@ -319,13 +305,3 @@ const handleAvatarUpload = async (files: File | File[]) => {
   }
 }
 </script>
-
-<style scoped>
-.v-card {
-  transition: all 0.3s ease;
-}
-
-.v-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-</style>
