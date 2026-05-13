@@ -238,6 +238,7 @@
                 <v-col cols="12" md="8" lg="6">
                   <AddApplicationByUrlForm
                     ref="urlFormRef"
+                    :show-toggle="false"
                     :loading="addDialog.loading"
                     @submit="handleUrlSubmit"
                     @cancel="closeAddDialog"
@@ -255,6 +256,7 @@
                     ref="manualFormRef"
                     :loading="addDialog.loading"
                     :initial-url="failedUrl"
+                    :show-toggle="false"
                     @submit="handleManualSubmit"
                     @cancel="closeAddDialog"
                   />
