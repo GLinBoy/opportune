@@ -1,22 +1,26 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title class="d-flex align-center justify-space-between">
-        <div class="d-flex align-center">
-          <v-icon icon="mdi-devices" class="mr-2" />
-          Active Sessions
-        </div>
-        <v-btn
-          color="primary"
-          variant="outlined"
-          prepend-icon="mdi-refresh"
-          :loading="loading"
-          @click="$emit('refresh')"
-        >
-          Refresh
-        </v-btn>
-      </v-card-title>
-      <v-card-text>
+    <FormCard :collapsible="false">
+      <template #title>
+        <v-icon icon="mdi-devices" class="mr-2" />
+        Active Sessions
+        <v-tooltip text="Refresh sessions" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              icon="mdi-refresh"
+              variant="text"
+              density="compact"
+              size="small"
+              class="ml-2"
+              :loading="loading"
+              @click="$emit('refresh')"
+            />
+          </template>
+        </v-tooltip>
+      </template>
+
+      <template #default>
         <v-alert color="info" variant="tonal" icon="mdi-information" class="mb-4">
           These are the devices that are currently logged in to your account. Revoke any sessions
           that you do not recognize.
@@ -116,8 +120,8 @@
             </v-card-text>
           </v-card>
         </div>
-      </v-card-text>
-    </v-card>
+      </template>
+    </FormCard>
 
     <!-- Confirm Revoke Dialog -->
     <ConfirmDialog
@@ -138,6 +142,7 @@
 import { defineComponent, computed, watch, nextTick, ref } from 'vue'
 import type { ISession } from '../../models'
 import ConfirmDialog from '../ConfirmDialog.vue'
+import FormCard from '../forms/FormCard.vue'
 
 function getAccessTokenId(): string | null {
   const token = localStorage.getItem('accessToken')
@@ -155,7 +160,7 @@ function getAccessTokenId(): string | null {
 
 export default defineComponent({
   name: 'SessionsCard',
-  components: { ConfirmDialog },
+  components: { ConfirmDialog, FormCard },
   props: {
     sessions: {
       type: Array as () => ISession[],
