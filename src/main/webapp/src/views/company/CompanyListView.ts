@@ -6,6 +6,7 @@ import SearchService from '../../services/search.service'
 import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import MdTooltip from '../../components/markdown/MdTooltip.vue'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -14,6 +15,7 @@ export default defineComponent({
     CompanyForm,
     CompanyLogo,
     ConfirmDialog,
+    MdTooltip
   },
   methods: {
     getCompanyStatusDisplay,
