@@ -6,6 +6,7 @@ import {
   getApplicationStatusIcon,
 } from '../../models/enumerations/application-status.model'
 import { type IApplicationProjection } from '../../models/application.model'
+import MdTooltip from '@/components/markdown/MdTooltip.vue'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -33,6 +34,9 @@ export default defineComponent({
     getApplicationStatusDisplay,
     getApplicationStatusColor,
     getApplicationStatusIcon,
+  },
+  components: {
+    MdTooltip,
   },
   setup(props) {
     const router = useRouter()
