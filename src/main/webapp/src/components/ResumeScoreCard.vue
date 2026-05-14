@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import MdViewer from './markdown/MdViewer.vue'
 
 export interface ScoreSection {
   label: string
@@ -50,11 +49,6 @@ function scoreColor(score: number | null | undefined): string {
   if (score >= 75) return 'success'
   if (score >= 50) return 'warning'
   return 'error'
-}
-
-function renderMd(raw: string | null | undefined): string {
-  if (!raw) return ''
-  return DOMPurify.sanitize(marked.parse(raw) as string)
 }
 
 const sections = computed<ScoreSection[]>(() => [
@@ -187,14 +181,14 @@ const sections = computed<ScoreSection[]>(() => [
 
                   <v-divider class="mb-4" />
 
-                  <!-- Rationale -->
+                  <!-- Rationale view via MdViewer -->
                   <v-sheet
                     v-if="section.rationale"
                     rounded="md"
                     color="surface"
-                    class="pa-4 text-body-2 markdown-body"
+                    class="pa-4 text-body-2"
                   >
-                    <div v-html="renderMd(section.rationale)" />
+                    <MdViewer :content="section.rationale" />
                   </v-sheet>
                   <v-alert
                     v-else
@@ -214,32 +208,14 @@ const sections = computed<ScoreSection[]>(() => [
 </template>
 
 <style scoped>
-/* Separator between tab list and content — uses Vuetify's own border CSS tokens
-   so it adapts to light/dark theme automatically */
 .tabs-col {
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
-/* On xs screens tabs stack above content, swap to a bottom border */
 @media (max-width: 599px) {
   .tabs-col {
     border-right: none;
     border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
-}
-
-.markdown-body :deep(ul) {
-  padding-left: 1.25rem;
-  margin: 0.25rem 0 0.75rem;
-}
-.markdown-body :deep(li) {
-  margin-bottom: 0.2rem;
-}
-.markdown-body :deep(strong) {
-  color: rgb(var(--v-theme-on-surface));
-  font-weight: 600;
-}
-.markdown-body :deep(p) {
-  margin-bottom: 0.5rem;
 }
 </style>
