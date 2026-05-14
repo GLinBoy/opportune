@@ -98,17 +98,7 @@
                   <span class="font-weight-bold">{{ item.name }}</span>
                 </v-col>
                 <v-col cols="auto" v-if="item.note">
-                  <v-tooltip :text="item.note" location="top">
-                    <template v-slot:activator="{ props }">
-                      <v-icon
-                        class="ms-1"
-                        color="primary"
-                        size="small"
-                        icon="mdi-information-outline"
-                        v-bind="props"
-                      />
-                    </template>
-                  </v-tooltip>
+                  <MdTooltip :content="item.note" location="top" />
                 </v-col>
               </v-row>
             </v-container>
