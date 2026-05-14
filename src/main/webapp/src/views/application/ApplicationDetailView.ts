@@ -10,6 +10,8 @@ import FormDialog from '../../components/FormDialog.vue'
 import MetadataTable from '../../components/MetadataTable.vue'
 import ResumeScoreCard from '../../components/ResumeScoreCard.vue'
 import FormCard from '@/components/forms/FormCard.vue'
+import MdEditor from '@/components/markdown/MdEditor.vue'
+import ContentViewer from '@/components/ContentViewer.vue'
 
 export interface Snackbar {
   show: boolean
@@ -29,6 +31,8 @@ export default defineComponent({
     MetadataTable,
     ResumeScoreCard,
     FormCard,
+    MdEditor,
+    ContentViewer,
   },
   computed: {
     statusOptions() {

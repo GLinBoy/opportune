@@ -197,13 +197,11 @@
               </v-select>
             </v-col>
             <v-col cols="12">
-              <v-textarea
+              <MdEditor
                 v-model="application.note"
                 label="Note"
-                variant="outlined"
-                rows="3"
-                prepend-inner-icon="mdi-note-text"
-                @input="markAsModified"
+                :rows="8"
+                @update:model-value="markAsModified"
               />
             </v-col>
           </v-row>
@@ -228,35 +226,25 @@
 
           <v-tabs-window v-model="activeTab">
             <v-tabs-window-item value="job-description">
-              <v-textarea
-                v-model="application.description"
-                label="AI Job Description Analysis"
-                variant="outlined"
-                rows="16"
-                readonly
+              <ContentViewer
+                title="Job Description Content"
+                :content="application.description"
                 class="mt-4"
               />
             </v-tabs-window-item>
 
             <v-tabs-window-item value="cover-letter">
-              <v-textarea
-                v-model="application.coverLetter"
-                label="AI Generated Cover Letter"
-                variant="outlined"
-                rows="16"
-                readonly
+              <ContentViewer
+                title="Cover Letter Content"
+                :content="application.coverLetter"
                 class="mt-4"
-                @input="markAsModified"
               />
             </v-tabs-window-item>
 
             <v-tabs-window-item value="resume-insights">
-              <v-textarea
-                v-model="application.resumeInsights"
-                label="Resume Insights"
-                variant="outlined"
-                rows="16"
-                readonly
+              <ContentViewer
+                title="Resume Insights Content"
+                :content="application.resumeInsights"
                 class="mt-4"
               />
             </v-tabs-window-item>
@@ -278,12 +266,9 @@
             </v-tabs-window-item>
 
             <v-tabs-window-item value="interview-introduction">
-              <v-textarea
-                v-model="application.interviewIntroduction"
-                label="Interview Introduction"
-                variant="outlined"
-                rows="16"
-                readonly
+              <ContentViewer
+                title="Interview Introduction Content"
+                :content="application.interviewIntroduction"
                 class="mt-4"
               />
             </v-tabs-window-item>
