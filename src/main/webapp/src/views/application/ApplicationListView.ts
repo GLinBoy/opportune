@@ -6,6 +6,7 @@ import SearchService from '../../services/search.service'
 import AddApplicationByUrlForm from '../../components/application/AddApplicationByUrlForm.vue'
 import AddApplicationManualForm from '../../components/application/AddApplicationManualForm.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import MdTooltip from '@/components/markdown/MdTooltip.vue'
 
 export interface Snackbar {
   show: boolean
@@ -27,6 +28,7 @@ export default defineComponent({
     AddApplicationByUrlForm,
     AddApplicationManualForm,
     ConfirmDialog,
+    MdTooltip,
   },
   methods: {
     getApplicationStatusDisplay,
