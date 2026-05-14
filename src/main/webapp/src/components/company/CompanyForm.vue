@@ -116,31 +116,20 @@
         </v-select>
       </v-col>
       <v-col cols="12">
-        <v-textarea
-          id="company-description"
+        <MdEditor
           :model-value="modelValue.description"
           label="Description"
-          variant="outlined"
-          bg-color="surface"
-          rounded="md"
-          hide-details="auto"
-          prepend-inner-icon="mdi-text"
-          rows="4"
+          hint="About the company (description) — supports Markdown formatting"
+          :rows="16"
           @update:model-value="updateField('description', $event)"
         />
       </v-col>
       <v-col cols="12">
-        <v-textarea
-          id="company-note"
+        <MdEditor
           :model-value="modelValue.note"
           label="Note"
-          variant="outlined"
-          bg-color="surface"
-          rounded="md"
-          hide-details="auto"
-          prepend-inner-icon="mdi-note-text"
-          rows="3"
-          placeholder="Personal note about the company"
+          hint="Personal note about the company — supports Markdown"
+          :rows="8"
           @update:model-value="updateField('note', $event)"
         />
       </v-col>
@@ -162,11 +151,13 @@ import {
   getCompanyStatusIcon,
 } from '../../models'
 import FormCard from '../forms/FormCard.vue'
+import MdEditor from '../markdown/MdEditor.vue'
 
 export default defineComponent({
   name: 'CompanyForm',
   components: {
     FormCard,
+    MdEditor,
   },
   props: {
     modelValue: {
