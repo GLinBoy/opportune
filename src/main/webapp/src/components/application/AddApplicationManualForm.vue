@@ -94,24 +94,13 @@
             prepend-inner-icon="mdi-currency-usd"
           />
         </v-col>
-
-        <v-col cols="12">
-          <v-textarea
-            id="manual-raw-content"
-            v-model="formData.rawContent"
-            label="Job Description"
-            placeholder="Paste the complete job description here..."
-            variant="outlined"
-            bg-color="surface"
-            rounded="md"
-            prepend-inner-icon="mdi-text-box-outline"
-            :rules="[rules.required]"
-            rows="10"
-            required
-            hint="This is the most important field - paste the full job description"
-            persistent-hint
-          />
-        </v-col>
+        <MdEditor
+          v-model="formData.rawContent"
+          label="Job Description"
+          hint="This is the most important field — paste the full job description. Supports Markdown."
+          :rows="16"
+        />
+        <v-col cols="12"> </v-col>
       </v-row>
 
       <v-alert type="info" variant="tonal" class="mt-5">
@@ -152,6 +141,7 @@ import { ref, reactive, watch } from 'vue'
 import type { ICompany } from '../../models'
 import CompanyAutocomplete from '../company/CompanyAutocomplete.vue'
 import FormCard from '../forms/FormCard.vue'
+import MdEditor from '@/components/markdown/MdEditor.vue'
 
 // Props
 export interface ManualFormProps {
