@@ -19,6 +19,7 @@ export interface Props {
   educationMatchRationale?: string | null
   keywordMatchScore?: number | null
   keywordMatchRationale?: string | null
+  height?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
   educationMatchRationale: null,
   keywordMatchScore: null,
   keywordMatchRationale: null,
+  height: '530px',
 })
 
 const activeTab = ref(0)
@@ -80,23 +82,27 @@ const sections = computed<ScoreSection[]>(() => [
 </script>
 
 <template>
-  <v-container>
+  <div class="resume-score-card" :style="{ height }">
     <!-- ── Empty state ── -->
     <template v-if="!isReady">
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="6" class="text-center py-12">
-          <v-icon icon="mdi-file-search-outline" size="64" color="grey-lighten-1" class="mb-4" />
-          <p class="text-h6 font-weight-medium text-medium-emphasis mb-2">No score analysis yet</p>
-          <p class="text-body-2 text-disabled">
-            Resume scoring will appear here once the application has been analyzed.
-          </p>
-        </v-col>
-      </v-row>
+      <div class="resume-score-card__scroll">
+        <v-row justify="center">
+          <v-col cols="12" sm="8" md="6" class="text-center py-12">
+            <v-icon icon="mdi-file-search-outline" size="64" color="grey-lighten-1" class="mb-4" />
+            <p class="text-h6 font-weight-medium text-medium-emphasis mb-2">
+              No score analysis yet
+            </p>
+            <p class="text-body-2 text-disabled">
+              Resume scoring will appear here once the application has been analyzed.
+            </p>
+          </v-col>
+        </v-row>
+      </div>
     </template>
 
     <template v-else>
-      <!-- ── Overall Score ── -->
-      <v-sheet rounded="lg" border class="pa-4 mb-6">
+      <!-- ── Overall Score (fixed) ── -->
+      <v-sheet rounded="lg" border class="pa-4 mb-4 mx-4 mt-4 flex-shrink-0">
         <div class="d-flex align-center justify-space-between mb-2">
           <span class="text-subtitle-1 font-weight-medium">Overall Match</span>
           <v-chip :color="scoreColor(resumeOverallScore)" variant="tonal" size="small" label>
@@ -113,11 +119,11 @@ const sections = computed<ScoreSection[]>(() => [
         />
       </v-sheet>
 
-      <!-- ── Vertical Tabs Layout ── -->
-      <v-card rounded="lg" variant="outlined">
-        <v-row density="compact">
+      <!-- ── Vertical Tabs Layout (fills remaining height) ── -->
+      <v-card rounded="lg" variant="outlined" class="resume-score-card__tabs-card mx-4 mb-4">
+        <div class="resume-score-card__tabs-layout">
           <!-- Left: Vertical Tab Headers -->
-          <v-col cols="12" sm="4" md="3" class="tabs-col">
+          <div class="tabs-col">
             <v-tabs v-model="activeTab" direction="vertical" color="primary" class="h-100">
               <v-tab
                 v-for="(section, index) in sections"
@@ -146,19 +152,20 @@ const sections = computed<ScoreSection[]>(() => [
                 </v-tooltip>
               </v-tab>
             </v-tabs>
-          </v-col>
+          </div>
 
           <!-- Right: Tab Content -->
-          <v-col cols="12" sm="8" md="9">
-            <v-tabs-window v-model="activeTab">
+          <div class="resume-score-card__content-col">
+            <v-tabs-window v-model="activeTab" class="h-100">
               <v-tabs-window-item
                 v-for="(section, index) in sections"
                 :key="section.label"
                 :value="index"
+                class="h-100"
               >
-                <div class="pa-6">
-                  <!-- Section header -->
-                  <div class="d-flex align-center ga-3 mb-4">
+                <div class="resume-score-card__tab-pane h-100">
+                  <!-- Section header (fixed) -->
+                  <div class="d-flex align-center ga-3 pa-6 pb-0">
                     <v-icon :icon="section.icon" size="22" />
                     <span class="text-h6 font-weight-medium">{{ section.label }}</span>
                     <v-spacer />
@@ -179,41 +186,96 @@ const sections = computed<ScoreSection[]>(() => [
                     </v-tooltip>
                   </div>
 
-                  <v-divider class="mb-4" />
+                  <v-divider class="mt-4 mx-6" />
 
-                  <!-- Rationale view via MdViewer -->
-                  <v-sheet
-                    v-if="section.rationale"
-                    rounded="md"
-                    color="surface"
-                    class="pa-4 text-body-2"
-                  >
-                    <MdViewer :content="section.rationale" />
-                  </v-sheet>
-                  <v-alert
-                    v-else
-                    type="info"
-                    variant="tonal"
-                    density="compact"
-                    text="No detailed rationale is available for this section."
-                  />
+                  <!-- Scrollable rationale content -->
+                  <div class="resume-score-card__tab-content px-6 pb-6 pt-4">
+                    <!-- Rationale view via MdViewer -->
+                    <v-sheet
+                      v-if="section.rationale"
+                      rounded="md"
+                      color="surface"
+                      class="pa-4 text-body-2"
+                    >
+                      <MdViewer :content="section.rationale" />
+                    </v-sheet>
+                    <v-alert
+                      v-else
+                      type="info"
+                      variant="tonal"
+                      density="compact"
+                      text="No detailed rationale is available for this section."
+                    />
+                  </div>
                 </div>
               </v-tabs-window-item>
             </v-tabs-window>
-          </v-col>
-        </v-row>
+          </div>
+        </div>
       </v-card>
     </template>
-  </v-container>
+  </div>
 </template>
 
 <style scoped>
+.resume-score-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.resume-score-card__scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.resume-score-card__tabs-card {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-score-card__tabs-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
 .tabs-col {
+  flex-shrink: 0;
+  width: 220px;
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+  overflow-y: auto;
+}
+
+.resume-score-card__content-col {
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-score-card__tab-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.resume-score-card__tab-content {
+  flex: 1;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 @media (max-width: 599px) {
+  .resume-score-card__tabs-layout {
+    flex-direction: column;
+  }
+
   .tabs-col {
+    width: 100%;
     border-right: none;
     border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
