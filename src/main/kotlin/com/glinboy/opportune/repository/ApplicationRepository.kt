@@ -2,12 +2,16 @@ package com.glinboy.opportune.repository
 
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.projection.ApplicationProjection
+import com.glinboy.opportune.projection.ApplicationStatProjection
+import com.glinboy.opportune.projection.ScoreSummaryProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.Instant
 import java.util.*
 
 @Repository
@@ -66,4 +70,28 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		" WHERE a.id = :id " +
 		" AND a.profile.id = :profileId ")
 	fun findApplicationDetailsByProfileIdAndId(profileId: UUID, id: UUID): Optional<Application>
+
+	@Query("""
+    SELECT CAST(a.createdDate AS date) AS createdDay,
+           a.status                   AS status,
+           COUNT(a)                   AS total
+    FROM Application a
+    WHERE a.createdDate >= :from
+      AND a.profile.id = :userId
+    GROUP BY CAST(a.createdDate AS date), a.status
+    ORDER BY createdDay ASC
+""")
+	fun findApplicationStatsByDateAndStatus(@Param("from") from: Instant, @Param("userId")  userId: UUID): List<ApplicationStatProjection>
+
+	@Query("""
+    SELECT AVG(a.resumeOverallScore)    AS avgResumeScore,
+           AVG(a.skillMatchScore)       AS avgSkillScore,
+           AVG(a.experienceMatchScore)  AS avgExperienceScore,
+           AVG(a.educationMatchScore)   AS avgEducationScore,
+           AVG(a.keywordMatchScore)     AS avgKeywordScore
+    FROM Application a
+    WHERE a.profile.id = :userId
+      AND a.createdDate >= :from
+""")
+	fun avgScoresForProfile(@Param("from") from: Instant, @Param("userId")  userId: UUID): ScoreSummaryProjection
 }
