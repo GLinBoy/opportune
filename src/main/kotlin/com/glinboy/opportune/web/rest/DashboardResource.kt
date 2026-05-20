@@ -2,7 +2,6 @@ package com.glinboy.opportune.web.rest
 
 import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.UserDashboardSummaryDTO
-import com.glinboy.opportune.projection.ApplicationStatProjection
 import com.glinboy.opportune.service.DashboardService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.ResponseEntity

@@ -10,7 +10,6 @@ import com.glinboy.opportune.event.ApplicationSubmittedEvent
 import com.glinboy.opportune.mapper.ApplicationDetailsMapper
 import com.glinboy.opportune.mapper.ApplicationMapper
 import com.glinboy.opportune.projection.ApplicationProjection
-import com.glinboy.opportune.projection.ApplicationStatProjection
 import com.glinboy.opportune.repository.ApplicationRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.ApplicationService

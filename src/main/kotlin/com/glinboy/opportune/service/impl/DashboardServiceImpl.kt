@@ -1,7 +1,6 @@
 package com.glinboy.opportune.service.impl
 
 import com.glinboy.opportune.dto.UserDashboardSummaryDTO
-import com.glinboy.opportune.projection.ApplicationStatProjection
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.ApplicationService
 import com.glinboy.opportune.service.DashboardService
