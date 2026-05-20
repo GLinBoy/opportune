@@ -3,12 +3,14 @@ package com.glinboy.opportune.service.impl
 import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.dto.ApplicationDetailsDTO
 import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
+import com.glinboy.opportune.dto.UserDashboardSummaryDTO
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.enums.ApplicationStatus
 import com.glinboy.opportune.event.ApplicationSubmittedEvent
 import com.glinboy.opportune.mapper.ApplicationDetailsMapper
 import com.glinboy.opportune.mapper.ApplicationMapper
 import com.glinboy.opportune.projection.ApplicationProjection
+import com.glinboy.opportune.projection.ApplicationStatProjection
 import com.glinboy.opportune.repository.ApplicationRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.ApplicationService
@@ -22,6 +24,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -170,4 +174,12 @@ class ApplicationServiceImpl(
 		}
 	}
 
+	override fun getUserSummery(currentUserID: UUID): UserDashboardSummaryDTO {
+		val from = Instant.now().minus(30, ChronoUnit.DAYS)
+		val currentUserID = SecurityUtils.getCurrentUserLoginID()
+		return UserDashboardSummaryDTO(
+			repository.findApplicationStatsByDateAndStatus(from, currentUserID),
+			repository.avgScoresForProfile(from, currentUserID)
+		)
+	}
 }
