@@ -1,9 +1,9 @@
 package com.glinboy.opportune.service.impl
 
-import com.maxmind.geoip2.DatabaseReader
-import com.maxmind.geoip2.exception.AddressNotFoundException
 import com.glinboy.opportune.service.GeoLocationResult
 import com.glinboy.opportune.service.GeoLocationService
+import com.maxmind.geoip2.DatabaseReader
+import com.maxmind.geoip2.exception.AddressNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.net.InetAddress
