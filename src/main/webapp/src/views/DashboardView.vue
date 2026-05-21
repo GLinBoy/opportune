@@ -1,48 +1,52 @@
 <template>
-  <v-row>
-    <v-col cols="12" sm="6" lg="3">
-      <DashboardCard
-        title="Total Applications"
-        icon="mdi-briefcase-variant-outline"
-        :value="2"
-        description="Tracked in your pipeline"
-      />
-    </v-col>
-    <v-col cols="12" sm="6" lg="3">
-      <DashboardCard
-        title="In Progress"
-        icon="mdi-chart-bar"
-        value="1"
-        description="Actively in an interview process"
-      />
-    </v-col>
-    <v-col cols="12" sm="6" lg="3">
-      <DashboardCard
-        title="Offer Received"
-        icon="mdi-check-circle-outline"
-        value="0"
-        description="You've received offers from"
-      />
-    </v-col>
-    <v-col cols="12" sm="6" lg="3">
-      <DashboardCard
-        title="Rejected"
-        icon="mdi-close-circle-outline"
-        value="0"
-        description="Applications marked as rejected"
-      />
-    </v-col>
-    <v-col cols="12" md="6">
-      <DashboardApplicationCard />
-    </v-col>
-    <v-col cols="12" md="6">
-      <DashboardCompanyCard />
-    </v-col>
-  </v-row>
+  <v-container fluid class="pa-4">
+    <!-- Row 1: KPI Cards -->
+    <DashboardKpiCards :kpis="kpis" :loading="loading" class="mb-4" />
+
+    <!-- Row 2: Applications Over Time — full width -->
+    <v-row class="mb-4">
+      <v-col cols="12">
+        <DashboardApplicationTrend
+          :dates="trendData.dates"
+          :counts="trendData.counts"
+          :loading="loading"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- Row 3: Status Donut + AI Score Radar + Pipeline Funnel -->
+    <v-row>
+      <v-col cols="12" md="4">
+        <DashboardStatusDonut :status-counts="statusCounts" :loading="loading" />
+      </v-col>
+      <v-col cols="12" md="4">
+        <DashboardAiScoreRadar :scores="scores" :loading="loading" />
+      </v-col>
+      <v-col cols="12" md="4">
+        <DashboardPipelineFunnel :status-counts="statusCounts" :loading="loading" />
+      </v-col>
+    </v-row>
+
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
 </template>
 
 <script setup lang="ts">
-import DashboardCard from '../components/dashboard/DashboardStatusCard.vue'
-import DashboardApplicationCard from '../components/dashboard/DashboardApplicationCard.vue'
-import DashboardCompanyCard from '../components/dashboard/DashboardCompanyCard.vue'
+import { ref } from 'vue'
+import type { Snackbar } from '../views/application/ApplicationListView'
+import { useDashboard } from '../composables/useDashboard'
+import DashboardKpiCards from '../components/dashboard/DashboardKpiCards.vue'
+import DashboardStatusDonut from '../components/dashboard/DashboardStatusDonut.vue'
+import DashboardApplicationTrend from '../components/dashboard/DashboardApplicationTrend.vue'
+import DashboardAiScoreRadar from '../components/dashboard/DashboardAiScoreRadar.vue'
+import DashboardPipelineFunnel from '../components/dashboard/DashboardPipelineFunnel.vue'
+
+const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
+
+const { kpis, statusCounts, trendData, scores, loading, error, reload } = useDashboard()
 </script>
