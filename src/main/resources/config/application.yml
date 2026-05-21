@@ -79,6 +79,9 @@ springdoc:              # Don't expose actuator ops in Swagger UI
     operations-sorter: alpha
 
 application:
+  config:
+    dashboard:
+      summary-days: 90
   files:
     base-path: \${OPPORTUNE_FILES_PATH:./uploads}
   geoip:
