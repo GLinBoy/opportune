@@ -5,12 +5,21 @@ import java.time.Duration
 
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 class ApplicationProperties {
+	var config: Config = Config()
 	var info: Info = Info()
 	var mail: Mail = Mail()
 	var security: Security = Security()
 	var files: Files = Files()
 	var geoip: GeoIp = GeoIp()
 	var web: Web = Web()
+
+	data class Config(
+		var dashboard: Dashboard = Dashboard(),
+	)
+
+	data class Dashboard(
+		var summaryDays: Long = 90
+	)
 
 	data class Web(
 		var forwardedForHeader: String = "X-Forwarded-For"
