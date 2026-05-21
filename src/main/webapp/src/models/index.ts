@@ -13,6 +13,7 @@ export * from './data-table-options.model'
 export * from './auth.models'
 export * from './search.model'
 export * from './session.model'
+export * from './dashboard.model'
 
 export * from './enumerations/application-status.model'
 export * from './enumerations/company-status.model'
