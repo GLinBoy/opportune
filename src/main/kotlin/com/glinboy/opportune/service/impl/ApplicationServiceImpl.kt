@@ -1,5 +1,6 @@
 package com.glinboy.opportune.service.impl
 
+import com.glinboy.opportune.config.ApplicationProperties
 import com.glinboy.opportune.dto.ApplicationDTO
 import com.glinboy.opportune.dto.ApplicationDetailsDTO
 import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
@@ -34,7 +35,8 @@ class ApplicationServiceImpl(
 	private val applicationDetailsMapper: ApplicationDetailsMapper,
 	private val entityManager: EntityManager,
 	private val jobDescriptionFetcherService: JobDescriptionFetcherService,
-	private val eventPublisher: ApplicationEventPublisher
+	private val eventPublisher: ApplicationEventPublisher,
+	private val properties: ApplicationProperties
 ) : GenericServiceImpl<UUID, Application, ApplicationDTO, ApplicationRepository,
 	ApplicationMapper>(applicationRepository, mapper), ApplicationService {
 
@@ -174,7 +176,8 @@ class ApplicationServiceImpl(
 	}
 
 	override fun getUserSummery(currentUserID: UUID): UserDashboardSummaryDTO {
-		val from = Instant.now().minus(30, ChronoUnit.DAYS)
+		val summaryDays = properties.config.dashboard.summaryDays
+		val from = Instant.now().minus(summaryDays, ChronoUnit.DAYS)
 		val currentUserID = SecurityUtils.getCurrentUserLoginID()
 		return UserDashboardSummaryDTO(
 			repository.findApplicationStatsByDateAndStatus(from, currentUserID),
