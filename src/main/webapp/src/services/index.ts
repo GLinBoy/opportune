@@ -11,3 +11,4 @@ export { default as ApplicationTimelineService } from './application-timeline.se
 export { default as InterviewNoteService } from './interview-note.service'
 export { default as InterviewAttachmentService } from './interview-attachment.service'
 export { default as CompanyApplicationService } from './company-application.service'
+export { default as DashboardService } from './dashboard.service'
