@@ -180,6 +180,7 @@ class ApplicationServiceImpl(
 		val from = Instant.now().minus(summaryDays, ChronoUnit.DAYS)
 		val currentUserID = SecurityUtils.getCurrentUserLoginID()
 		return UserDashboardSummaryDTO(
+			summaryDays,
 			repository.findApplicationStatsByDateAndStatus(from, currentUserID),
 			repository.avgScoresForProfile(from, currentUserID)
 		)
