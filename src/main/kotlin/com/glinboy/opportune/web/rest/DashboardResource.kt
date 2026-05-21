@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @SecurityRequirement(name = OpenApiConfiguration.BEARER_AUTHENTICATION_NAME)
 class DashboardResource (private val dashboardService: DashboardService) {
 
-	@GetMapping("/summery")
-	fun summery(): ResponseEntity<UserDashboardSummaryDTO> = ResponseEntity
+	@GetMapping("/summary")
+	fun getUserSummary(): ResponseEntity<UserDashboardSummaryDTO> = ResponseEntity
 		.ok(dashboardService.getCurrentUserSummery())
 }
