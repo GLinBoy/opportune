@@ -48,21 +48,17 @@ const hasScores = computed(
   () => props.scores !== null && Object.values(props.scores).some((v) => v !== null)
 )
 
+const fmt = (v: number | null | undefined) => (v == null ? null : +v.toFixed(1))
+
 const scoreList = computed(() => {
   const s = props.scores
   if (!s) return []
   return [
-    { label: 'Overall', value: s.avgResumeScore != null ? +s.avgResumeScore.toFixed(1) : null },
-    { label: 'Skill', value: s.avgSkillScore != null ? +s.avgSkillScore.toFixed(1) : null },
-    {
-      label: 'Experience',
-      value: s.avgExperienceScore != null ? +s.avgExperienceScore.toFixed(1) : null,
-    },
-    {
-      label: 'Education',
-      value: s.avgEducationScore != null ? +s.avgEducationScore.toFixed(1) : null,
-    },
-    { label: 'Keywords', value: s.avgKeywordScore != null ? +s.avgKeywordScore.toFixed(1) : null },
+    { label: 'Overall', value: fmt(s.avgResumeScore) },
+    { label: 'Skill', value: fmt(s.avgSkillScore) },
+    { label: 'Experience', value: fmt(s.avgExperienceScore) },
+    { label: 'Education', value: fmt(s.avgEducationScore) },
+    { label: 'Keywords', value: fmt(s.avgKeywordScore) },
   ]
 })
 
@@ -88,11 +84,11 @@ const option = computed<EChartsOption>(() => {
         data: [
           {
             value: [
-              s.avgResumeScore ?? 0,
-              s.avgSkillScore ?? 0,
-              s.avgExperienceScore ?? 0,
-              s.avgEducationScore ?? 0,
-              s.avgKeywordScore ?? 0,
+              fmt(s.avgResumeScore),
+              fmt(s.avgSkillScore),
+              fmt(s.avgExperienceScore),
+              fmt(s.avgEducationScore),
+              fmt(s.avgKeywordScore),
             ],
             name: 'Avg Scores',
             areaStyle: { opacity: 0.2 },
@@ -103,7 +99,7 @@ const option = computed<EChartsOption>(() => {
             emphasis: {
               label: {
                 show: true,
-                formatter: (params: any) => `${params.value}`,
+                formatter: (params: any) => `${params.value ?? '—'}`,
                 fontSize: 13,
                 fontWeight: 'bold',
                 color: '#66BB6A',
