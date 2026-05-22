@@ -10,8 +10,20 @@ export enum ApplicationStatus {
   DECLINED = 'DECLINED'
 }
 
-export function getApplicationStatusDisplay(status: ApplicationStatus): string {
-  const statusMap: Record<ApplicationStatus, string> = {
+export const APPLICATION_STATUS_ORDER: string[] = [
+  ApplicationStatus.INITIATED,
+  ApplicationStatus.AI_PROCESSING,
+  ApplicationStatus.READY_TO_APPLY,
+  ApplicationStatus.APPLIED,
+  ApplicationStatus.IN_PROGRESS,
+  ApplicationStatus.REJECTED,
+  ApplicationStatus.OFFER_RECEIVED,
+  ApplicationStatus.ACCEPTED,
+  ApplicationStatus.DECLINED,
+]
+
+export function getApplicationStatusDisplay(status: ApplicationStatus | string): string {
+  const statusMap: Record<string, string> = {
     [ApplicationStatus.INITIATED]: 'Initiated',
     [ApplicationStatus.AI_PROCESSING]: 'AI Processing',
     [ApplicationStatus.READY_TO_APPLY]: 'Ready to Apply',
@@ -20,9 +32,25 @@ export function getApplicationStatusDisplay(status: ApplicationStatus): string {
     [ApplicationStatus.REJECTED]: 'Rejected',
     [ApplicationStatus.OFFER_RECEIVED]: 'Offer Received',
     [ApplicationStatus.ACCEPTED]: 'Accepted',
-    [ApplicationStatus.DECLINED]: 'Declined'
+    [ApplicationStatus.DECLINED]: 'Declined',
   };
-  return statusMap[status];
+  return statusMap[status] ?? status.replace(/_/g, ' ');
+}
+
+export function getApplicationStatusChartColor(status: string): string {
+  const colorMap: Record<string, string> = {
+    [ApplicationStatus.INITIATED]: '#FFA726',
+    [ApplicationStatus.AI_PROCESSING]: '#AB47BC',
+    [ApplicationStatus.READY_TO_APPLY]: '#26C6DA',
+    [ApplicationStatus.APPLIED]: '#5C6BC0',
+    [ApplicationStatus.IN_PROGRESS]: '#42A5F5',
+    [ApplicationStatus.REJECTED]: '#EF5350',
+    [ApplicationStatus.OFFER_RECEIVED]: '#66BB6A',
+    [ApplicationStatus.ACCEPTED]: '#26A69A',
+    [ApplicationStatus.DECLINED]: '#FF7043',
+    WITHDRAWN: '#BDBDBD',
+  };
+  return colorMap[status] ?? '#78909C';
 }
 
 export function getApplicationStatusColor(status: ApplicationStatus | keyof typeof ApplicationStatus | null | undefined): string {
