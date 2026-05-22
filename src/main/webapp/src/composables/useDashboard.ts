@@ -8,8 +8,6 @@ import type {
   ApplicationStatProjection,
 } from '../models'
 
-// Fix 2a: use enum members, not string literals
-// Fix 2b: WITHDRAWN doesn't exist — the real enum has ACCEPTED and DECLINED
 const ACTIVE_STATUSES: ApplicationStatus[] = [
   ApplicationStatus.APPLIED,
   ApplicationStatus.IN_PROGRESS,
@@ -30,7 +28,6 @@ function computeKpis(stats: ApplicationStatProjection[]): DashboardKpis {
     return { totalApplications: 0, activePipeline: 0, responseRate: 0, offerRate: 0, rejectionRate: 0 }
   }
 
-  // Fix 2c: type the accumulator as Partial<Record<...>> to avoid undefined access errors
   const countByStatus = stats.reduce<Partial<Record<ApplicationStatus, number>>>((acc, r) => {
     acc[r.status] = (acc[r.status] ?? 0) + r.total
     return acc
@@ -50,13 +47,12 @@ function computeKpis(stats: ApplicationStatProjection[]): DashboardKpis {
   }
 }
 
-// Fix 2d: no default param — avoids the TS2554 "Expected 0 arguments" ambiguity
 export function useDashboard() {
   const dashboardService = new DashboardService()
 
   const summary = ref<UserDashboardSummaryDto | null>(null)
   const loading = ref(true)
-  const error = ref<string | null>(null)   // Fix 2e: was missing from return
+  const error = ref<string | null>(null)
 
   const kpis = computed<DashboardKpis>(() =>
     summary.value ? computeKpis(summary.value.stats) : computeKpis([])
@@ -73,6 +69,7 @@ export function useDashboard() {
     )
   })
 
+  // KEEP trendData as-is — still used by nothing, but safe to leave or remove later
   const trendData = computed(() => {
     if (!summary.value) return { dates: [] as string[], counts: [] as number[] }
     const byDay = summary.value.stats.reduce<Partial<Record<string, number>>>((acc, r) => {
@@ -93,6 +90,40 @@ export function useDashboard() {
     return { dates, counts }
   })
 
+  // NEW: multi-series trend data, one series per status
+  const trendStats = computed(() => {
+    if (!summary.value) return { dates: [] as string[], series: {} as Record<string, number[]> }
+
+    const days = summary.value.summaryDays ?? 90
+    const today = new Date()
+
+    // Build full date axis for the period
+    const dates: string[] = []
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(today.getDate() - i)
+      dates.push(d.toISOString().slice(0, 10))
+    }
+
+    // Collect all distinct statuses present in data
+    const statuses = [...new Set(summary.value.stats.map(r => r.status))]
+
+    // Build lookup: status → date → total
+    const byStatusDay: Partial<Record<string, Record<string, number>>> = {}
+    for (const stat of summary.value.stats) {
+      if (!byStatusDay[stat.status]) byStatusDay[stat.status] = {}
+      byStatusDay[stat.status]![stat.createdDay] = stat.total
+    }
+
+    // Fill each series aligned to the full date axis (0 for missing days)
+    const series: Record<string, number[]> = {}
+    for (const status of statuses) {
+      series[status] = dates.map(d => byStatusDay[status]?.[d] ?? 0)
+    }
+
+    return { dates, series }
+  })
+
   const scores = computed(() => summary.value?.scores ?? null)
 
   async function load() {
@@ -110,6 +141,5 @@ export function useDashboard() {
 
   onMounted(load)
 
-  // Fix 2e: error is now included in the return
-  return { summary, kpis, statusCounts, trendData, scores, loading, error, reload: load }
+  return { summary, kpis, statusCounts, trendData, trendStats, scores, loading, error, reload: load }
 }
