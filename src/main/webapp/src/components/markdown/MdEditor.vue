@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useTheme } from 'vuetify'
 import { MdEditor as MarkdownEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import MdViewer from './MdViewer.vue'
@@ -26,6 +27,9 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
+const vuetifyTheme = useTheme()
+const editorTheme = computed(() => (vuetifyTheme.global.current.value.dark ? 'dark' : 'light'))
+
 const content = computed({
   get: () => props.modelValue ?? '',
   set: (val: string) => emit('update:modelValue', val),
@@ -44,6 +48,7 @@ const editorHeight = computed(() => `${props.rows * 36}px`)
           :placeholder="placeholder"
           :style="{ height: editorHeight, minHeight: editorHeight }"
           language="en-US"
+          :theme="editorTheme"
           preview-theme="default"
           :preview="false"
           :toolbars="[
