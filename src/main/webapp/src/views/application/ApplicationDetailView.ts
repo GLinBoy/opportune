@@ -12,12 +12,7 @@ import ResumeScoreCard from '../../components/ResumeScoreCard.vue'
 import FormCard from '@/components/forms/FormCard.vue'
 import MdEditor from '@/components/markdown/MdEditor.vue'
 import ContentViewer from '@/components/ContentViewer.vue'
-
-export interface Snackbar {
-  show: boolean
-  message: string
-  color: string
-}
+import { useToastStore } from '../../stores/toast'
 
 
 export default defineComponent({
@@ -90,12 +85,7 @@ export default defineComponent({
     // Delete company dialog state
     const confirmDeleteCompanyDialog = ref(false)
 
-    // Snackbar state
-    const snackbar = ref<Snackbar>({
-      show: false,
-      message: '',
-      color: 'success',
-    })
+    const toast = useToastStore()
 
     // Computed properties
     const applicationId = computed(() => route.params.id as string)
@@ -160,18 +150,10 @@ export default defineComponent({
 
         hasModifications.value = false
 
-        snackbar.value = {
-          show: true,
-          message: 'Application saved successfully!',
-          color: 'success',
-        }
+        toast.success('Application saved successfully!')
       } catch (error) {
         console.error('Failed to save application:', error)
-        snackbar.value = {
-          show: true,
-          message: 'Failed to save application. Please try again.',
-          color: 'error',
-        }
+        toast.error('Failed to save application. Please try again.')
       } finally {
         saving.value = false
       }
@@ -180,11 +162,7 @@ export default defineComponent({
     const uploadResume = () => {
       // Function to handle resume upload for this specific application
       console.log('Upload resume clicked for application:', application.value?.id)
-      snackbar.value = {
-        show: true,
-        message: 'Upload resume functionality will be implemented soon!',
-        color: 'info',
-      }
+      toast.info('Upload resume functionality will be implemented soon!')
     }
 
     const appliedJob = () => {
@@ -216,11 +194,7 @@ export default defineComponent({
       isDeleting.value = true
       try {
         await applicationService().delete(String(application.value.id))
-        snackbar.value = {
-          show: true,
-          message: `Deleted ${application.value.title || 'application'} successfully.`,
-          color: 'success',
-        }
+        toast.success(`Deleted ${application.value.title || 'application'} successfully.`)
         closeDeleteDialog()
         // Navigate back to applications list after successful deletion
         setTimeout(() => {
@@ -228,11 +202,7 @@ export default defineComponent({
         }, 1000)
       } catch (err) {
         console.error('Failed to delete application:', err)
-        snackbar.value = {
-          show: true,
-          message: 'Failed to delete application. Please try again.',
-          color: 'error',
-        }
+        toast.error('Failed to delete application. Please try again.')
         isDeleting.value = false
         closeDeleteDialog()
       }
@@ -258,38 +228,22 @@ export default defineComponent({
     // AI Content Generation Methods
     const regenerateJobDescription = () => {
       console.log('Regenerate job description clicked for application:', application.value?.id)
-      snackbar.value = {
-        show: true,
-        message: 'Regenerating job description analysis...',
-        color: 'info',
-      }
+      toast.info('Regenerating job description analysis...')
     }
 
     const regenerateCoverLetter = () => {
       console.log('Regenerate cover letter clicked for application:', application.value?.id)
-      snackbar.value = {
-        show: true,
-        message: 'Regenerating cover letter...',
-        color: 'info',
-      }
+      toast.info('Regenerating cover letter...')
     }
 
     const regenerateResumeEnhancer = () => {
       console.log('Regenerate resume enhancer clicked for application:', application.value?.id)
-      snackbar.value = {
-        show: true,
-        message: 'Regenerating resume enhancement suggestions...',
-        color: 'info',
-      }
+      toast.info('Regenerating resume enhancement suggestions...')
     }
 
     const regenerateInterviewDetails = () => {
       console.log('Regenerate interview details clicked for application:', application.value?.id)
-      snackbar.value = {
-        show: true,
-        message: 'Regenerating interview preparation details...',
-        color: 'info',
-      }
+      toast.info('Regenerating interview preparation details...')
     }
 
     // Meta Data Management Methods
@@ -325,21 +279,21 @@ export default defineComponent({
               const index = applicationMetadata.value.findIndex(item => item.id === data.id)
               if (index !== -1) applicationMetadata.value.splice(index, 1, data)
             })
-          snackbar.value = { show: true, message: 'Meta data updated successfully!', color: 'success' }
+          toast.success('Meta data updated successfully!')
         } else {
           await applicationMetadataService()
             .create(application.value?.id || '', newMetaData.value)
             .then(data => {
               applicationMetadata.value.push(data)
             })
-          snackbar.value = { show: true, message: 'Meta data added successfully!', color: 'success' }
+          toast.success('Meta data added successfully!')
         }
 
         metaDataDialog.value = false
         newMetaData.value = { metaName: '', metaValue: '' }
       } catch (error) {
         console.error('Failed to save meta data:', error)
-        snackbar.value = { show: true, message: 'Failed to save meta data. Please try again.', color: 'error' }
+        toast.error('Failed to save meta data. Please try again.')
       } finally {
         savingMetaData.value = false
       }
@@ -371,28 +325,16 @@ export default defineComponent({
           const index = applicationMetadata.value.findIndex(item => item.id === metadata.id)
           if (index !== -1) {
             applicationMetadata.value.splice(index, 1)
-            snackbar.value = {
-              show: true,
-              message: 'Meta data removed successfully!',
-              color: 'success',
-            }
+            toast.success('Meta data removed successfully!')
           }
         } catch (err) {
           console.error('Failed to delete meta data:', err)
-          snackbar.value = {
-            show: true,
-            message: 'Failed to delete meta data. Please try again.',
-            color: 'error',
-          }
+          toast.error('Failed to delete meta data. Please try again.')
         } finally {
           closeDeleteMetaDataDialog()
         }
       } else {
-        snackbar.value = {
-          show: true,
-          message: 'Meta data item not found.',
-          color: 'error',
-        }
+        toast.error('Meta data item not found.')
         closeDeleteMetaDataDialog()
       }
     }
@@ -421,11 +363,7 @@ export default defineComponent({
 
       } catch (error) {
         console.error('Failed to load application:', error)
-        snackbar.value = {
-          show: true,
-          message: 'Failed to load application details.',
-          color: 'error',
-        }
+        toast.error('Failed to load application details.')
         application.value = null
       } finally {
         loading.value = false
@@ -471,9 +409,6 @@ export default defineComponent({
 
       // Delete company dialog state
       confirmDeleteCompanyDialog,
-
-      // UI state
-      snackbar,
 
       // Computed properties
       applicationId,

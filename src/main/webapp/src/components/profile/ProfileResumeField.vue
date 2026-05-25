@@ -85,22 +85,15 @@
     >
       Are you sure you want to delete this resume? This action cannot be undone.
     </ConfirmDialog>
-
-    <!-- Snackbar for notifications -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
-      {{ snackbar.message }}
-      <template #actions>
-        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
-      </template>
-    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, reactive } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { type IProfileResume } from '../../models'
 import ProfileResumeService from '../../services/profile-resume.service'
 import ConfirmDialog from '../ConfirmDialog.vue'
+import { useToastStore } from '../../stores/toast'
 
 // Import Vue FilePond
 import vueFilePond from 'vue-filepond'
@@ -128,6 +121,7 @@ const emit = defineEmits<{
 }>()
 
 const resumeService = new ProfileResumeService()
+const toast = useToastStore()
 
 // FilePond configuration
 const acceptedFileTypes = [
@@ -154,23 +148,6 @@ const uploading = ref(false)
 const downloading = ref(false)
 const deleting = ref(false)
 const showDeleteDialog = ref(false)
-
-// Snackbar state
-const snackbar = reactive({
-  show: false,
-  message: '',
-  color: 'success',
-  timeout: 3000,
-})
-
-const showNotification = (
-  message: string,
-  color: 'success' | 'error' | 'warning' | 'info' = 'success'
-) => {
-  snackbar.message = message
-  snackbar.color = color
-  snackbar.show = true
-}
 
 // Fetch resume info when resumeId changes
 watch(
@@ -221,7 +198,7 @@ const handleAddFile = async (_error: FilePondErrorDescription | null, file: File
     const result = await resumeService.upload(actualFile)
     resumeInfo.value = result
     emit('update:resumeId', result.id)
-    showNotification('Resume uploaded successfully', 'success')
+    toast.success('Resume uploaded successfully')
 
     // Clear FilePond after successful upload
     if (pond.value) {
@@ -229,7 +206,7 @@ const handleAddFile = async (_error: FilePondErrorDescription | null, file: File
     }
   } catch (error) {
     console.error('Failed to upload resume:', error)
-    showNotification('Failed to upload resume. Please try again.', 'error')
+    toast.error('Failed to upload resume. Please try again.')
 
     // Clear FilePond on error
     if (pond.value) {
@@ -242,7 +219,7 @@ const handleAddFile = async (_error: FilePondErrorDescription | null, file: File
 
 const handleError = (error: FilePondErrorDescription) => {
   if (error) {
-    showNotification(error.body || 'An error occurred', 'error')
+    toast.error(error.body || 'An error occurred')
   }
 }
 
@@ -262,7 +239,7 @@ const downloadResume = async () => {
     globalThis.URL.revokeObjectURL(url)
   } catch (error) {
     console.error('Failed to download resume:', error)
-    showNotification('Failed to download resume. Please try again.', 'error')
+    toast.error('Failed to download resume. Please try again.')
   } finally {
     downloading.value = false
   }
@@ -281,10 +258,10 @@ const deleteResume = async () => {
     resumeInfo.value = null
     emit('update:resumeId', undefined)
     showDeleteDialog.value = false
-    showNotification('Resume deleted successfully', 'success')
+    toast.success('Resume deleted successfully')
   } catch (error) {
     console.error('Failed to delete resume:', error)
-    showNotification('Failed to delete resume. Please try again.', 'error')
+    toast.error('Failed to delete resume. Please try again.')
   } finally {
     deleting.value = false
   }

@@ -13,12 +13,7 @@ import FormDialog from '../../components/FormDialog.vue'
 import ApplicationTable from '../../components/application/ApplicationTable.vue'
 import MetadataTable from '../../components/MetadataTable.vue'
 import FormCard from '@/components/forms/FormCard.vue'
-
-export interface Snackbar {
-  show: boolean
-  message: string
-  color: string
-}
+import { useToastStore } from '../../stores/toast'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -62,8 +57,7 @@ export default defineComponent({
     const confirmDeleteApplicationDialog = ref(false)
     const applicationToDelete = ref<IApplicationProjection | null>(null)
 
-    // Snackbar state
-    const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
+    const toast = useToastStore()
 
     // Computed properties
     const breadcrumbs = computed(() => [
@@ -78,11 +72,6 @@ export default defineComponent({
 
     const rules = {
       required: (value: string) => !!value || 'This field is required',
-    }
-
-    // Utility functions
-    const showSnackbar = (message: string, color: string) => {
-      snackbar.value = { show: true, message, color }
     }
 
     const markAsModified = () => {
@@ -129,7 +118,7 @@ export default defineComponent({
 
       } catch (error) {
         console.error('Failed to load company details:', error)
-        showSnackbar('Failed to load company details. Please try again.', 'error')
+        toast.error('Failed to load company details. Please try again.')
       } finally {
         loading.value = false
       }
@@ -145,10 +134,10 @@ export default defineComponent({
           company.value = data
         })
 
-        showSnackbar('Company saved successfully!', 'success')
+        toast.success('Company saved successfully!')
       } catch (error) {
         console.error('Failed to save company:', error)
-        showSnackbar('Failed to save company. Please try again.', 'error')
+        toast.error('Failed to save company. Please try again.')
       } finally {
         saving.value = false
       }
@@ -186,21 +175,21 @@ export default defineComponent({
               const index = companyMetadata.value.findIndex(item => item.id === data.id)
               if (index !== -1) companyMetadata.value.splice(index, 1, data)
             })
-          showSnackbar('Meta data updated successfully!', 'success')
+          toast.success('Meta data updated successfully!')
         } else {
           await companyMetadataService()
             .create(company.value?.id || '', newMetaData.value)
             .then(data => {
               companyMetadata.value.push(data)
             })
-          showSnackbar('Meta data added successfully!', 'success')
+          toast.success('Meta data added successfully!')
         }
 
         showMetaDataDialog.value = false
         newMetaData.value = {}
       } catch (error) {
         console.error('Failed to save meta data:', error)
-        showSnackbar('Failed to save meta data. Please try again.', 'error')
+        toast.error('Failed to save meta data. Please try again.')
       } finally {
         savingMetaData.value = false
       }
@@ -227,16 +216,16 @@ export default defineComponent({
           const index = companyMetadata.value.findIndex(item => item.id === metadata.id)
           if (index !== -1) {
             companyMetadata.value.splice(index, 1)
-            showSnackbar('Meta data removed successfully!', 'success')
+            toast.success('Meta data removed successfully!')
           }
         } catch (err) {
           console.error('Failed to delete meta data:', err)
-          showSnackbar('Failed to delete meta data. Please try again.', 'error')
+          toast.error('Failed to delete meta data. Please try again.')
         } finally {
           closeDeleteMetaDataDialog()
         }
       } else {
-        showSnackbar('Meta data item not found.', 'error')
+        toast.error('Meta data item not found.')
         closeDeleteMetaDataDialog()
       }
     }
@@ -261,10 +250,10 @@ export default defineComponent({
         await applicationService().delete(app.id)
         const index = associatedApplications.value.findIndex(a => a.id === app.id)
         if (index !== -1) associatedApplications.value.splice(index, 1)
-        showSnackbar(`Deleted "${app.title}" successfully.`, 'success')
+        toast.success(`Deleted "${app.title}" successfully.`)
       } catch (err) {
         console.error('Failed to delete application:', err)
-        showSnackbar('Failed to delete application. Please try again.', 'error')
+        toast.error('Failed to delete application. Please try again.')
       } finally {
         closeDeleteApplicationDialog()
       }
@@ -287,7 +276,7 @@ export default defineComponent({
       isDeleting.value = true
       try {
         await companyService().delete(String(company.value.id))
-        showSnackbar(`Deleted ${company.value.name || 'company'} successfully.`, 'success')
+        toast.success(`Deleted ${company.value.name || 'company'} successfully.`)
         closeDeleteDialog()
         // Navigate back to companies list after successful deletion
         setTimeout(() => {
@@ -295,7 +284,7 @@ export default defineComponent({
         }, 1000)
       } catch (err) {
         console.error('Failed to delete company:', err)
-        showSnackbar('Failed to delete company. Please try again.', 'error')
+        toast.error('Failed to delete company. Please try again.')
         isDeleting.value = false
         closeDeleteDialog()
       }
@@ -319,7 +308,6 @@ export default defineComponent({
       isDeleting,
 
       // UI state
-      snackbar,
       breadcrumbs,
       metaDataDialogTitle,
 

@@ -7,12 +7,7 @@ import ProfileInfoCard from '../../components/profile/ProfileInfoCard.vue'
 import PasswordSecurityCard from '../../components/profile/PasswordSecurityCard.vue'
 import SessionsCard from '../../components/profile/SessionsCard.vue'
 import ApiWebhookCard from '../../components/profile/ApiWebhookCard.vue'
-
-export interface Snackbar {
-  show: boolean
-  message: string
-  color: string
-}
+import { useToastStore } from '../../stores/toast'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -98,21 +93,7 @@ export default defineComponent({
       }
     ]
 
-    // Snackbar for messages
-    const snackbar = ref<Snackbar>({
-      show: false,
-      message: '',
-      color: 'success'
-    })
-
-    // Methods
-    const showSnackbar = (message: string, color: 'success' | 'error' = 'success') => {
-      snackbar.value = {
-        show: true,
-        message,
-        color
-      }
-    }
+    const toast = useToastStore()
 
     const markAsModified = () => {
       hasChanges.value = true
@@ -128,7 +109,7 @@ export default defineComponent({
         })
       } catch (error) {
         console.error('Failed to load profile:', error)
-        showSnackbar('Failed to load profile information. Please try again.', 'error')
+        toast.error('Failed to load profile information. Please try again.')
       } finally {
         loading.value = false
       }
@@ -144,10 +125,10 @@ export default defineComponent({
           profile.value = data
           hasChanges.value = false
         })
-        showSnackbar('Profile updated successfully!', 'success')
+        toast.success('Profile updated successfully!')
       } catch (error) {
         console.error('Failed to save profile:', error)
-        showSnackbar('Failed to save profile. Please try again.', 'error')
+        toast.error('Failed to save profile. Please try again.')
       } finally {
         saving.value = false
       }
@@ -166,7 +147,7 @@ export default defineComponent({
     // Change password
     const changePassword = async () => {
       if (!passwordFormValid.value) {
-        showSnackbar('Please fill all password fields correctly', 'error')
+        toast.error('Please fill all password fields correctly')
         return
       }
 
@@ -187,7 +168,7 @@ export default defineComponent({
         }
         passwordFormValid.value = false
 
-        showSnackbar('Password changed successfully!', 'success')
+        toast.success('Password changed successfully!')
       } catch (error: unknown) {
         console.error('Failed to change password:', error)
         let message = 'Failed to change password. Please check your current password and try again.'
@@ -195,7 +176,7 @@ export default defineComponent({
           const axiosError = error as { response?: { data?: { message?: string } } }
           message = axiosError.response?.data?.message || message
         }
-        showSnackbar(message, 'error')
+        toast.error(message)
       } finally {
         passwordChanging.value = false
       }
@@ -214,7 +195,7 @@ export default defineComponent({
         sessions.value = response.data
       } catch (error) {
         console.error('Failed to load sessions:', error)
-        showSnackbar('Failed to load sessions. Please try again.', 'error')
+        toast.error('Failed to load sessions. Please try again.')
       } finally {
         sessionsLoading.value = false
       }
@@ -245,12 +226,12 @@ export default defineComponent({
           await authStore.logout()
           router.push({ name: 'login' })
         } else {
-          showSnackbar('Session revoked successfully.', 'success')
+          toast.success('Session revoked successfully.')
           await loadSessions()
         }
       } catch (error) {
         console.error('Failed to terminate session:', error)
-        showSnackbar('Failed to revoke session. Please try again.', 'error')
+        toast.error('Failed to revoke session. Please try again.')
       } finally {
         terminatingSessionId.value = null
       }
@@ -276,7 +257,6 @@ export default defineComponent({
       activeTab,
       tabs,
       breadcrumbs,
-      snackbar,
       // Password change data
       passwordForm,
       passwordFormValid,
@@ -287,7 +267,6 @@ export default defineComponent({
       terminatingSessionId,
       highlightedSessionId,
       // Methods
-      showSnackbar,
       markAsModified,
       saveProfile,
       validatePasswordForm,
