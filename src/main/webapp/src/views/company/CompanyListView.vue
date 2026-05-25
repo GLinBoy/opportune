@@ -222,11 +222,6 @@
       <strong>{{ companyToDelete?.name }}</strong
       >? This action cannot be undone.
     </ConfirmDialog>
-
-    <!-- Success/Error Snackbar -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
-      {{ snackbar.message }}
-    </v-snackbar>
   </div>
 </template>
 <script lang="ts" src="./CompanyListView.ts" />

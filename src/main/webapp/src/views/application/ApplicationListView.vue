@@ -175,14 +175,6 @@
       <v-progress-circular color="primary" indeterminate size="64" />
     </v-overlay>
 
-    <!-- Snackbar for status updates -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
-      {{ snackbar.message }}
-      <template v-slot:actions>
-        <v-btn color="white" variant="text" @click="snackbar.show = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
-
     <!-- Confirm Delete Dialog -->
     <ConfirmDialog
       v-model="confirmDeleteDialog"

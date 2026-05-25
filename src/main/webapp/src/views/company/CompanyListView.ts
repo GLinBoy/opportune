@@ -7,6 +7,7 @@ import CompanyForm from '../../components/company/CompanyForm.vue'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import MdTooltip from '../../components/markdown/MdTooltip.vue'
+import { useToastStore } from '../../stores/toast'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -23,11 +24,7 @@ export default defineComponent({
     getCompanyStatusIcon
   },
   setup() {
-    // Snackbar state
-    const snackbar = ref<{ show: boolean; message: string; color: 'success' | 'error' }>({ show: false, message: '', color: 'success' })
-    const showSnackbar = (message: string, color: 'success' | 'error' = 'success') => {
-      snackbar.value = { show: true, message, color }
-    }
+    const toast = useToastStore()
     // Services and dependencies
     const companyService = inject('companyService', () => new CompanyService())
     const searchService = inject('searchService', () => new SearchService())
@@ -132,10 +129,10 @@ export default defineComponent({
       try {
         await companyService().delete(String(companyToDelete.value.id))
         await retrieveCompanies()
-        showSnackbar(`Deleted ${companyToDelete.value.name || 'company'} successfully.`, 'success')
+        toast.success(`Deleted ${companyToDelete.value.name || 'company'} successfully.`)
       } catch (err) {
         console.error('Failed to delete company:', err)
-        showSnackbar('Failed to delete company. Please try again.', 'error')
+        toast.error('Failed to delete company. Please try again.')
       } finally {
         isDeleting.value = false
         closeDeleteDialog()
@@ -280,9 +277,6 @@ export default defineComponent({
       confirmDelete,
       closeDeleteDialog,
       performDelete,
-      // Snackbar
-      snackbar,
-      showSnackbar,
       formatDate,
     }
   }

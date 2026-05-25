@@ -31,27 +31,16 @@
         <DashboardStatusDonut :status-counts="statusCounts" :loading="loading" />
       </v-col>
     </v-row>
-
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
-      {{ snackbar.message }}
-      <template #actions>
-        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Snackbar } from '../views/application/ApplicationListView'
 import { useDashboard } from '../composables/useDashboard'
 import DashboardKpiCards from '../components/dashboard/DashboardKpiCards.vue'
 import DashboardStatusDonut from '../components/dashboard/DashboardStatusDonut.vue'
 import DashboardApplicationTrend from '../components/dashboard/DashboardApplicationTrend.vue'
 import DashboardAiScoreRadar from '../components/dashboard/DashboardAiScoreRadar.vue'
 import DashboardActivityHeatmap from '../components/dashboard/DashboardActivityHeatmap.vue'
-
-const snackbar = ref<Snackbar>({ show: false, message: '', color: 'success' })
 
 const { summary, kpis, statusCounts, trendData, trendStats, scores, loading, error, reload } =
   useDashboard()

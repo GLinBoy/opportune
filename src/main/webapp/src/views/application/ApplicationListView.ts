@@ -7,12 +7,7 @@ import AddApplicationByUrlForm from '../../components/application/AddApplication
 import AddApplicationManualForm from '../../components/application/AddApplicationManualForm.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import MdTooltip from '@/components/markdown/MdTooltip.vue'
-
-export interface Snackbar {
-  show: boolean
-  message: string
-  color: string
-}
+import { useToastStore } from '../../stores/toast'
 
 export interface AddDialog {
   show: boolean
@@ -39,6 +34,7 @@ export default defineComponent({
     const applicationService = inject('applicationService', () => new ApplicationService())
     const searchService = inject('searchService', () => new SearchService())
     const router = useRouter()
+    const toast = useToastStore()
 
     // Reactive data
     const applications = ref<IApplicationProjection[]>([])
@@ -92,9 +88,7 @@ export default defineComponent({
         totalItems.value = Number.parseInt(response.headers['x-total-count'], 10)
       } catch (error) {
         console.error('Error fetching applications:', error)
-        snackbar.value.message = 'Error fetching applications'
-        snackbar.value.color = 'error'
-        snackbar.value.show = true
+        toast.error('Error fetching applications')
       } finally {
         isFetching.value = false
       }
@@ -152,13 +146,6 @@ export default defineComponent({
         router.push(`/applications/${selected.id}`)
       }
     }
-
-    // Snackbar for notifications
-    const snackbar = ref<Snackbar>({
-      show: false,
-      message: '',
-      color: 'success',
-    })
 
     // Add application dialog
     const addDialog = ref<AddDialog>({
@@ -230,14 +217,10 @@ export default defineComponent({
       try {
         await applicationService().delete(String(applicationToDelete.value.id))
         await retrieveApplications()
-        snackbar.value.message = `Deleted ${applicationToDelete.value.title || 'application'} successfully.`
-        snackbar.value.color = 'success'
-        snackbar.value.show = true
+        toast.success(`Deleted ${applicationToDelete.value.title || 'application'} successfully.`)
       } catch (err) {
         console.error('Failed to delete application:', err)
-        snackbar.value.message = 'Failed to delete application. Please try again.'
-        snackbar.value.color = 'error'
-        snackbar.value.show = true
+        toast.error('Failed to delete application. Please try again.')
       } finally {
         isDeleting.value = false
         closeDeleteDialog()
@@ -249,9 +232,7 @@ export default defineComponent({
       try {
         const createdApplication = await applicationService().submitUrl({ url: data.url })
 
-        snackbar.value.message = 'Application created successfully!'
-        snackbar.value.color = 'success'
-        snackbar.value.show = true
+        toast.success('Application created successfully!')
         closeAddDialog()
 
         // Redirect to the created application
@@ -265,9 +246,7 @@ export default defineComponent({
         failedUrl.value = data.url
 
         // Show error and suggest switching to manual entry
-        snackbar.value.message = 'Failed to fetch job details from URL. Please try manual entry.'
-        snackbar.value.color = 'warning'
-        snackbar.value.show = true
+        toast.warning('Failed to fetch job details from URL. Please try manual entry.')
 
         // Switch to manual entry tab
         addDialog.value.activeTab = 'manual'
@@ -319,9 +298,7 @@ export default defineComponent({
 
         const createdApplication = await applicationService().create(application)
 
-        snackbar.value.message = 'Application created successfully!'
-        snackbar.value.color = 'success'
-        snackbar.value.show = true
+        toast.success('Application created successfully!')
         closeAddDialog()
 
         // Redirect to the created application
@@ -330,9 +307,7 @@ export default defineComponent({
         }
       } catch (error) {
         console.error('Error creating application:', error)
-        snackbar.value.message = 'Error creating application. Please try again.'
-        snackbar.value.color = 'error'
-        snackbar.value.show = true
+        toast.error('Error creating application. Please try again.')
       } finally {
         addDialog.value.loading = false
       }
@@ -370,7 +345,6 @@ export default defineComponent({
       selectedApplication,
 
       // Reactive data
-      snackbar,
       addDialog,
       urlFormRef,
       manualFormRef,

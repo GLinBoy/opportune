@@ -199,11 +199,6 @@
       Are you sure you want to delete
       <strong>"{{ metaDataToDelete?.metaName }}"</strong>?
     </ConfirmDialog>
-
-    <!-- Success/Error Snackbar -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
-      {{ snackbar.message }}
-    </v-snackbar>
   </div>
 </template>
 <script lang="ts" src="./CompanyDetailView.ts" />

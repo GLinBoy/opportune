@@ -390,14 +390,6 @@
       <v-btn color="primary" to="/applications"> Back to Applications </v-btn>
     </div>
 
-    <!-- Snackbar for notifications -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
-      {{ snackbar.message }}
-      <template #actions>
-        <v-btn color="white" variant="text" @click="snackbar.show = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
-
     <!-- Add Meta Data Dialog -->
     <FormDialog
       v-model="metaDataDialog"
