@@ -33,7 +33,7 @@ repositories {
 
 defaultTasks("bootRun")
 
-extra["springAiVersion"] = "2.0.0-M5"
+extra["springAiVersion"] = "2.0.0-M6"
 
 // Function to load environment variables from .env files
 fun loadEnvFile(profile: String, warnIfMissing: Boolean = false): Map<String, String> {
