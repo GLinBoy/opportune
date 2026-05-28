@@ -82,6 +82,8 @@ application:
   config:
     dashboard:
       summary-days: 90
+      trend-days: 30
+      ai-queue-preview-size: 10
   files:
     base-path: \${OPPORTUNE_FILES_PATH:./uploads}
   geoip:

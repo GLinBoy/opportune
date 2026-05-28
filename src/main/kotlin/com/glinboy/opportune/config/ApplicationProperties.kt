@@ -18,7 +18,9 @@ class ApplicationProperties {
 	)
 
 	data class Dashboard(
-		var summaryDays: Long = 90
+		var summaryDays: Long = 90,
+		var trendDays: Long = 30,
+		var aiQueuePreviewSize: Int = 10
 	)
 
 	data class Web(
