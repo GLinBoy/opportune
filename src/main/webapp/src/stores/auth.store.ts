@@ -28,7 +28,9 @@ export const useAuthStore = defineStore('auth', () => {
   const roles = computed<string[]>(() => {
     if (!accessToken.value) return []
     try {
-      const payload = JSON.parse(atob(accessToken.value.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      const [, segment] = accessToken.value.split('.')
+      if (!segment) return []
+      const payload = JSON.parse(atob(segment.replace(/-/g, '+').replace(/_/g, '/')))
       return Array.isArray(payload.roles) ? payload.roles : []
     } catch {
       return []
