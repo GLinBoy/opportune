@@ -25,6 +25,18 @@ export const useAuthStore = defineStore('auth', () => {
     return Date.now() < expiresAt.value
   })
 
+  const roles = computed<string[]>(() => {
+    if (!accessToken.value) return []
+    try {
+      const payload = JSON.parse(atob(accessToken.value.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      return Array.isArray(payload.roles) ? payload.roles : []
+    } catch {
+      return []
+    }
+  })
+
+  const isAdmin = computed(() => roles.value.includes('ROLE_ADMIN'))
+
   // Actions
   async function login(credentials: ILoginRequest): Promise<void> {
     isLoading.value = true
@@ -128,6 +140,8 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     // Computed
     isAuthenticated,
+    roles,
+    isAdmin,
     // Actions
     login,
     logout,
