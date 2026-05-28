@@ -35,4 +35,6 @@ class CompanyServiceImpl(companyRepository: CompanyRepository, mapper: CompanyMa
 		return repository.findByNameAndProfileId(name, SecurityUtils.getCurrentUserLoginID())
 			.map(mapper::toDto)
 	}
+
+	override fun countAll(): Long = repository.count()
 }
