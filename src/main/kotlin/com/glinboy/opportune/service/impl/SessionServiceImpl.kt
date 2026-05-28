@@ -58,6 +58,8 @@ class SessionServiceImpl(
 			criteriaBuilder.equal(root.get<UUID>("accessTokenId"), accessTokenId)
 		}.map(mapper::toDto).orElse(null)
 
+	override fun countActiveSessions(): Long = repository.countByStatus(SessionStatus.ACTIVE)
+
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	override fun terminateCurrentSession() {
 		val jwt = SecurityContextHolder.getContext().authentication?.principal as? Jwt
