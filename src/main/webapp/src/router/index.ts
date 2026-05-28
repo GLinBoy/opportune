@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BlankLayout from '@/layouts/BlankLayout.vue'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 
 import DashboardView from '@/views/DashboardView.vue'
 import ApplicationList from '@/views/application/ApplicationListView.vue';
@@ -9,6 +10,7 @@ import ApplicationDetail from '@/views/application/ApplicationDetailView.vue';
 import CompanyList from '@/views/company/CompanyListView.vue';
 import CompanyDetail from '@/views/company/CompanyDetailView.vue';
 import ProfileView from '@/views/profile/ProfileView.vue';
+import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import RegisterView from '@/views/auth/RegisterView.vue';
@@ -170,6 +172,90 @@ const router = createRouter({
       ],
     },
     {
+      path: '/admin',
+      redirect: '/admin/dashboard',
+    },
+    {
+      path: '/admin',
+      component: AdminLayout,
+      meta: { requiresAdmin: true },
+      children: [
+        {
+          path: 'dashboard',
+          name: 'admin-dashboard',
+          component: AdminDashboardView,
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'Dashboard',
+            breadcrumbs: [{ title: 'Dashboard', disabled: true }],
+          },
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('@/views/admin/UsersView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'User Management',
+            breadcrumbs: [{ title: 'Users', disabled: true }],
+          },
+        },
+        {
+          path: 'users/:id',
+          name: 'admin-user-detail',
+          component: () => import('@/views/admin/UserDetailView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'User Detail',
+            breadcrumbs: [
+              { title: 'Users', to: '/admin/users' },
+              { title: 'Detail', disabled: true },
+            ],
+          },
+        },
+        {
+          path: 'companies',
+          name: 'admin-companies',
+          component: () => import('@/views/admin/CompaniesView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'Company Management',
+            breadcrumbs: [{ title: 'Companies', disabled: true }],
+          },
+        },
+        {
+          path: 'security',
+          name: 'admin-security',
+          component: () => import('@/views/admin/SecurityView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'Security Center',
+            breadcrumbs: [{ title: 'Security', disabled: true }],
+          },
+        },
+        {
+          path: 'ai-monitor',
+          name: 'admin-ai-monitor',
+          component: () => import('@/views/admin/AiMonitorView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'AI Monitor',
+            breadcrumbs: [{ title: 'AI Monitor', disabled: true }],
+          },
+        },
+        {
+          path: 'settings',
+          name: 'admin-settings',
+          component: () => import('@/views/admin/SettingsView.vue'),
+          meta: {
+            requiresAdmin: true,
+            pageTitle: 'Settings',
+            breadcrumbs: [{ title: 'Settings', disabled: true }],
+          },
+        },
+      ],
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/404',
     },
@@ -177,6 +263,11 @@ const router = createRouter({
 })
 
 // Navigation guard to protect routes
+async function checkAdminRole(): Promise<boolean> {
+  const { useAuthStore } = await import('../stores/auth.store')
+  return useAuthStore().isAdmin
+}
+
 router.beforeEach(async (to, from) => {
   const accessToken = localStorage.getItem('accessToken')
   const expiresAt = localStorage.getItem('expiresAt')
@@ -214,6 +305,11 @@ router.beforeEach(async (to, from) => {
   } else if (to.name === 'login' && isAuthenticated) {
     // Redirect to dashboard if already authenticated and trying to access login
     return { name: 'dashboard-home' }
+  }
+
+  // Admin route guard — check ROLE_ADMIN
+  if (to.meta?.requiresAdmin && !(await checkAdminRole())) {
+    return { name: 'unauthorized' }
   }
 })
 
