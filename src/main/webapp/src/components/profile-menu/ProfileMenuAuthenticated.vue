@@ -21,10 +21,17 @@
             >
               Profile
             </v-btn>
-            <v-divider class="my-3"></v-divider>
-            <v-btn color="primary" variant="text" prepend-icon="mdi-shield-crown-outline">
-              Control Panel
-            </v-btn>
+            <template v-if="isAdmin">
+              <v-divider class="my-3"></v-divider>
+              <v-btn
+                color="primary"
+                variant="text"
+                prepend-icon="mdi-shield-crown-outline"
+                @click="goToAdmin"
+              >
+                Admin Panel
+              </v-btn>
+            </template>
             <v-divider class="my-3"></v-divider>
             <v-btn color="primary" variant="text" prepend-icon="mdi-logout" @click="handleLogout">
               Logout
@@ -46,6 +53,8 @@ import CryptoJS from 'crypto-js'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+const isAdmin = computed(() => authStore.isAdmin)
 const profileService = new ProfileService()
 
 const profile = ref<IProfile | null>(null)
@@ -83,6 +92,10 @@ const loadProfile = async () => {
 
 const goToProfile = () => {
   router.push('/profile')
+}
+
+const goToAdmin = () => {
+  router.push('/admin')
 }
 
 const handleLogout = async () => {
