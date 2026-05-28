@@ -1,9 +1,6 @@
 package com.glinboy.opportune.service
 
-import com.glinboy.opportune.dto.ApplicationDTO
-import com.glinboy.opportune.dto.ApplicationDetailsDTO
-import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
-import com.glinboy.opportune.dto.UserDashboardSummaryDTO
+import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.projection.ApplicationProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -18,4 +15,7 @@ interface ApplicationService : GenericService<UUID, ApplicationDTO> {
 	fun getApplicationDetailsForCurrentUser(id: UUID): Optional<ApplicationDetailsDTO>
 	fun submitApplicationUrl(submission: ApplicationUrlSubmissionDTO): Optional<ApplicationDTO>
 	fun getUserSummery(currentUserID: UUID): UserDashboardSummaryDTO
+	fun getApplicationStatusDistribution(): List<ApplicationStatusCountDTO>
+	fun getAiQueueCount(): Long
+	fun findAiQueueItems(size: Int): List<AiQueueItemDTO>
 }

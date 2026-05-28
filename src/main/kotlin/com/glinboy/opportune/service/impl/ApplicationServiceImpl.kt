@@ -1,10 +1,7 @@
 package com.glinboy.opportune.service.impl
 
 import com.glinboy.opportune.config.ApplicationProperties
-import com.glinboy.opportune.dto.ApplicationDTO
-import com.glinboy.opportune.dto.ApplicationDetailsDTO
-import com.glinboy.opportune.dto.ApplicationUrlSubmissionDTO
-import com.glinboy.opportune.dto.UserDashboardSummaryDTO
+import com.glinboy.opportune.dto.*
 import com.glinboy.opportune.entity.Application
 import com.glinboy.opportune.enums.ApplicationStatus
 import com.glinboy.opportune.event.ApplicationSubmittedEvent
@@ -18,6 +15,7 @@ import com.glinboy.opportune.service.JobDescriptionFetcherService
 import jakarta.persistence.EntityManager
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
@@ -185,4 +183,26 @@ class ApplicationServiceImpl(
 			repository.avgScoresForProfile(from, currentUserID)
 		)
 	}
+
+	override fun getApplicationStatusDistribution(): List<ApplicationStatusCountDTO> =
+		repository.countAllByStatusGrouped().map { row ->
+			ApplicationStatusCountDTO(status = row.getStatus(), count = row.getTotal())
+		}
+
+	override fun getAiQueueCount(): Long =
+		repository.countAllByStatusGrouped()
+			.find { it.getStatus() == ApplicationStatus.AI_PROCESSING }
+			?.getTotal() ?: 0L
+
+	override fun findAiQueueItems(size: Int): List<AiQueueItemDTO> =
+		repository.findAiQueueItems(PageRequest.of(0, size)).map { item ->
+			val waitMinutes = ChronoUnit.MINUTES.between(item.getCreatedDate(), Instant.now())
+			AiQueueItemDTO(
+				id = item.getId(),
+				title = item.getTitle(),
+				companyName = item.getCompanyName(),
+				createdDate = item.getCreatedDate(),
+				waitMinutes = waitMinutes
+			)
+		}
 }
