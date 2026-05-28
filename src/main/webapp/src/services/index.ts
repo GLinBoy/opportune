@@ -1,3 +1,4 @@
+export { default as AdminDashboardService } from './admin-dashboard.service'
 export { default as CompanyService } from './company.service'
 export { default as CompanyMetaDataService } from './company-metadata.service'
 export { default as ProfileService } from './profile.service'
