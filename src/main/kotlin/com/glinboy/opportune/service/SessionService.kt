@@ -12,6 +12,7 @@ interface SessionService {
 	fun update(session: SessionDTO): SessionDTO
 	fun findByRefreshTokenId(refreshTokenId: UUID): SessionDTO?
 	fun findByAccessTokenId(accessTokenId: UUID): SessionDTO?
+	fun countActiveSessions(): Long
 	fun terminateCurrentSession()
 	fun terminateSession(refreshTokenId: UUID)
 	fun terminateAllOtherSessions(reason: RevocationReason)

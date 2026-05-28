@@ -2,6 +2,7 @@ package com.glinboy.opportune.repository
 
 import com.glinboy.opportune.entity.Session
 import com.glinboy.opportune.enums.RevocationReason
+import com.glinboy.opportune.enums.SessionStatus
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
@@ -12,6 +13,9 @@ import java.util.*
 
 @Repository
 interface SessionRepository : JpaRepository<Session, UUID>, JpaSpecificationExecutor<Session> {
+
+	fun countByStatus(status: SessionStatus): Long
+
 	@Modifying
 	@Query("UPDATE Session s " +
 		" SET s.status = 'REVOKED', s.revocationReason = :reason, s.revokedAt = instant " +
