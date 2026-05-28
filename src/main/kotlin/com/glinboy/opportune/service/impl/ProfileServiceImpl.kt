@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -203,4 +204,19 @@ class ProfileServiceImpl(
 			)
 		}
 	}
+
+	override fun countAll(): Long = repository.count()
+
+	override fun getRegistrationTrend(from: Instant): List<UserRegistrationTrendPointDTO> =
+		repository.findRegistrationTrend(from).map { point ->
+			UserRegistrationTrendPointDTO(
+				date = point.getRegistrationDate().toString(),
+				count = point.getTotal()
+			)
+		}
+
+	override fun getAccountStatusDistribution(): List<AccountStatusCountDTO> =
+		repository.countByStatusGrouped().map { row ->
+			AccountStatusCountDTO(status = row.getStatus(), count = row.getTotal())
+		}
 }

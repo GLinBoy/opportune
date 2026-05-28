@@ -2,11 +2,15 @@ package com.glinboy.opportune.repository
 
 import com.glinboy.opportune.entity.Profile
 import com.glinboy.opportune.enums.AccountStatus
+import com.glinboy.opportune.projection.ProfileRegistrationTrendProjection
+import com.glinboy.opportune.projection.ProfileStatusCountProjection
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.Instant
 import java.util.*
 
 @Repository
@@ -24,5 +28,17 @@ interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExec
 	@Modifying
 	@Query("UPDATE Profile p SET p.password = :password WHERE p.id = :id")
 	fun updatePassword(id: UUID, password: String)
+
+	@Query("SELECT p.status AS status, COUNT(p) AS total FROM Profile p GROUP BY p.status")
+	fun countByStatusGrouped(): List<ProfileStatusCountProjection>
+
+	@Query("""
+		SELECT CAST(p.createdDate AS date) AS registrationDate, COUNT(p) AS total
+		FROM Profile p
+		WHERE p.createdDate >= :from
+		GROUP BY CAST(p.createdDate AS date)
+		ORDER BY registrationDate ASC
+	""")
+	fun findRegistrationTrend(@Param("from") from: Instant): List<ProfileRegistrationTrendProjection>
 }
 
