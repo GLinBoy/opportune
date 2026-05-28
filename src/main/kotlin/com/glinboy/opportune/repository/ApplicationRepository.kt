@@ -1,8 +1,10 @@
 package com.glinboy.opportune.repository
 
 import com.glinboy.opportune.entity.Application
+import com.glinboy.opportune.projection.AiQueueProjection
 import com.glinboy.opportune.projection.ApplicationProjection
 import com.glinboy.opportune.projection.ApplicationStatProjection
+import com.glinboy.opportune.projection.ApplicationStatusCountProjection
 import com.glinboy.opportune.projection.ScoreSummaryProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -94,4 +96,17 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
       AND a.createdDate >= :from
 """)
 	fun avgScoresForProfile(@Param("from") from: Instant, @Param("userId")  userId: UUID): ScoreSummaryProjection
+
+	@Query("SELECT a.status AS status, COUNT(a) AS total FROM Application a GROUP BY a.status")
+	fun countAllByStatusGrouped(): List<ApplicationStatusCountProjection>
+
+	@Query("""
+		SELECT a.id AS id, a.title AS title, a.createdDate AS createdDate,
+		       c.name AS companyName
+		FROM Application a
+		LEFT JOIN a.company c
+		WHERE a.status = 'AI_PROCESSING'
+		ORDER BY a.createdDate ASC
+	""")
+	fun findAiQueueItems(pageable: Pageable): List<AiQueueProjection>
 }
