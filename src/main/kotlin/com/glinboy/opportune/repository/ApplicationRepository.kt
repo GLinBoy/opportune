@@ -19,6 +19,9 @@ import java.util.*
 @Repository
 interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecificationExecutor<Application> {
 
+	fun countByProfile_Id(profileId: UUID): Long
+
+
 	@Query("SELECT a.id AS id, " +
 		" a.url AS url, " +
 		" a.title AS title, " +
