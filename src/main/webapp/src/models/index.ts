@@ -17,6 +17,7 @@ export * from './dashboard.model'
 
 export * from './admin-dashboard.model'
 export * from './admin-user.model'
+export * from './admin-company.model'
 export * from './enumerations/application-status.model'
 export * from './enumerations/company-status.model'
 export * from './enumerations/profile-status.model'
