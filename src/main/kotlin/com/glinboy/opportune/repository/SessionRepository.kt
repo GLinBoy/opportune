@@ -16,6 +16,8 @@ interface SessionRepository : JpaRepository<Session, UUID>, JpaSpecificationExec
 
 	fun countByStatus(status: SessionStatus): Long
 
+	fun findAllByProfile_Id(profileId: UUID): List<Session>
+
 	@Modifying
 	@Query("UPDATE Session s " +
 		" SET s.status = 'REVOKED', s.revocationReason = :reason, s.revokedAt = instant " +
