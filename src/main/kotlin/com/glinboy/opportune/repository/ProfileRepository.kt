@@ -26,6 +26,10 @@ interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExec
 	fun updateEmailVerification(id: UUID, emailVerification: Boolean)
 
 	@Modifying
+	@Query("UPDATE Profile p SET p.status = :status WHERE p.id = :id")
+	fun updateStatusById(@Param("id") id: UUID, @Param("status") status: AccountStatus)
+
+	@Modifying
 	@Query("UPDATE Profile p SET p.password = :password WHERE p.id = :id")
 	fun updatePassword(id: UUID, password: String)
 
