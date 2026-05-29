@@ -21,6 +21,8 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 
 	fun countByProfile_Id(profileId: UUID): Long
 
+	fun countByCompany_Id(companyId: UUID): Long
+
 
 	@Query("SELECT a.id AS id, " +
 		" a.url AS url, " +
