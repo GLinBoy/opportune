@@ -254,3 +254,38 @@ CREATE INDEX idx_session_access_token_expiration      ON session(access_token_ex
 -- Status-only: bulk revocation / audit queries
 CREATE INDEX idx_session_status                       ON session(status);
 
+-- System settings singleton table.
+-- Always contains exactly one row (id = 00000000-0000-0000-0000-000000000001).
+-- Admins read/update this row via GET/PATCH /api/admin/settings.
+
+CREATE TABLE system_settings (
+    id                           UUID         NOT NULL PRIMARY KEY,
+    registration_enabled         BOOLEAN      NOT NULL DEFAULT TRUE,
+    ai_scoring_enabled           BOOLEAN      NOT NULL DEFAULT TRUE,
+    email_notifications_enabled  BOOLEAN      NOT NULL DEFAULT TRUE,
+    maintenance_mode             BOOLEAN      NOT NULL DEFAULT FALSE,
+    max_applications_per_user    INTEGER      NOT NULL DEFAULT 100,
+    max_ai_requests_per_day      INTEGER      NOT NULL DEFAULT 1000,
+    created_date                 TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed the single settings row with safe production defaults
+INSERT INTO system_settings (
+    id,
+    registration_enabled,
+    ai_scoring_enabled,
+    email_notifications_enabled,
+    maintenance_mode,
+    max_applications_per_user,
+    max_ai_requests_per_day
+) VALUES (
+    '00000000-0000-0000-0000-000000000001',
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    100,
+    1000
+);
+
