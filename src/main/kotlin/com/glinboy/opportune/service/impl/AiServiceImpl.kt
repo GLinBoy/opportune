@@ -49,6 +49,12 @@ class AiServiceImpl(
 		analysisApplication(event.applicationId)
 	}
 
+	@Async
+	override fun retryAnalysis(applicationId: UUID) {
+		log.info("Admin-triggered retry for application {}", applicationId)
+		analysisApplication(applicationId)
+	}
+
 	override fun analysisApplication(applicationId: UUID) {
 		val applicationDTO = applicationService.getById(applicationId)
 		val profileDTO = profileService.getById(applicationDTO.profileId!!)
