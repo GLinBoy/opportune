@@ -29,5 +29,17 @@ interface SessionRepository : JpaRepository<Session, UUID>, JpaSpecificationExec
 		" SET s.status = 'REVOKED', s.revocationReason = :reason, s.revokedAt = instant " +
 		" WHERE s.profile.id = :profileId AND s.status = 'ACTIVE' AND s.refreshTokenId <> :sessionId")
 	fun revokeAllSessionsExcept(@Param("profileId") profileId: UUID, @Param("reason") reason: RevocationReason, @Param("sessionId") sessionId: UUID)
+
+	@Modifying
+	@Query("UPDATE Session s " +
+		" SET s.status = 'REVOKED', s.revocationReason = :reason, s.revokedAt = instant " +
+		" WHERE s.refreshTokenId = :id AND s.status = 'ACTIVE'")
+	fun revokeSessionById(@Param("id") id: UUID, @Param("reason") reason: RevocationReason)
+
+	@Modifying
+	@Query("UPDATE Session s " +
+		" SET s.status = 'REVOKED', s.revocationReason = :reason, s.revokedAt = instant " +
+		" WHERE s.clientIp = :ip AND s.status = 'ACTIVE'")
+	fun revokeAllSessionsByIp(@Param("ip") ip: String, @Param("reason") reason: RevocationReason)
 }
 
