@@ -114,4 +114,19 @@ interface ApplicationRepository : JpaRepository<Application, UUID>, JpaSpecifica
 		ORDER BY a.createdDate ASC
 	""")
 	fun findAiQueueItems(pageable: Pageable): List<AiQueueProjection>
+
+	@Query(
+		value = """
+			SELECT a.id AS id, a.title AS title, a.createdDate AS createdDate,
+			       c.name AS companyName
+			FROM Application a
+			LEFT JOIN a.company c
+			WHERE a.status = 'AI_PROCESSING'
+		""",
+		countQuery = "SELECT COUNT(a) FROM Application a WHERE a.status = 'AI_PROCESSING'"
+	)
+	fun findAiQueueItemsPaged(pageable: Pageable): Page<AiQueueProjection>
+
+	@Query("SELECT a.resumeOverallScore FROM Application a WHERE a.resumeOverallScore IS NOT NULL")
+	fun findAllResumeScores(): List<Int>
 }
