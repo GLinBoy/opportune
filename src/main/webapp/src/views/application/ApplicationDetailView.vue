@@ -276,44 +276,6 @@
         </template>
       </FormCard>
 
-      <!-- 3. Meta Data -->
-      <FormCard class="mb-6" :collapsible="true" :default-open="true">
-        <template #title>
-          <v-icon icon="mdi-tag-multiple" class="mr-2" />
-          Meta Data
-        </template>
-
-        <template #default>
-          <MetadataTable
-            v-if="applicationMetadata && applicationMetadata.length > 0"
-            :items="applicationMetadata"
-            @edit="showEditMetaDataDialog"
-            @delete="removeMetaData"
-          />
-          <div v-else class="text-center py-8 text-medium-emphasis">
-            <v-icon icon="mdi-information" size="48" class="mb-2" />
-            <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
-          </div>
-        </template>
-
-        <template #actions>
-          <v-tooltip text="Add new meta data" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                text="Add Meta Data"
-                variant="text"
-                color="primary"
-                prepend-icon="mdi-tag-plus"
-                :disabled="loading"
-                min-width="120"
-                @click="showAddMetaDataDialog"
-              />
-            </template>
-          </v-tooltip>
-        </template>
-      </FormCard>
-
       <!-- 4. Interview Notes-->
       <FormCard class="mb-6" :collapsible="true" :default-open="true">
         <template #title>
@@ -346,6 +308,44 @@
                 :disabled="loading"
                 min-width="120"
                 @click="showAddInterviewNotePanel"
+              />
+            </template>
+          </v-tooltip>
+        </template>
+      </FormCard>
+
+      <!-- 3. Meta Data -->
+      <FormCard class="mb-6" :collapsible="true" :default-open="true">
+        <template #title>
+          <v-icon icon="mdi-tag-multiple" class="mr-2" />
+          Meta Data
+        </template>
+
+        <template #default>
+          <MetadataTable
+            v-if="applicationMetadata && applicationMetadata.length > 0"
+            :items="applicationMetadata"
+            @edit="showEditMetaDataDialog"
+            @delete="removeMetaData"
+          />
+          <div v-else class="text-center py-8 text-medium-emphasis">
+            <v-icon icon="mdi-information" size="48" class="mb-2" />
+            <p>No meta data available. Click "Add Meta Data" to add key-value pairs.</p>
+          </div>
+        </template>
+
+        <template #actions>
+          <v-tooltip text="Add new meta data" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                text="Add Meta Data"
+                variant="text"
+                color="primary"
+                prepend-icon="mdi-tag-plus"
+                :disabled="loading"
+                min-width="120"
+                @click="showAddMetaDataDialog"
               />
             </template>
           </v-tooltip>
