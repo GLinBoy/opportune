@@ -48,4 +48,39 @@ export default class InterviewAttachmentService {
         .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
     })
   }
+
+  download(applicationId: string, interviewNoteId: string, id: string, fallbackName?: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const url = `${INTERVIEW_ATTACHMENT_API_URL.replace('{application_id}', applicationId).replace('{interview_note_id}', interviewNoteId)}/${id}/download`
+      apiClient
+        .get(url, { responseType: 'blob' })
+        .then(res => {
+          const disposition: string = (res.headers['content-disposition'] as string) ?? ''
+
+          let filename = fallbackName ?? 'attachment'
+          const utf8Match = /filename\*\s*=\s*UTF-8''([^;\s]+)/i.exec(disposition)
+          if (utf8Match?.[1]) {
+            filename = decodeURIComponent(utf8Match[1])
+          } else {
+            const plainMatch = /filename\s*=\s*"?([^";\r\n]+)"?/i.exec(disposition)
+            if (plainMatch?.[1]) {
+              filename = plainMatch[1].trim().replace(/^"|"$/g, '')
+            }
+          }
+
+          const blobUrl = URL.createObjectURL(
+            new Blob([res.data as BlobPart], { type: res.headers['content-type'] as string })
+          )
+          const anchor = document.createElement('a')
+          anchor.href = blobUrl
+          anchor.download = filename
+          document.body.appendChild(anchor)
+          anchor.click()
+          anchor.remove()
+          URL.revokeObjectURL(blobUrl)
+          resolve()
+        })
+        .catch((err: unknown) => { reject(err instanceof Error ? err : new Error(String(err))) })
+    })
+  }
 }
