@@ -52,6 +52,10 @@ export default defineComponent({
             return props.attachmentCounts[id] ?? 0
         }
 
-        return { headers, sortBy, formatDate, truncateNotes, getAttachmentCount }
+        const handleRowClick = (_event: Event, { item }: { item: IInterviewNote }) => {
+            _emit('edit', item)
+        }
+
+        return { headers, sortBy, formatDate, truncateNotes, getAttachmentCount, handleRowClick }
     },
 })
