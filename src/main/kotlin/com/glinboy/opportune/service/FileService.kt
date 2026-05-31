@@ -8,6 +8,7 @@ interface FileService {
 	fun download()
 	fun delete()
 	fun uploadResume(file: MultipartFile): String
+	fun uploadAttachment(file: MultipartFile, userId: String, noteId: String): String
 	fun loadFileAsResource(path: String): Resource
 	fun deleteFile(path: String)
 }

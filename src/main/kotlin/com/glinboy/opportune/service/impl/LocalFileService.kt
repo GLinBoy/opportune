@@ -48,6 +48,23 @@ class LocalFileService(private val properties: ApplicationProperties) : FileServ
 		return targetPath.toString()
 	}
 
+	override fun uploadAttachment(file: MultipartFile, userId: String, noteId: String): String {
+		val attachmentPath = Paths.get(properties.files.basePath, userId, "interview-notes", noteId)
+
+		if (!Files.exists(attachmentPath)) {
+			Files.createDirectories(attachmentPath)
+		}
+
+		val originalFilename = file.originalFilename ?: "attachment"
+		val extension = originalFilename.substringAfterLast('.', "")
+		val newFilename = "${UUID.randomUUID()}${if (extension.isNotEmpty()) ".$extension" else ""}"
+		val targetPath: Path = attachmentPath.resolve(newFilename)
+
+		Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
+
+		return targetPath.toString()
+	}
+
 	override fun loadFileAsResource(path: String): Resource {
 		val filePath = Paths.get(path)
 		val resource = UrlResource(filePath.toUri())
