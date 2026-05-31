@@ -56,7 +56,7 @@
                 variant="text"
                 color="error"
                 icon="mdi-delete-outline"
-                @click.stop="$emit('delete', item.id)"
+                @click.stop="$emit('delete', item)"
               />
             </template>
           </v-tooltip>
