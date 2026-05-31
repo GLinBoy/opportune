@@ -78,6 +78,15 @@
               </v-list-item-subtitle>
               <template #append>
                 <v-btn
+                  icon="mdi-download"
+                  size="x-small"
+                  variant="text"
+                  color="primary"
+                  :loading="downloadingIds.includes(attachment.id ?? '')"
+                  :disabled="downloadingIds.includes(attachment.id ?? '')"
+                  @click="downloadAttachment(attachment)"
+                />
+                <v-btn
                   icon="mdi-delete-outline"
                   size="x-small"
                   variant="text"
