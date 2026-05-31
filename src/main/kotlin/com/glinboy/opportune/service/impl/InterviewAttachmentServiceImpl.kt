@@ -130,6 +130,7 @@ class InterviewAttachmentServiceImpl(
 			}, pageable
 	).map(mapper::toDto)
 
+	@Transactional
 	override fun deleteByApplicationIdAndInterviewNoteIdAndIdForCurrentUser(
 		applicationId: UUID,
 		interviewNoteId: UUID, id: UUID
@@ -147,8 +148,8 @@ class InterviewAttachmentServiceImpl(
 				}
 		)
 		attachment.ifPresent { entity ->
-			entity.path?.let { fileService.deleteFile(it) }
 			repository.delete(entity)
+			entity.path?.let { fileService.deleteFile(it) }
 		}
 	}
 
