@@ -1,8 +1,8 @@
 import { ref, computed, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData } from '../../models'
+import { Application, type IApplication, type IApplicationDetails, type IApplicationMetaData, type IInterviewNote } from '../../models'
 import { ApplicationStatus, getApplicationStatusDisplay, getApplicationStatusColor, getApplicationStatusIcon } from '../../models/enumerations/application-status.model'
-import { ApplicationService, ApplicationMetaDataService } from '../../services'
+import { ApplicationService, ApplicationMetaDataService, InterviewNoteService } from '../../services'
 import RawContentDialog from '../../components/application/RawContentDialog.vue'
 import CompanyAutocomplete from '../../components/company/CompanyAutocomplete.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
@@ -12,6 +12,8 @@ import ResumeScoreCard from '../../components/ResumeScoreCard.vue'
 import FormCard from '@/components/forms/FormCard.vue'
 import MdEditor from '@/components/markdown/MdEditor.vue'
 import ContentViewer from '@/components/ContentViewer.vue'
+import InterviewNotePanel from '../../components/application/InterviewNotePanel.vue'
+import InterviewNoteTable from '../../components/application/InterviewNoteTable.vue'
 import { useToastStore } from '../../stores/toast'
 
 
@@ -28,6 +30,8 @@ export default defineComponent({
     FormCard,
     MdEditor,
     ContentViewer,
+    InterviewNotePanel,
+    InterviewNoteTable,
   },
   computed: {
     statusOptions() {
@@ -46,6 +50,7 @@ export default defineComponent({
   setup() {
     const applicationService = inject('applicationService', () => new ApplicationService())
     const applicationMetadataService = inject('applicationMetadataService', () => new ApplicationMetaDataService())
+    const interviewNoteService = inject('interviewNoteService', () => new InterviewNoteService())
     const route = useRoute()
     const router = useRouter()
 
@@ -75,6 +80,13 @@ export default defineComponent({
     const metaDataDialogTitle = computed(() =>
       newMetaData.value?.id ? 'Edit Meta Data' : 'Add Meta Data'
     )
+
+    // Interview Note state
+    const interviewNotes = ref<IInterviewNote[]>([])
+    const interviewNotePanel = ref(false)
+    const currentInterviewNote = ref<IInterviewNote | null>(null)
+    const confirmDeleteInterviewNoteDialog = ref(false)
+    const interviewNoteToDelete = ref<IInterviewNote | null>(null)
 
     // Raw Content Dialog state
     const rawContentDialog = ref(false)
@@ -339,6 +351,60 @@ export default defineComponent({
       }
     }
 
+    // Interview Note Management Methods
+    const showAddInterviewNotePanel = () => {
+      currentInterviewNote.value = null
+      interviewNotePanel.value = true
+    }
+
+    const showEditInterviewNotePanel = (item: IInterviewNote) => {
+      currentInterviewNote.value = item
+      interviewNotePanel.value = true
+    }
+
+    const onInterviewNoteSaved = (note: IInterviewNote) => {
+      const index = interviewNotes.value.findIndex(n => n.id === note.id)
+      if (index !== -1) {
+        interviewNotes.value.splice(index, 1, note)
+      } else {
+        interviewNotes.value.push(note)
+      }
+      interviewNotePanel.value = false
+      toast.success('Interview note saved successfully!')
+    }
+
+    const removeInterviewNote = (item: IInterviewNote) => {
+      interviewNoteToDelete.value = item
+      confirmDeleteInterviewNoteDialog.value = true
+    }
+
+    const closeDeleteInterviewNoteDialog = () => {
+      confirmDeleteInterviewNoteDialog.value = false
+      interviewNoteToDelete.value = null
+    }
+
+    const performInterviewNoteDelete = async () => {
+      const note = interviewNoteToDelete.value
+      if (note?.id) {
+        try {
+          await interviewNoteService().delete(applicationId.value, note.id)
+          const index = interviewNotes.value.findIndex(n => n.id === note.id)
+          if (index !== -1) {
+            interviewNotes.value.splice(index, 1)
+          }
+          toast.success('Interview note deleted successfully!')
+        } catch (err) {
+          console.error('Failed to delete interview note:', err)
+          toast.error('Failed to delete interview note. Please try again.')
+        } finally {
+          closeDeleteInterviewNoteDialog()
+        }
+      } else {
+        toast.error('Interview note not found.')
+        closeDeleteInterviewNoteDialog()
+      }
+    }
+
     const loadApplication = async () => {
       try {
         loading.value = true
@@ -346,6 +412,7 @@ export default defineComponent({
         await applicationService().getApplicationsDetails(applicationId.value)
           .then(data => {
             application.value = data
+            interviewNotes.value = data.interviewNotes ?? []
           })
 
         const metadataPaginationQuery = {
@@ -454,6 +521,21 @@ export default defineComponent({
       metaDataDialogTitle,
       closeDeleteMetaDataDialog,
       performMetaDataDelete,
+
+      // Interview Note state
+      interviewNotes,
+      interviewNotePanel,
+      currentInterviewNote,
+      confirmDeleteInterviewNoteDialog,
+      interviewNoteToDelete,
+
+      // Interview Note methods
+      showAddInterviewNotePanel,
+      showEditInterviewNotePanel,
+      onInterviewNoteSaved,
+      removeInterviewNote,
+      closeDeleteInterviewNoteDialog,
+      performInterviewNoteDelete,
 
       // Data methods
       loadApplication,
