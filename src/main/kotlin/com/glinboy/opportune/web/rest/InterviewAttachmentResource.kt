@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import org.springdoc.core.converters.models.PageableAsQueryParam
+import org.springframework.core.io.Resource
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.net.URI
 import java.util.*
 
 @RestController
@@ -63,11 +65,30 @@ class InterviewAttachmentResource(private val interviewAttachmentService: Interv
 	@PostMapping("/{application_id}/interview-notes/{interview_note_id}/attachments", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun uploadInterviewAttachment(
 		@PathVariable("application_id") applicationId: UUID,
-		@PathVariable("interview_note_id") noteId: UUID,
-		@RequestParam("interview_attachment") interviewAttachment: MultipartFile,
+		@PathVariable("interview_note_id") interviewNoteId: UUID,
+		@RequestPart("interview_attachment") interviewAttachment: MultipartFile,
 		request: HttpServletRequest
 	): ResponseEntity<InterviewAttachmentDTO> {
-		// TODO implement file upload (FileService?)
-		return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build()
+		val saved = interviewAttachmentService.upload(applicationId, interviewNoteId, interviewAttachment)
+		val location = URI.create("${request.requestURI}/${saved.id}")
+		return ResponseEntity.created(location)
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(saved)
+	}
+
+	@GetMapping("/{application_id}/interview-notes/{interview_note_id}/attachments/{id}/download")
+	fun downloadInterviewAttachment(
+		@PathVariable("application_id") applicationId: UUID,
+		@PathVariable("interview_note_id") interviewNoteId: UUID,
+		@PathVariable("id") id: UUID
+	): ResponseEntity<Resource> {
+		val (resource, dto) = interviewAttachmentService.getFileResource(applicationId, interviewNoteId, id)
+		val contentType = dto.contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
+		val filename = dto.name ?: "attachment"
+		return ResponseEntity.ok()
+			.contentType(MediaType.parseMediaType(contentType))
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$filename\"")
+			.body(resource)
 	}
 }
+
