@@ -102,6 +102,13 @@ const editorHeight = computed(() => `${props.rows * 36}px`)
   background: rgb(var(--v-theme-surface));
 }
 
+/* md-editor-v3 sets height:100% on .md-editor-input-wrapper which leaks onto the
+   outer v-input (they share the same class name). Reset it here so the component
+   takes only the height dictated by the editor's explicit height style. */
+.md-editor-input-wrapper.v-input {
+  height: auto !important;
+}
+
 /* Text color follows Vuetify theme */
 .md-editor-input-wrapper :deep(.md-editor-input),
 .md-editor-input-wrapper :deep(.md-editor-preview) {
