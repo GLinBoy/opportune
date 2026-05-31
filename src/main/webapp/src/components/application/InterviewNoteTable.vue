@@ -9,6 +9,7 @@
       hide-default-footer
       density="compact"
       class="elevation-1"
+      @click:row="handleRowClick"
     >
       <!-- Date Column -->
       <template v-slot:[`item.date`]="{ item }">
@@ -35,19 +36,7 @@
 
       <!-- Actions Column -->
       <template v-slot:[`item.actions`]="{ item }">
-        <div class="d-flex justify-end" style="gap: 4px">
-          <v-tooltip text="Edit" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                size="x-small"
-                variant="text"
-                color="primary"
-                icon="mdi-pencil-outline"
-                @click.stop="$emit('edit', item)"
-              />
-            </template>
-          </v-tooltip>
+        <div class="d-flex justify-end">
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props }">
               <v-btn
