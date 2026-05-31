@@ -322,10 +322,33 @@
         </template>
 
         <template #default>
-          <div class="text-center py-8 text-medium-emphasis">
+          <InterviewNoteTable
+            v-if="interviewNotes && interviewNotes.length > 0"
+            :items="interviewNotes"
+            @edit="showEditInterviewNotePanel"
+            @delete="removeInterviewNote"
+          />
+          <div v-else class="text-center py-8 text-medium-emphasis">
             <v-icon icon="mdi-notebook-edit-outline" size="48" class="mb-2" />
-            <p>No interview notes yet. This section will be available soon.</p>
+            <p>No interview notes yet. Click "Add Interview Note" to add your first note.</p>
           </div>
+        </template>
+
+        <template #actions>
+          <v-tooltip text="Add new interview note" location="top">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                text="Add Interview Note"
+                variant="text"
+                color="primary"
+                prepend-icon="mdi-note-plus"
+                :disabled="loading"
+                min-width="120"
+                @click="showAddInterviewNotePanel"
+              />
+            </template>
+          </v-tooltip>
         </template>
       </FormCard>
 
@@ -475,6 +498,27 @@
       Are you sure you want to remove
       <strong>{{ application?.company?.name }}</strong> from this application? The change will take
       effect when you save.
+    </ConfirmDialog>
+
+    <!-- Interview Note Panel -->
+    <InterviewNotePanel
+      v-model="interviewNotePanel"
+      :applicationId="applicationId"
+      :interviewNote="currentInterviewNote"
+      @saved="onInterviewNoteSaved"
+    />
+
+    <!-- Confirm Delete Interview Note Dialog -->
+    <ConfirmDialog
+      v-model="confirmDeleteInterviewNoteDialog"
+      title="Confirm Deletion"
+      variant="error"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      @confirm="performInterviewNoteDelete"
+      @cancel="closeDeleteInterviewNoteDialog"
+    >
+      Are you sure you want to delete this interview note? This action cannot be undone.
     </ConfirmDialog>
   </div>
 </template>

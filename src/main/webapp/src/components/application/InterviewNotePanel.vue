@@ -134,7 +134,7 @@
   top: 0 !important;
   bottom: 0 !important;
   margin: 0 !important;
-  width: 540px !important;
+  width: 75vw !important;
   max-width: 100vw !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
