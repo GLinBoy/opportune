@@ -147,6 +147,25 @@ export default defineComponent({
       }
     }
 
+    const downloadingIds = ref<string[]>([])
+
+    const downloadAttachment = async (attachment: IInterviewAttachment) => {
+      if (!attachment.id || !currentNote.value?.id) return
+      downloadingIds.value = [...downloadingIds.value, attachment.id]
+      try {
+        await attachmentService.download(
+          props.applicationId,
+          currentNote.value.id,
+          attachment.id,
+          attachment.name
+        )
+      } catch {
+        toastStore.error('Failed to download attachment')
+      } finally {
+        downloadingIds.value = downloadingIds.value.filter((id) => id !== attachment.id)
+      }
+    }
+
     // ── Save (create → edit-mode  OR  update → close) ────────────────────────
 
     const close = () => {
@@ -219,6 +238,8 @@ export default defineComponent({
       triggerFileInput,
       onFileSelected,
       deleteAttachment,
+      downloadingIds,
+      downloadAttachment,
       formatFileSize,
     }
   },
