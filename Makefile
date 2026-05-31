@@ -1,5 +1,7 @@
 .PHONY: help start-be start-fe start stop-be stop-fe stop restart-be restart-fe restart attach-be attach-fe status
 
+.DEFAULT_GOAL := start
+
 SHELL := /bin/bash
 BE_SESSION  := opportune-be
 FE_SESSION  := opportune-fe
