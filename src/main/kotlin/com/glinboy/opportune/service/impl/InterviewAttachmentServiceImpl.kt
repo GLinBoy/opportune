@@ -2,25 +2,31 @@ package com.glinboy.opportune.service.impl
 
 import com.glinboy.opportune.dto.InterviewAttachmentDTO
 import com.glinboy.opportune.entity.InterviewAttachment
+import com.glinboy.opportune.entity.InterviewNote
 import com.glinboy.opportune.mapper.InterviewAttachmentMapper
 import com.glinboy.opportune.repository.InterviewAttachmentRepository
 import com.glinboy.opportune.security.SecurityUtils
+import com.glinboy.opportune.service.FileService
 import com.glinboy.opportune.service.InterviewAttachmentService
 import jakarta.persistence.EntityManager
+import org.springframework.core.io.Resource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 import java.util.*
 
 @Service
 class InterviewAttachmentServiceImpl(
 	interviewAttachmentRepository: InterviewAttachmentRepository,
 	mapper: InterviewAttachmentMapper,
-	private val entityManager: EntityManager
+	private val entityManager: EntityManager,
+	private val fileService: FileService
 ) : GenericServiceImpl<UUID, InterviewAttachment, InterviewAttachmentDTO, InterviewAttachmentRepository,
 	InterviewAttachmentMapper>(interviewAttachmentRepository, mapper), InterviewAttachmentService {
 
@@ -128,7 +134,7 @@ class InterviewAttachmentServiceImpl(
 		applicationId: UUID,
 		interviewNoteId: UUID, id: UUID
 	) {
-		repository.delete(
+		val attachment = repository.findOne(
 			currentUserSpecification()
 				.and { root, _, criteriaBuilder ->
 					criteriaBuilder.equal(root.get<UUID>("interviewNote").get<UUID>("application").get<UUID>("id"), applicationId)
@@ -139,7 +145,59 @@ class InterviewAttachmentServiceImpl(
 				.and { root, _, criteriaBuilder ->
 					criteriaBuilder.equal(root.get<UUID>("id"), id)
 				}
-				.toDeleteSpecification()
 		)
+		attachment.ifPresent { entity ->
+			entity.path?.let { fileService.deleteFile(it) }
+			repository.delete(entity)
+		}
+	}
+
+	@Transactional
+	override fun upload(applicationId: UUID, interviewNoteId: UUID, file: MultipartFile): InterviewAttachmentDTO {
+		val currentUserId = SecurityUtils.getCurrentUserLoginID()
+
+		val count = entityManager.createQuery(
+			"""
+			SELECT COUNT(n) FROM InterviewNote n
+			WHERE n.id = :interviewNoteId
+			  AND n.application.id = :applicationId
+			  AND n.application.profile.id = :userId
+			""".trimIndent(),
+			Long::class.java
+		).apply {
+			setParameter("interviewNoteId", interviewNoteId)
+			setParameter("applicationId", applicationId)
+			setParameter("userId", currentUserId)
+		}.singleResult
+
+		if (count == 0L) {
+			throw ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"Interview note not found or you do not have permission to access this resource"
+			)
+		}
+
+		val path = fileService.uploadAttachment(file, currentUserId.toString(), interviewNoteId.toString())
+
+		val entity = InterviewAttachment(
+			name = file.originalFilename,
+			path = path,
+			contentType = file.contentType,
+			contentLength = file.size,
+			createdDate = Instant.now(),
+			lastModifiedDate = Instant.now(),
+			interviewNote = InterviewNote(id = interviewNoteId)
+		)
+		val savedEntity = repository.save(entity)
+		return mapper.toDto(savedEntity)
+	}
+
+	override fun getFileResource(applicationId: UUID, interviewNoteId: UUID, id: UUID): Pair<Resource, InterviewAttachmentDTO> {
+		val dto = findByApplicationIdANdInterviewNoteIdAndIdForCurrentUser(applicationId, interviewNoteId, id)
+			.orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Attachment not found") }
+		val path = dto.path
+			?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "File path not found")
+		val resource = fileService.loadFileAsResource(path)
+		return Pair(resource, dto)
 	}
 }
