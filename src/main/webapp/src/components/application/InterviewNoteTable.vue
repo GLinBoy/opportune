@@ -99,4 +99,8 @@
   color: rgb(var(--v-theme-on-primary)) !important;
   font-weight: 600;
 }
+
+:deep(.v-table) {
+  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
 </style>
