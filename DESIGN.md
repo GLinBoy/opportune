@@ -445,57 +445,15 @@ Stateless auth simplifies horizontal scaling and removes the need for a distribu
 
 ## 9. Folder Structure Reference
 
-```
-opportune/
-├── build.gradle.kts                   # Unified build: backend + frontend
-├── AGENTS.md                          # AI agent catalogue
-├── DESIGN.md                          # This file
-│
-├── src/main/
-│   ├── kotlin/                        # Backend source
-│   │   └── …/opportune/
-│   │       ├── aop/                   # Cross-cutting concerns (logging, auditing aspects)
-│   │       ├── config/                # Spring configuration beans (Security, Jackson, OpenAPI, etc.)
-│   │       ├── dto/                   # Data Transfer Objects (request/response shapes)
-│   │       ├── entity/                # JPA entities
-│   │       ├── enums/                 # Shared enumerations (Role, ApplicationStatus, etc.)
-│   │       ├── event/                 # Spring application events
-│   │       ├── mapper/                # MapStruct mappers (entity ↔ DTO)
-│   │       ├── projection/            # JPA interface projections for lightweight queries
-│   │       ├── repository/            # Spring Data JPA repositories
-│   │       ├── security/              # JWT utilities, SecurityUtils, auth converters
-│   │       ├── service/               # Business logic (interfaces + impl/ sub-package)
-│   │       ├── util/                  # Shared utilities
-│   │       └── web/                   # REST controllers, filters, exception handlers
-│   │
-│   ├── resources/
-│   │   ├── application.yml            # Base configuration
-│   │   ├── application-*.yml          # Profile-specific overrides
-│   │   ├── db/migration/              # Flyway SQL migrations (V{n}__{desc}.sql)
-│   │   └── prompts/                   # Spring AI prompt templates (.st files)
-│   │
-│   └── webapp/                        # Frontend root (Vite project)
-│       ├── package.json
-│       ├── vite.config.ts
-│       └── src/
-│           ├── assets/
-│           │   ├── main.scss
-│           │   └── tabler-overrides.scss   # ← Tabler design language
-│           ├── components/
-│           ├── composables/
-│           ├── layouts/
-│           ├── models/
-│           ├── plugins/vuetify.ts          # ← Vuetify theme config
-│           ├── router/
-│           ├── services/
-│           ├── stores/
-│           ├── utils/
-│           ├── views/
-│           ├── App.vue
-│           └── main.ts                    # ← Style loading order defined here
-│
-└── src/test/                          # Backend tests (JUnit 5)
-```
+The full project directory tree is maintained in [`AGENTS.md §4`](./AGENTS.md). Key paths for design work:
+
+| Path                                               | Design relevance                                           |
+| -------------------------------------------------- | ---------------------------------------------------------- |
+| `src/main/webapp/src/plugins/vuetify.ts`           | Vuetify theme config (`tablerLight` / `tablerDark`)        |
+| `src/main/webapp/src/assets/tabler-overrides.scss` | Global Vuetify visual overrides (Tabler design language)   |
+| `src/main/webapp/src/assets/main.scss`             | App-level style entry — imports `tabler-overrides.scss`    |
+| `src/main/webapp/src/main.ts`                      | Style loading order, ECharts registration                  |
+| `src/main/resources/prompts/`                      | AI prompt templates (.st files)                            |
 
 ---
 
