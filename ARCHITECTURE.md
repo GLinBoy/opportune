@@ -80,18 +80,26 @@ A simplified layout looks like this:
 ```text
 opportune/
 ├── build.gradle.kts
+├── settings.gradle.kts
 ├── package.json
+├── compose.yaml
+├── Dockerfile
+├── Makefile
+├── docs/
 ├── AGENTS.md
 ├── DESIGN.md
 ├── ARCHITECTURE.md
 ├── CONTRIBUTING.md
 ├── DEVELOPMENT.md
 └── src/
-    └── main/
-        ├── kotlin/
-        ├── resources/
-        └── webapp/
-            └── src/
+    ├── main/
+    │   ├── kotlin/          → Backend source (Kotlin + Spring Boot)
+    │   ├── resources/       → config/, db/migration/, prompts/, templates/
+    │   └── webapp/          → Frontend source (Vue 3 + Vite)
+    │       └── src/
+    └── test/
+        ├── kotlin/          → Backend tests (JUnit 5)
+        └── resources/       → Test config (application-test.yml)
 ```
 
 The frontend source folders are `assets`, `components`, `composables`, `layouts`, `models`, `plugins`, `router`, `services`, `stores`, `utils`, and `views` under `src/main/webapp/src/`.
@@ -119,22 +127,26 @@ The actual package layout is:
 
 ```text
 src/main/kotlin/.../opportune/
-├── aop/             # Cross-cutting concerns (logging, auditing aspects)
-├── config/          # Spring configuration beans (Security, Jackson, OpenAPI, etc.)
-├── dto/             # Data Transfer Objects (request/response shapes)
-├── entity/          # JPA entities
-├── enums/           # Shared enumerations (Role, ApplicationStatus, etc.)
-├── event/           # Spring application events (e.g. ApplicationSubmittedEvent)
-├── mapper/          # MapStruct mappers (entity ↔ DTO)
-├── projection/      # JPA interface projections for lightweight queries
-├── repository/      # Spring Data JPA repositories
-├── security/        # JWT utilities, SecurityUtils, auth converters
-├── service/         # Business logic and orchestration (interfaces + impl/ sub-package)
-├── util/            # Shared utilities
-└── web/             # REST controllers, filters, exception handlers
-    ├── controller/
-    ├── filter/
-    └── rest/
+├── aop/
+│   ├── logging/         # Logging aspects
+│   └── session/         # Session tracking aspects
+├── config/              # Spring configuration beans (Security, Jackson, OpenAPI, etc.)
+├── dto/                 # Data Transfer Objects (request/response shapes)
+├── entity/              # JPA entities
+├── enums/               # Shared enumerations (Role, ApplicationStatus, etc.)
+├── event/               # Spring application events (e.g. ApplicationSubmittedEvent)
+├── mapper/              # MapStruct mappers (entity ↔ DTO)
+├── projection/          # JPA interface projections for lightweight queries
+├── repository/          # Spring Data JPA repositories
+├── security/
+│   └── jwt/             # JWT utilities, SecurityUtils, auth converters
+├── service/
+│   └── impl/            # Business logic and orchestration
+├── util/                # Shared utilities
+└── web/
+    ├── controller/      # REST controllers
+    ├── filter/          # Servlet filters
+    └── rest/            # REST exception handlers / advice
 ```
 
 AI service logic lives in `service/` — there is no separate `ai/` package. Keep new backend code in the most specific existing package that matches its responsibility.
@@ -255,57 +267,33 @@ If a view grows too much, split it before continuing to add logic.
 
 ## UI Architecture
 
+The UI architecture is built on three layers — see [`DESIGN.md §5`](./DESIGN.md) for the full design language and tokens.
+
 ### Component strategy
 
-The UI component layer should be built with Vuetify components, while the visual language should follow a Tabler-inspired style system applied through shared overrides rather than bypassing Vuetify.
-
-This means:
-
-- use Vuetify as the component foundation
-- style globally through shared overrides where appropriate
-- avoid replacing Vuetify components with raw HTML just to imitate Tabler
-
-### Global style architecture
-
-`src/main/webapp/src/assets/tabler-overrides.scss` contains global visual overrides for cards, buttons, fields, drawers, tables, dividers, elevations, app bars, list items, typography, touch targets, tooltips, images, and chart wrappers.
-
-Use style locations deliberately:
-
-- local component styles -> inside the component
-- global Vuetify visual overrides -> `src/main/webapp/src/assets/tabler-overrides.scss`
-- global app stylesheet entry -> `src/main/webapp/src/assets/main.scss`
-- theme configuration -> `src/main/webapp/src/plugins/vuetify.ts`
+Vuetify components are the foundation; a Tabler-inspired visual language is applied through shared overrides in `tabler-overrides.scss`. Never bypass Vuetify components for raw HTML just to match Tabler aesthetics.
 
 ### Style loading order
 
-The application entrypoint (`src/main/webapp/src/main.ts`) imports styles in this order, which must be preserved so project styles can override library defaults predictably:
+The entrypoint (`src/main/webapp/src/main.ts`) loads styles in this order (must be preserved):
 
 1. `vuetify/styles` — Vuetify base styles
 2. `@mdi/font/css/materialdesignicons.css` — MDI icons
-3. `./assets/main.scss` — app typography and Tabler overrides
+3. `./assets/main.scss` — app styles (includes Tabler overrides)
+
+### Global style locations
+
+- Component-scoped styles → `<style scoped>` inside `.vue` files
+- Global Vuetify overrides → `tabler-overrides.scss`
+- Theme configuration → `plugins/vuetify.ts`
 
 ### Chart architecture
 
-ECharts is registered globally in `src/main/webapp/src/main.ts` through `vue-echarts`. Only the needed renderers, charts, and components are imported to keep the bundle lean (`CanvasRenderer`, `PieChart`, `LineChart`, `BarChart`, `RadarChart`, `FunnelChart`, `HeatmapChart`, and related ECharts components). A global `VChart` component is registered for use in views.
-
-Architecturally, that means:
-
-- chart bootstrapping belongs in application setup
-- chart rendering belongs in components/views
-- new chart types should be added to the shared registration path, not bootstrapped ad hoc in random components
+ECharts is registered globally in `main.ts` via `vue-echarts` with only needed chart types imported (tree-shaken). New chart types must be added to the shared registration path in `main.ts`, not bootstrapped ad hoc in components. Chart wrappers use `.chart-wrapper` class.
 
 ### Markdown architecture
 
-Markdown editing and rendering should be treated as first-class application capabilities.
-
-Recommended separation:
-
-- editing layer -> editor component integration
-- rendering layer -> safe markdown rendering
-- persistence layer -> backend-stored or backend-generated markdown
-- AI layer -> markdown generation or transformation workflows
-
-Keep markdown human-readable first, even when it is AI-generated.
+Markdown is a first-class content format. The architecture separates editing (`md-editor-v3`), rendering (`marked` + sanitisation), persistence (backend), and generation (AI). See [`DESIGN.md §5`](./DESIGN.md) for the full markdown conventions.
 
 ---
 
@@ -416,16 +404,13 @@ Before merging a structural change, confirm:
 
 ## Related Docs
 
-- `AGENTS.md`
-- `DESIGN.md`
-- `CONTRIBUTING.md`
-- `DEVELOPMENT.md`
-
-Future linked docs:
-
-- `API.md`
-- `DATA_MODEL.md`
-- `SECURITY.md`
-- `PROMPTS.md`
-- `AI_CONTEXT.md`
-- `TESTING.md`
+- [`AGENTS.md`](./AGENTS.md) — AI agent catalogue and prompt architecture
+- [`DESIGN.md`](./DESIGN.md) — system design, UI language, design decisions
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — contribution workflow and rules
+- [`DEVELOPMENT.md`](./DEVELOPMENT.md) — local setup and daily routine
+- [`API.md`](./API.md) — REST API contract
+- [`DATA_MODEL.md`](./DATA_MODEL.md) — domain entities and JPA conventions
+- [`SECURITY.md`](./SECURITY.md) — authentication and authorization model
+- [`PROMPTS.md`](./PROMPTS.md) — prompt template documentation
+- [`AI_CONTEXT.md`](./AI_CONTEXT.md) — compact project context for AI tools
+- [`TESTING.md`](./TESTING.md) — testing strategy and conventions
