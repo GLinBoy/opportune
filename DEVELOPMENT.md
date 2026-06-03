@@ -217,6 +217,8 @@ Use this structure consistently:
 - `utils/` for pure helpers
 - `models/` for TypeScript data shapes
 - `layouts/` for app shells and layout wrappers
+- `plugins/` for framework/plugin setup
+- `assets/` for global styles and static assets
 
 If a view gets too large, split it before adding more logic.
 
@@ -288,7 +290,7 @@ Keep AI behavior explicit and documented.
 
 ## Testing During Development
 
-Run tests early and often.
+Run tests early and often. See [`TESTING.md`](./TESTING.md) for the full strategy, conventions, and CI behaviour.
 
 ### Backend unit & integration tests
 
