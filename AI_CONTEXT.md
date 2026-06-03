@@ -284,16 +284,16 @@ Avoid these common mistakes:
 
 Use this quick map:
 
-- AI behavior changed -> update `AGENTS.md`
-- structural layering changed -> update `ARCHITECTURE.md`
-- design or UI conventions changed -> update `DESIGN.md`
-- local setup/workflow changed -> update `DEVELOPMENT.md`
-- contribution process changed -> update `CONTRIBUTING.md`
-- API contract changed -> update `API.md`
-- security model changed -> update `SECURITY.md`
-- data model or entities changed -> update `DATA_MODEL.md`
-- prompt templates changed -> update `PROMPTS.md`
-- test strategy changed -> update `TESTING.md`
+- AI behavior changed → update [`AGENTS.md`](./AGENTS.md)
+- structural layering changed → update [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+- design or UI conventions changed → update [`DESIGN.md`](./DESIGN.md)
+- local setup/workflow changed → update [`DEVELOPMENT.md`](./DEVELOPMENT.md)
+- contribution process changed → update [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- API contract changed → update [`API.md`](./API.md)
+- security model changed → update [`SECURITY.md`](./SECURITY.md)
+- data model or entities changed → update [`DATA_MODEL.md`](./DATA_MODEL.md)
+- prompt templates changed → update [`PROMPTS.md`](./PROMPTS.md)
+- test strategy changed → update [`TESTING.md`](./TESTING.md)
 
 This file should stay short and high-signal. Put deeper detail in the specialized docs.
 
@@ -303,16 +303,16 @@ This file should stay short and high-signal. Put deeper detail in the specialize
 
 Read these together:
 
-- `AGENTS.md`
-- `DESIGN.md`
-- `ARCHITECTURE.md`
-- `CONTRIBUTING.md`
-- `DEVELOPMENT.md`
-- `API.md`
-- `DATA_MODEL.md`
-- `SECURITY.md`
-- `PROMPTS.md`
-- `TESTING.md`
+- [`AGENTS.md`](./AGENTS.md)
+- [`DESIGN.md`](./DESIGN.md)
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`DEVELOPMENT.md`](./DEVELOPMENT.md)
+- [`API.md`](./API.md)
+- [`DATA_MODEL.md`](./DATA_MODEL.md)
+- [`SECURITY.md`](./SECURITY.md)
+- [`PROMPTS.md`](./PROMPTS.md)
+- [`TESTING.md`](./TESTING.md)
 
 ---
 
