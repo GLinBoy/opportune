@@ -1,6 +1,8 @@
 <template>
   <v-app-bar flat color="surface" height="56" border="b">
     <v-container class="mx-auto d-flex align-center" style="max-width: 1400px">
+      <slot name="prepend" />
+
       <!-- Logo -->
       <router-link to="/dashboard" class="brand-link d-flex align-center text-decoration-none me-4">
         <img src="@/assets/logo.png" alt="Opportune" width="28" height="28" />
