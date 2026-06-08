@@ -17,37 +17,75 @@
         <v-card-text class="pa-6">
           <v-row align="center">
             <v-col cols="auto">
-              <v-avatar size="72" color="primary" class="text-h5 font-weight-bold">
-                {{ initials }}
-              </v-avatar>
+              <UserAvatar :email="detail.profile.email" :avatar-url="detail.profile.avatar" :size="72" />
             </v-col>
             <v-col>
               <div class="text-h6 font-weight-medium">{{ fullName }}</div>
               <div class="text-body-2 text-medium-emphasis">{{ detail.profile.email }}</div>
               <div class="d-flex flex-wrap gap-2 mt-2">
-                <v-chip :color="statusColor(detail.profile.status)" size="small" label>
+                <v-chip
+                  :color="statusColor(detail.profile.status)"
+                  size="small"
+                  label
+                  :prepend-icon="statusIcon(detail.profile.status)"
+                >
                   {{ detail.profile.status ?? '—' }}
                 </v-chip>
                 <v-chip
                   v-for="role in detail.profile.roles"
                   :key="role"
-                  size="x-small"
+                  size="small"
                   :color="role === 'ROLE_ADMIN' ? 'warning' : 'default'"
+                  :prepend-icon="role === 'ROLE_ADMIN' ? 'mdi-shield-account' : 'mdi-account-circle-outline'"
                   label
                 >
                   {{ role === 'ROLE_ADMIN' ? 'Admin' : 'User' }}
                 </v-chip>
+                <v-chip
+                  v-if="detail.profile.emailVerification"
+                  prepend-icon="mdi-email-check-outline"
+                  size="small"
+                  color="success"
+                  variant="tonal"
+                >
+                  Verified
+                </v-chip>
+                <v-chip
+                  v-else
+                  prepend-icon="mdi-email-alert-outline"
+                  size="small"
+                  color="warning"
+                  variant="tonal"
+                >
+                  Unverified
+                </v-chip>
               </div>
             </v-col>
-            <!-- KPI chips -->
-            <v-col cols="12" sm="auto" class="d-flex gap-4 flex-wrap">
-              <div class="text-center">
-                <div class="text-h6 font-weight-bold">{{ detail.applicationCount }}</div>
-                <div class="text-caption text-medium-emphasis">Applications</div>
+            <!-- Compact KPI cards -->
+            <v-col cols="12" sm="auto" class="d-flex flex-wrap gap-3">
+              <div class="kpi-card-compact">
+                <div class="kpi-card-compact__body">
+                  <div class="kpi-card-compact__icon" style="color: rgb(var(--v-theme-primary))">
+                    <v-icon size="28">mdi-file-document-multiple-outline</v-icon>
+                  </div>
+                  <div class="kpi-card-compact__content">
+                    <div class="kpi-card-compact__value">{{ detail.applicationCount }}</div>
+                    <div class="kpi-card-compact__label">Applications</div>
+                  </div>
+                </div>
+                <div class="kpi-card-compact__accent" style="background: rgb(var(--v-theme-primary))" />
               </div>
-              <div class="text-center">
-                <div class="text-h6 font-weight-bold">{{ activeSessions }}</div>
-                <div class="text-caption text-medium-emphasis">Active Sessions</div>
+              <div class="kpi-card-compact">
+                <div class="kpi-card-compact__body">
+                  <div class="kpi-card-compact__icon" style="color: rgb(var(--v-theme-info))">
+                    <v-icon size="28">mdi-monitor-cellphone</v-icon>
+                  </div>
+                  <div class="kpi-card-compact__content">
+                    <div class="kpi-card-compact__value">{{ activeSessions }}</div>
+                    <div class="kpi-card-compact__label">Active Sessions</div>
+                  </div>
+                </div>
+                <div class="kpi-card-compact__accent" style="background: rgb(var(--v-theme-info))" />
               </div>
             </v-col>
           </v-row>
@@ -66,10 +104,6 @@
             <v-col v-if="detail.profile.lastLogin" cols="12" sm="6" md="4">
               <div class="text-caption text-medium-emphasis">Last Login</div>
               <div class="text-body-2">{{ formatDate(detail.profile.lastLogin) }}</div>
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <div class="text-caption text-medium-emphasis">Email Verified</div>
-              <div class="text-body-2">{{ detail.profile.emailVerification ? 'Yes' : 'No' }}</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -152,7 +186,12 @@
           density="compact"
         >
           <template #item.status="{ item }">
-            <v-chip :color="item.status === 'ACTIVE' ? 'success' : 'default'" size="x-small" label>
+            <v-chip
+              :color="item.status === 'ACTIVE' ? 'success' : 'default'"
+              size="x-small"
+              label
+              :prepend-icon="sessionStatusIcon(item.status)"
+            >
               {{ item.status }}
             </v-chip>
           </template>
@@ -198,6 +237,7 @@ import { useToastStore } from '../../stores/toast'
 import AdminUserService from '../../services/admin/admin-user.service'
 import type { IAdminUserDetail } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import UserAvatar from '../../components/UserAvatar.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -214,13 +254,6 @@ const error = ref<string | null>(null)
 const fullName = computed(() => {
   const p = detail.value?.profile
   return [p?.forename, p?.surname].filter(Boolean).join(' ') || p?.email || '—'
-})
-
-const initials = computed(() => {
-  const p = detail.value?.profile
-  const f = p?.forename?.[0] ?? ''
-  const s = p?.surname?.[0] ?? ''
-  return (f + s).toUpperCase() || (p?.email?.[0] ?? '?').toUpperCase()
 })
 
 const activeSessions = computed(
@@ -246,6 +279,32 @@ function statusColor(status: string | null | undefined) {
       return 'warning'
     default:
       return 'default'
+  }
+}
+
+function statusIcon(status: string | null | undefined) {
+  switch (status) {
+    case 'ACTIVE':
+      return 'mdi-account-check-outline'
+    case 'SUSPENDED':
+      return 'mdi-account-cancel-outline'
+    case 'PENDING_VERIFICATION':
+      return 'mdi-account-clock-outline'
+    default:
+      return undefined
+  }
+}
+
+function sessionStatusIcon(status: string) {
+  switch (status) {
+    case 'ACTIVE':
+      return 'mdi-check-circle'
+    case 'EXPIRED':
+      return 'mdi-clock-alert-outline'
+    case 'REVOKED':
+      return 'mdi-close-circle'
+    default:
+      return undefined
   }
 }
 
@@ -349,3 +408,69 @@ async function executeAction() {
   }
 }
 </script>
+
+<style scoped>
+.kpi-card-compact {
+  position: relative;
+  overflow: hidden;
+  min-width: 160px;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 12px;
+  background: rgb(var(--v-theme-surface));
+}
+
+.kpi-card-compact__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 60px;
+}
+
+.kpi-card-compact__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.kpi-card-compact__icon .v-icon {
+  padding: 12px;
+  border-radius: 50%;
+  background: color-mix(in oklch, currentColor 12%, transparent);
+}
+
+.kpi-card-compact__content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kpi-card-compact__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.kpi-card-compact__label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+
+.kpi-card-compact__accent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  opacity: 0.7;
+  border-radius: 0 0 12px 12px;
+}
+</style>
