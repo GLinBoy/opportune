@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-4">
     <!-- Row 1: KPI Cards -->
-    <DashboardKpiCards :kpis="kpis" :loading="loading" class="mb-4" />
+    <DashboardKpiCards :cards="kpiCards" :loading="loading" class="mb-4" />
 
     <!-- Row 2: Applications Over Time — full width -->
     <v-row class="mb-4">
@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useDashboard } from '../composables/useDashboard'
 import DashboardKpiCards from '../components/dashboard/DashboardKpiCards.vue'
 import DashboardStatusDonut from '../components/dashboard/DashboardStatusDonut.vue'
@@ -44,4 +45,15 @@ import DashboardActivityHeatmap from '../components/dashboard/DashboardActivityH
 
 const { summary, kpis, statusCounts, trendData, trendStats, scores, loading, error, reload } =
   useDashboard()
+
+const kpiCards = computed(() => {
+  const k = kpis.value
+  return [
+    { label: 'Total Applications', value: k.totalApplications, icon: 'mdi-briefcase-outline', color: 'primary' },
+    { label: 'Active Pipeline', value: k.activePipeline, icon: 'mdi-progress-clock', color: 'info' },
+    { label: 'Response Rate', value: `${k.responseRate}%`, icon: 'mdi-reply-outline', color: 'success' },
+    { label: 'Offer Rate', value: `${k.offerRate}%`, icon: 'mdi-trophy-outline', color: 'warning' },
+    { label: 'Rejection Rate', value: `${k.rejectionRate}%`, icon: 'mdi-close-circle-outline', color: 'error' },
+  ]
+})
 </script>
