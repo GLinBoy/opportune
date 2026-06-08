@@ -14,6 +14,7 @@ import com.glinboy.opportune.repository.ProfileRepository
 import com.glinboy.opportune.repository.SessionRepository
 import com.glinboy.opportune.security.SecurityUtils
 import com.glinboy.opportune.service.AdminUserService
+import cz.jirutka.rsql.parser.RSQLParserException
 import io.github.perplexhub.rsql.RSQLJPASupport
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -41,7 +42,11 @@ class AdminUserServiceImpl(
 		val page: Page<Profile> = if (filter.isNullOrBlank()) {
 			profileRepository.findAll(pageable)
 		} else {
-			val spec: Specification<Profile> = RSQLJPASupport.toSpecification(filter)
+			val spec: Specification<Profile> = try {
+				RSQLJPASupport.toSpecification(filter)
+			} catch (e: RSQLParserException) {
+				throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid search filter syntax")
+			}
 			profileRepository.findAll(spec, pageable)
 		}
 		return page.map { profile ->
