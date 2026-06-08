@@ -40,14 +40,13 @@
         :page="page"
         item-value="id"
         @update:options="onTableOptions"
+        @click:row="navigateToDetail"
       >
         <!-- Name -->
         <template #item.name="{ item }">
           <div class="d-flex align-center gap-2 py-1">
-            <v-avatar size="32" color="primary" class="text-caption font-weight-bold">
-              {{ initials(item) }}
-            </v-avatar>
-            <div>
+            <UserAvatar :email="item.email" :avatar-url="item.avatar" :size="32" />
+            <div class="ml-3">
               <div class="text-body-2 font-weight-medium">{{ fullName(item) }}</div>
               <div class="text-caption text-medium-emphasis">{{ item.email }}</div>
             </div>
@@ -56,7 +55,12 @@
 
         <!-- Status -->
         <template #item.status="{ item }">
-          <v-chip :color="statusColor(item.status)" size="small" label>
+          <v-chip
+            :color="statusColor(item.status)"
+            :prepend-icon="statusIcon(item.status)"
+            size="small"
+            label
+          >
             {{ item.status ?? '—' }}
           </v-chip>
         </template>
@@ -68,6 +72,7 @@
             :key="role"
             size="x-small"
             :color="role === 'ROLE_ADMIN' ? 'warning' : 'default'"
+            :prepend-icon="role === 'ROLE_ADMIN' ? 'mdi-shield-crown-outline' : 'mdi-account-outline'"
             class="mr-1"
             label
           >
@@ -87,15 +92,9 @@
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <v-btn
-            size="small"
-            variant="text"
-            icon="mdi-eye-outline"
-            :to="{ name: 'admin-user-detail', params: { id: item.id } }"
-          />
           <v-menu>
             <template #activator="{ props }">
-              <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" />
+              <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" @click.stop />
             </template>
             <v-list density="compact" min-width="200">
               <v-list-item
@@ -165,12 +164,15 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { useToastStore } from '../../stores/toast'
 import AdminUserService from '../../services/admin/admin-user.service'
 import type { IAdminUserListItem } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import UserAvatar from '../../components/UserAvatar.vue'
 
 const toast = useToastStore()
+const router = useRouter()
 const service = new AdminUserService()
 
 // — Table state —
@@ -215,12 +217,6 @@ function fullName(item: IAdminUserListItem) {
   return [item.forename, item.surname].filter(Boolean).join(' ') || item.email || '—'
 }
 
-function initials(item: IAdminUserListItem) {
-  const f = item.forename?.[0] ?? ''
-  const s = item.surname?.[0] ?? ''
-  return (f + s).toUpperCase() || (item.email?.[0] ?? '?').toUpperCase()
-}
-
 function statusColor(status: string | null | undefined) {
   switch (status) {
     case 'ACTIVE':
@@ -240,6 +236,23 @@ function formatDate(iso: string) {
     month: 'short',
     day: 'numeric',
   })
+}
+
+function statusIcon(status: string | null | undefined) {
+  switch (status) {
+    case 'ACTIVE':
+      return 'mdi-check-circle-outline'
+    case 'SUSPENDED':
+      return 'mdi-cancel'
+    case 'PENDING_VERIFICATION':
+      return 'mdi-clock-outline'
+    default:
+      return 'mdi-help-circle-outline'
+  }
+}
+
+function navigateToDetail(_: any, row: { item: IAdminUserListItem }) {
+  router.push({ name: 'admin-user-detail', params: { id: row.item.id } })
 }
 
 // — RSQL builder —
@@ -380,3 +393,9 @@ async function executeAction() {
   }
 }
 </script>
+
+<style scoped>
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+</style>
