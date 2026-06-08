@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-4">
     <!-- Row 1: KPI cards -->
-    <AdminKpiCards :kpis="kpis" :loading="loading" class="mb-4" />
+    <DashboardKpiCards :cards="kpiCards" :loading="loading" class="mb-4" />
 
     <!-- Row 2: User trend (full width) -->
     <v-row class="mb-4">
@@ -26,8 +26,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useAdminDashboard } from '../../composables/useAdminDashboard'
-import AdminKpiCards from '../../components/admin/dashboard/AdminKpiCards.vue'
+import DashboardKpiCards from '../../components/dashboard/DashboardKpiCards.vue'
 import AdminUserTrend from '../../components/admin/dashboard/AdminUserTrend.vue'
 import AdminUserStatusDonut from '../../components/admin/dashboard/AdminUserStatusDonut.vue'
 import AdminAppStatusDonut from '../../components/admin/dashboard/AdminAppStatusDonut.vue'
@@ -42,4 +43,16 @@ const {
   aiQueueItems,
   loading,
 } = useAdminDashboard()
+
+const kpiCards = computed(() => [
+  { label: 'Total Users', value: kpis.value.totalUsers, icon: 'mdi-account-group-outline', color: 'primary' },
+  { label: 'Total Companies', value: kpis.value.totalCompanies, icon: 'mdi-domain', color: 'info' },
+  { label: 'Active Sessions', value: kpis.value.activeSessions, icon: 'mdi-shield-check-outline', color: 'success' },
+  {
+    label: 'AI Queue',
+    value: kpis.value.aiQueueCount,
+    icon: 'mdi-robot-outline',
+    color: kpis.value.aiQueueCount > 0 ? 'warning' : 'secondary',
+  },
+])
 </script>
