@@ -62,6 +62,7 @@ class AdminUserServiceImpl(
 				lastLogin = profile.lastLogin,
 				createdDate = profile.createdDate,
 				lastModifiedDate = profile.lastModifiedDate,
+				avatar = profile.avatar,
 			)
 		}
 	}

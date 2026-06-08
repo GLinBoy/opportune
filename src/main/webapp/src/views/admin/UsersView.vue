@@ -251,7 +251,7 @@ function buildFilter(): string | undefined {
       const q = encodeRsqlValue(term)
       return `(email=ilike="${q}",forename=ilike="${q}",surname=ilike="${q}")`
     })
-    parts.push(termFilters.length === 1 ? termFilters[0] : `(${termFilters.join(';')})`)
+    parts.push(termFilters.length === 1 ? termFilters[0]! : `(${termFilters.join(';')})`)
   }
   if (statusFilter.value) {
     parts.push(`status==${statusFilter.value}`)
