@@ -21,6 +21,7 @@
           :value="item.route"
           rounded="lg"
           active-class="text-primary"
+          :active="route.path.startsWith(item.route)"
         />
       </v-list>
     </v-navigation-drawer>
