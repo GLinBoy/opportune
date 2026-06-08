@@ -17,4 +17,5 @@ data class AdminUserListItemDTO(
 	val lastLogin: Instant? = null,
 	val createdDate: Instant? = null,
 	val lastModifiedDate: Instant? = null,
+	val avatar: String? = null,
 )

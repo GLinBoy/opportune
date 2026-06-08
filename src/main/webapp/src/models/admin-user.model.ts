@@ -12,6 +12,7 @@ export interface IAdminUserListItem {
     lastLogin?: string
     createdDate?: string
     lastModifiedDate?: string
+    avatar?: string
 }
 
 export interface IAdminUserDetail {
