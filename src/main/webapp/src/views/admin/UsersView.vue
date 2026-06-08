@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-4">
     <!-- Toolbar -->
-    <v-row align="center" class="mb-4" no-gutters>
+    <v-row align="center" class="mb-4" density="compact">
       <v-col cols="12" sm="5" md="4">
         <v-text-field
           v-model="searchText"
@@ -26,11 +26,6 @@
           hide-details
           @update:model-value="applyFilters"
         />
-      </v-col>
-      <v-col class="d-flex justify-end mt-3 mt-sm-0">
-        <v-btn variant="tonal" color="primary" prepend-icon="mdi-magnify" @click="applyFilters">
-          Search
-        </v-btn>
       </v-col>
     </v-row>
 
@@ -251,8 +246,12 @@ function formatDate(iso: string) {
 function buildFilter(): string | undefined {
   const parts: string[] = []
   if (searchText.value.trim()) {
-    const q = encodeRsqlValue(searchText.value.trim())
-    parts.push(`(email=ilike=*${q}*,forename=ilike=*${q}*,surname=ilike=*${q}*)`)
+    const terms = searchText.value.trim().split(/\s+/)
+    const termFilters = terms.map(term => {
+      const q = encodeRsqlValue(term)
+      return `(email=ilike="${q}",forename=ilike="${q}",surname=ilike="${q}")`
+    })
+    parts.push(termFilters.length === 1 ? termFilters[0] : `(${termFilters.join(';')})`)
   }
   if (statusFilter.value) {
     parts.push(`status==${statusFilter.value}`)
