@@ -29,46 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { DashboardKpis } from '../../models'
+export interface KpiCardDef {
+  label: string
+  value: string | number
+  icon: string
+  color: string
+}
 
-const props = defineProps<{
-  kpis: DashboardKpis
+defineProps<{
+  cards: KpiCardDef[]
   loading: boolean
 }>()
-
-const cards = computed(() => [
-  {
-    label: 'Total Applications',
-    value: props.kpis.totalApplications,
-    icon: 'mdi-briefcase-outline',
-    color: 'primary',
-  },
-  {
-    label: 'Active Pipeline',
-    value: props.kpis.activePipeline,
-    icon: 'mdi-progress-clock',
-    color: 'info',
-  },
-  {
-    label: 'Response Rate',
-    value: `${props.kpis.responseRate}%`,
-    icon: 'mdi-reply-outline',
-    color: 'success',
-  },
-  {
-    label: 'Offer Rate',
-    value: `${props.kpis.offerRate}%`,
-    icon: 'mdi-trophy-outline',
-    color: 'warning',
-  },
-  {
-    label: 'Rejection Rate',
-    value: `${props.kpis.rejectionRate}%`,
-    icon: 'mdi-close-circle-outline',
-    color: 'error',
-  },
-])
 </script>
 
 <style scoped>
