@@ -17,15 +17,42 @@
         <v-card-text class="pa-6">
           <v-row align="center">
             <v-col cols="auto">
-              <UserAvatar :email="detail.profile.email" :avatar-url="detail.profile.avatar" :size="72" />
+              <UserAvatar
+                :email="detail.profile.email"
+                :avatar-url="detail.profile.avatar"
+                :size="72"
+              />
             </v-col>
             <v-col>
               <div class="text-h6 font-weight-medium">{{ fullName }}</div>
-              <div class="text-body-2 text-medium-emphasis">{{ detail.profile.email }}</div>
-              <div class="d-flex flex-wrap gap-2 mt-2">
+              <div class="text-body-2 text-medium-emphasis d-flex align-center">
+                {{ detail.profile.email }}
+                <span class="px-1" />
+                <v-tooltip
+                  v-if="detail.profile.emailVerification !== undefined"
+                  :text="detail.profile.emailVerification ? 'Email verified' : 'Email not verified'"
+                  location="bottom"
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      :icon="
+                        detail.profile.emailVerification
+                          ? 'mdi-email-check-outline'
+                          : 'mdi-email-alert-outline'
+                      "
+                      :color="detail.profile.emailVerification ? 'success' : 'warning'"
+                      size="small"
+                      class="mr-1"
+                    />
+                  </template>
+                </v-tooltip>
+              </div>
+              <div class="d-flex flex-wrap gap-3 mt-2">
                 <v-chip
                   :color="statusColor(detail.profile.status)"
                   size="small"
+                  class="mx-1"
                   label
                   :prepend-icon="statusIcon(detail.profile.status)"
                 >
@@ -35,35 +62,20 @@
                   v-for="role in detail.profile.roles"
                   :key="role"
                   size="small"
+                  class="mx-1"
                   :color="role === 'ROLE_ADMIN' ? 'warning' : 'default'"
-                  :prepend-icon="role === 'ROLE_ADMIN' ? 'mdi-shield-account' : 'mdi-account-circle-outline'"
+                  :prepend-icon="
+                    role === 'ROLE_ADMIN' ? 'mdi-shield-account' : 'mdi-account-circle-outline'
+                  "
                   label
                 >
                   {{ role === 'ROLE_ADMIN' ? 'Admin' : 'User' }}
                 </v-chip>
-                <v-chip
-                  v-if="detail.profile.emailVerification"
-                  prepend-icon="mdi-email-check-outline"
-                  size="small"
-                  color="success"
-                  variant="tonal"
-                >
-                  Verified
-                </v-chip>
-                <v-chip
-                  v-else
-                  prepend-icon="mdi-email-alert-outline"
-                  size="small"
-                  color="warning"
-                  variant="tonal"
-                >
-                  Unverified
-                </v-chip>
               </div>
             </v-col>
             <!-- Compact KPI cards -->
-            <v-col cols="12" sm="auto" class="d-flex flex-wrap gap-3">
-              <div class="kpi-card-compact">
+            <v-col cols="12" sm="auto" class="d-flex flex-wrap">
+              <div class="kpi-card-compact mx-1">
                 <div class="kpi-card-compact__body">
                   <div class="kpi-card-compact__icon" style="color: rgb(var(--v-theme-primary))">
                     <v-icon size="28">mdi-file-document-multiple-outline</v-icon>
@@ -73,9 +85,12 @@
                     <div class="kpi-card-compact__label">Applications</div>
                   </div>
                 </div>
-                <div class="kpi-card-compact__accent" style="background: rgb(var(--v-theme-primary))" />
+                <div
+                  class="kpi-card-compact__accent"
+                  style="background: rgb(var(--v-theme-primary))"
+                />
               </div>
-              <div class="kpi-card-compact">
+              <div class="kpi-card-compact mx-1">
                 <div class="kpi-card-compact__body">
                   <div class="kpi-card-compact__icon" style="color: rgb(var(--v-theme-info))">
                     <v-icon size="28">mdi-monitor-cellphone</v-icon>
@@ -85,7 +100,10 @@
                     <div class="kpi-card-compact__label">Active Sessions</div>
                   </div>
                 </div>
-                <div class="kpi-card-compact__accent" style="background: rgb(var(--v-theme-info))" />
+                <div
+                  class="kpi-card-compact__accent"
+                  style="background: rgb(var(--v-theme-info))"
+                />
               </div>
             </v-col>
           </v-row>
@@ -295,7 +313,7 @@ function statusIcon(status: string | null | undefined) {
   }
 }
 
-function sessionStatusIcon(status: string) {
+function sessionStatusIcon(status: string | null | undefined) {
   switch (status) {
     case 'ACTIVE':
       return 'mdi-check-circle'
