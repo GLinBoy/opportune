@@ -3,13 +3,13 @@
     <v-menu min-width="200px" rounded transition="scale-y-transition" location="bottom right">
       <template v-slot:activator="{ props }">
         <v-btn icon v-bind="props">
-          <v-avatar :image="gravatarImage" size="32"> </v-avatar>
+          <UserAvatar :email="userEmail" :size="32" />
         </v-btn>
       </template>
       <v-card class="px-5">
         <v-card-text>
           <div class="mx-auto text-center">
-            <v-avatar class="my-2" :image="gravatarImage" size="48"> </v-avatar>
+            <UserAvatar :email="userEmail" :size="48" class="my-2" />
             <h3>{{ fullname }}</h3>
             <p class="text-caption mt-1">{{ userEmail }}</p>
             <v-divider class="my-3"></v-divider>
@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth.store'
 import ProfileService from '../../services/profile.service'
 import type { IProfile } from '../../models'
-import CryptoJS from 'crypto-js'
+import UserAvatar from '@/components/UserAvatar.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -66,13 +66,6 @@ const fullname = computed(() => {
   const forename = profile.value.forename || ''
   const surname = profile.value.surname || ''
   return `${forename} ${surname}`.trim() || 'User'
-})
-
-const gravatarImage = computed(() => {
-  if (!userEmail.value) return 'https://www.gravatar.com/avatar/?s=48&d=mp&r=g'
-  const trimmedEmail = userEmail.value.trim().toLowerCase()
-  const hash = CryptoJS.MD5(trimmedEmail).toString()
-  return `https://www.gravatar.com/avatar/${hash}?s=48&d=mp&r=g`
 })
 
 const loadProfile = async () => {
