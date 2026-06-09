@@ -3,7 +3,7 @@
     <!-- ─── Feature Flags ─── -->
     <v-card flat border rounded="lg" class="mb-6">
       <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-toggle-switch-outline" color="primary" />
+        <v-icon icon="mdi-toggle-switch-outline" color="primary" class="mx-2" />
         <span>Feature Flags</span>
       </v-card-title>
       <v-divider />
@@ -16,7 +16,7 @@
       <v-list v-else lines="two">
         <v-list-item>
           <template #prepend>
-            <v-icon icon="mdi-account-plus-outline" class="mr-3" />
+            <v-icon icon="mdi-account-plus-outline" />
           </template>
           <v-list-item-title>User Registration</v-list-item-title>
           <v-list-item-subtitle>Allow new users to create accounts</v-list-item-subtitle>
@@ -35,7 +35,7 @@
 
         <v-list-item>
           <template #prepend>
-            <v-icon icon="mdi-robot-outline" class="mr-3" />
+            <v-icon icon="mdi-robot-outline" />
           </template>
           <v-list-item-title>AI Scoring</v-list-item-title>
           <v-list-item-subtitle
@@ -56,7 +56,7 @@
 
         <v-list-item>
           <template #prepend>
-            <v-icon icon="mdi-email-outline" class="mr-3" />
+            <v-icon icon="mdi-email-outline" />
           </template>
           <v-list-item-title>Email Notifications</v-list-item-title>
           <v-list-item-subtitle
@@ -78,7 +78,7 @@
     <!-- ─── Maintenance Mode ─── -->
     <v-card flat border rounded="lg" class="mb-6">
       <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-wrench-outline" color="warning" />
+        <v-icon icon="mdi-wrench-outline" color="warning" class="mx-2" />
         <span>Maintenance Mode</span>
       </v-card-title>
       <v-divider />
@@ -90,7 +90,7 @@
           <template #prepend>
             <v-icon
               icon="mdi-alert-circle-outline"
-              class="mr-3"
+              class="mr-1"
               :color="form.maintenanceMode ? 'warning' : undefined"
             />
           </template>
@@ -128,7 +128,7 @@
     <!-- ─── Rate Limits ─── -->
     <v-card flat border rounded="lg" class="mb-6">
       <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-speedometer" color="secondary" />
+        <v-icon icon="mdi-speedometer" color="secondary" class="mx-2" />
         <span>Rate Limits</span>
       </v-card-title>
       <v-divider />
