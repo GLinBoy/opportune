@@ -1,12 +1,11 @@
 <template>
-  <v-container fluid class="pa-4">
+  <div>
     <!-- ─── Feature Flags ─── -->
-    <v-card flat border rounded="lg" class="mb-6">
-      <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-toggle-switch-outline" color="primary" class="mx-2" />
-        <span>Feature Flags</span>
-      </v-card-title>
-      <v-divider />
+    <FormCard class="mb-6" :collapsible="false">
+      <template #title>
+        <v-icon icon="mdi-toggle-switch-outline" color="primary" class="mr-2" />
+        Feature Flags
+      </template>
 
       <v-skeleton-loader
         v-if="loading"
@@ -73,15 +72,14 @@
           </template>
         </v-list-item>
       </v-list>
-    </v-card>
+    </FormCard>
 
     <!-- ─── Maintenance Mode ─── -->
-    <v-card flat border rounded="lg" class="mb-6">
-      <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-wrench-outline" color="warning" class="mx-2" />
-        <span>Maintenance Mode</span>
-      </v-card-title>
-      <v-divider />
+    <FormCard class="mb-6" :collapsible="false">
+      <template #title>
+        <v-icon icon="mdi-wrench-outline" color="warning" class="mr-2" />
+        Maintenance Mode
+      </template>
 
       <v-skeleton-loader v-if="loading" type="list-item-two-line" />
 
@@ -123,53 +121,50 @@
           Remember to save to apply the change.
         </v-alert>
       </v-expand-transition>
-    </v-card>
+    </FormCard>
 
     <!-- ─── Rate Limits ─── -->
-    <v-card flat border rounded="lg" class="mb-6">
-      <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-speedometer" color="secondary" class="mx-2" />
-        <span>Rate Limits</span>
-      </v-card-title>
-      <v-divider />
+    <FormCard class="mb-6" :collapsible="false">
+      <template #title>
+        <v-icon icon="mdi-speedometer" color="secondary" class="mr-2" />
+        Rate Limits
+      </template>
 
       <v-skeleton-loader v-if="loading" type="list-item-two-line,list-item-two-line" />
 
-      <v-card-text v-else>
-        <v-row>
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model.number="form.maxApplicationsPerUser"
-              label="Max Applications per User"
-              type="number"
-              min="1"
-              max="100000"
-              :rules="[(v) => v >= 1 || 'Must be at least 1']"
-              variant="outlined"
-              density="comfortable"
-              hint="Maximum number of job applications a single user can create"
-              persistent-hint
-              prepend-inner-icon="mdi-briefcase-outline"
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model.number="form.maxAiRequestsPerDay"
-              label="Max AI Requests per Day"
-              type="number"
-              min="1"
-              max="1000000"
-              :rules="[(v) => v >= 1 || 'Must be at least 1']"
-              variant="outlined"
-              density="comfortable"
-              hint="Maximum number of AI scoring requests across all users per calendar day"
-              persistent-hint
-              prepend-inner-icon="mdi-robot-outline"
-            />
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+      <v-row v-else>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model.number="form.maxApplicationsPerUser"
+            label="Max Applications per User"
+            type="number"
+            min="1"
+            max="100000"
+            :rules="[(v) => v >= 1 || 'Must be at least 1']"
+            variant="outlined"
+            density="comfortable"
+            hint="Maximum number of job applications a single user can create"
+            persistent-hint
+            prepend-inner-icon="mdi-briefcase-outline"
+          />
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model.number="form.maxAiRequestsPerDay"
+            label="Max AI Requests per Day"
+            type="number"
+            min="1"
+            max="1000000"
+            :rules="[(v) => v >= 1 || 'Must be at least 1']"
+            variant="outlined"
+            density="comfortable"
+            hint="Maximum number of AI scoring requests across all users per calendar day"
+            persistent-hint
+            prepend-inner-icon="mdi-robot-outline"
+          />
+        </v-col>
+      </v-row>
+    </FormCard>
 
     <!-- ─── Save Button ─── -->
     <div class="d-flex justify-end">
@@ -185,7 +180,7 @@
         Save Settings
       </v-btn>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -193,6 +188,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useToastStore } from '../../stores/toast'
 import AdminSettingsService from '../../services/admin/admin-settings.service'
 import type { AdminSettings } from '../../models'
+import FormCard from '../../components/forms/FormCard.vue'
 
 const toast = useToastStore()
 const service = new AdminSettingsService()
