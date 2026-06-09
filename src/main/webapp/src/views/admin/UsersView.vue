@@ -1,5 +1,10 @@
 <template>
-  <v-container fluid class="pa-4">
+  <FormCard :collapsible="false">
+    <template #title>
+      <v-icon icon="mdi-account-group" class="mr-2" />
+      Users
+    </template>
+
     <!-- Toolbar -->
     <v-row align="center" class="mb-4" density="compact">
       <v-col cols="12" sm="5" md="4">
@@ -29,9 +34,7 @@
       </v-col>
     </v-row>
 
-    <!-- Data table -->
-    <v-card flat border rounded="lg">
-      <v-data-table-server
+    <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
         :items="users"
@@ -55,29 +58,35 @@
 
         <!-- Status -->
         <template #item.status="{ item }">
-          <v-chip
-            :color="statusColor(item.status)"
-            :prepend-icon="statusIcon(item.status)"
-            size="small"
-            label
-          >
-            {{ item.status ?? '—' }}
-          </v-chip>
+          <v-tooltip :text="item.status ?? '—'" location="bottom">
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                :icon="statusIcon(item.status)"
+                :color="statusColor(item.status)"
+              />
+            </template>
+          </v-tooltip>
         </template>
 
         <!-- Roles -->
         <template #item.roles="{ item }">
-          <v-chip
+          <v-tooltip
             v-for="role in item.roles"
             :key="role"
-            size="x-small"
-            :color="role === 'ROLE_ADMIN' ? 'warning' : 'default'"
-            :prepend-icon="role === 'ROLE_ADMIN' ? 'mdi-shield-crown-outline' : 'mdi-account-outline'"
-            class="mr-1"
-            label
+            :text="role === 'ROLE_ADMIN' ? 'Admin' : 'User'"
+            location="bottom"
           >
-            {{ role === 'ROLE_ADMIN' ? 'Admin' : 'User' }}
-          </v-chip>
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                :icon="role === 'ROLE_ADMIN' ? 'mdi-shield-crown-outline' : 'mdi-account-outline'"
+                :color="role === 'ROLE_ADMIN' ? 'warning' : 'default'"
+                size="small"
+                class="mr-1"
+              />
+            </template>
+          </v-tooltip>
         </template>
 
         <!-- Last Login -->
@@ -146,7 +155,7 @@
           </div>
         </template>
       </v-data-table-server>
-    </v-card>
+    </FormCard>
 
     <!-- Confirmation Dialog -->
     <ConfirmDialog
@@ -159,7 +168,6 @@
     >
       {{ dialog.message }}
     </ConfirmDialog>
-  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -170,6 +178,7 @@ import AdminUserService from '../../services/admin/admin-user.service'
 import type { IAdminUserListItem } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import UserAvatar from '../../components/UserAvatar.vue'
+import FormCard from '../../components/forms/FormCard.vue'
 
 const toast = useToastStore()
 const router = useRouter()
@@ -273,7 +282,6 @@ function buildFilter(): string | undefined {
 }
 
 function encodeRsqlValue(v: string) {
-  // escape RSQL special chars inside values
   return v.replace(/['"();,=<>!~]/g, '\\$&')
 }
 
