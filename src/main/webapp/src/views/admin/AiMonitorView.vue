@@ -2,11 +2,16 @@
   <v-container fluid class="pa-4">
     <!-- ─── Processing Queue ─── -->
     <v-card flat border rounded="lg" class="mb-6">
-      <v-card-title class="d-flex align-center justify-space-between pa-4">
-        <div class="d-flex align-center gap-2">
-          <v-icon icon="mdi-robot-outline" color="warning" />
+      <v-card-title class="d-flex align-center justify-space-between pa-3">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-robot-outline" color="warning" class="mx-2" />
           <span>AI Processing Queue</span>
-          <v-chip v-if="!loadingQueue && totalQueue > 0" color="warning" size="x-small">
+          <v-chip
+            v-if="!loadingQueue && totalQueue > 0"
+            color="warning"
+            size="x-small"
+            class="ms-2"
+          >
             {{ totalQueue }}
           </v-chip>
         </div>
@@ -87,13 +92,15 @@
     </v-card>
 
     <!-- ─── Score Distribution Chart ─── -->
-    <v-card flat border rounded="lg">
-      <v-card-title class="d-flex align-center gap-2 pa-4">
-        <v-icon icon="mdi-chart-bar" color="primary" />
-        <span>Resume Score Distribution</span>
-        <span class="text-caption font-weight-regular text-medium-emphasis ms-1">
-          · resumeOverallScore across all scored applications
-        </span>
+    <v-card flat border rounded="lg" class="mb-6">
+      <v-card-title class="d-flex align-center justify-space-between pa-3">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-chart-bar" color="primary" class="mx-2" />
+          <span>Resume Score Distribution</span>
+          <span class="text-caption font-weight-regular text-medium-emphasis ms-1">
+            · resumeOverallScore across all scored applications
+          </span>
+        </div>
       </v-card-title>
 
       <v-card-text>
