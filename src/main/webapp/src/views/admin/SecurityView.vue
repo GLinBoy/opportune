@@ -22,14 +22,14 @@
             density="compact"
             variant="outlined"
             prepend-inner-icon="mdi-account-search-outline"
-            placeholder="User email…"
+            placeholder="Search by name or email…"
             clearable
             hide-details
             @keyup.enter="loadSessions"
             @click:clear="onClearFilters"
           />
         </v-col>
-        <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
+        <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
           <v-text-field
             v-model="filterIp"
             density="compact"
@@ -66,11 +66,6 @@
             hide-details
             @update:model-value="() => loadSessions()"
           />
-        </v-col>
-        <v-col class="d-flex justify-end mt-2 mt-sm-0 pl-sm-2">
-          <v-btn variant="tonal" color="primary" prepend-icon="mdi-magnify" @click="loadSessions">
-            Search
-          </v-btn>
         </v-col>
       </v-row>
 
@@ -181,14 +176,14 @@
             density="compact"
             variant="outlined"
             prepend-inner-icon="mdi-account-search-outline"
-            placeholder="User email…"
+            placeholder="Search by name or email…"
             clearable
             hide-details
             @keyup.enter="loadAudit"
             @click:clear="onClearAudit"
           />
         </v-col>
-        <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
+        <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
           <v-text-field
             v-model="auditFilterIp"
             density="compact"
@@ -212,11 +207,6 @@
             hide-details
             @update:model-value="() => loadAudit()"
           />
-        </v-col>
-        <v-col class="d-flex justify-end mt-2 mt-sm-0 pl-sm-2">
-          <v-btn variant="tonal" color="primary" prepend-icon="mdi-magnify" @click="loadAudit">
-            Search
-          </v-btn>
         </v-col>
       </v-row>
 
@@ -461,8 +451,12 @@ function encodeRsql(v: string) {
 function buildActiveFilter(): string | undefined {
   const parts: string[] = ['status==ACTIVE']
   if (filterUser.value.trim()) {
-    const q = encodeRsql(filterUser.value.trim())
-    parts.push(`profile.email=ilike=*${q}*`)
+    const terms = filterUser.value.trim().split(/\s+/)
+    const termFilters = terms.map(term => {
+      const q = encodeRsql(term)
+      return `(profile.email=ilike="${q}",profile.forename=ilike="${q}",profile.surname=ilike="${q}")`
+    })
+    parts.push(termFilters.length === 1 ? termFilters[0]! : `(${termFilters.join(';')})`)
   }
   if (filterIp.value.trim()) {
     parts.push(`clientIp==${encodeRsql(filterIp.value.trim())}`)
@@ -482,8 +476,12 @@ function buildActiveFilter(): string | undefined {
 function buildAuditFilter(): string | undefined {
   const parts: string[] = ['status==REVOKED']
   if (auditFilterUser.value.trim()) {
-    const q = encodeRsql(auditFilterUser.value.trim())
-    parts.push(`profile.email=ilike=*${q}*`)
+    const terms = auditFilterUser.value.trim().split(/\s+/)
+    const termFilters = terms.map(term => {
+      const q = encodeRsql(term)
+      return `(profile.email=ilike="${q}",profile.forename=ilike="${q}",profile.surname=ilike="${q}")`
+    })
+    parts.push(termFilters.length === 1 ? termFilters[0]! : `(${termFilters.join(';')})`)
   }
   if (auditFilterIp.value.trim()) {
     parts.push(`clientIp==${encodeRsql(auditFilterIp.value.trim())}`)
