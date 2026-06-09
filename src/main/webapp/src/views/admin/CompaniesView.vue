@@ -1,7 +1,12 @@
 <template>
-  <v-container fluid class="pa-4">
+  <FormCard :collapsible="false">
+    <template #title>
+      <v-icon icon="mdi-office-building" class="mr-2" />
+      Companies
+    </template>
+
     <!-- Toolbar -->
-    <v-row align="center" class="mb-4" no-gutters>
+    <v-row align="center" class="mb-4" density="compact">
       <v-col cols="12" sm="5" md="4">
         <v-text-field
           v-model="searchText"
@@ -15,12 +20,9 @@
           @click:clear="onClearSearch"
         />
       </v-col>
-
     </v-row>
 
-    <!-- Data table -->
-    <v-card flat border rounded="lg">
-      <v-data-table-server
+    <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
         :items="companies"
@@ -77,7 +79,7 @@
           </div>
         </template>
       </v-data-table-server>
-    </v-card>
+    </FormCard>
 
     <!-- Company Detail Dialog -->
     <v-dialog v-model="detailDialog" max-width="600">
@@ -158,7 +160,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -168,6 +169,7 @@ import AdminCompanyService from '../../services/admin/admin-company.service'
 import type { IAdminCompanyListItem } from '../../models'
 import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import MdViewer from '../../components/markdown/MdViewer.vue'
+import FormCard from '../../components/forms/FormCard.vue'
 import {
   getCompanyStatusColor,
   getCompanyStatusIcon,
@@ -269,7 +271,7 @@ async function loadCompanies(opts: {
 function onTableOptions(opts: {
   page: number
   itemsPerPage: number
-  sortBy: { key: string; order: string }[]
+  sortBy?: { key: string; order: string }[]
 }) {
   page.value = opts.page
   itemsPerPage.value = opts.itemsPerPage
