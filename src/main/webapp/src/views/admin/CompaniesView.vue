@@ -33,11 +33,8 @@
         <!-- Name + logo -->
         <template #item.name="{ item }">
           <div class="d-flex align-center gap-2 py-1">
-            <v-avatar size="32" color="primary" class="text-caption font-weight-bold">
-              <v-img v-if="item.logo" :src="item.logo" :alt="item.name ?? ''" />
-              <span v-else>{{ (item.name?.[0] ?? '?').toUpperCase() }}</span>
-            </v-avatar>
-            <div>
+            <CompanyLogo :alt="item.name" :logo="item.logo" :website="item.website" size="32" />
+            <div class="ml-3">
               <div class="text-body-2 font-weight-medium">{{ item.name ?? '—' }}</div>
               <div v-if="item.website" class="text-caption text-medium-emphasis">
                 <a :href="item.website" target="_blank" rel="noopener noreferrer">{{
@@ -237,6 +234,7 @@ import { useToastStore } from '../../stores/toast'
 import AdminCompanyService from '../../services/admin/admin-company.service'
 import type { IAdminCompanyListItem, IAdminCompanyUpdate } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import CompanyLogo from '../../components/company/CompanyLogo.vue'
 import {
   getCompanyStatusColor,
   getCompanyStatusIcon,
