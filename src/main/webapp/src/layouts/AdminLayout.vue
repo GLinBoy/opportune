@@ -1,42 +1,46 @@
 <template>
   <v-app :theme="currentTheme">
-    <!-- Top App Bar -->
     <AppBar />
 
-    <!-- Left Sidebar / Nav Drawer -->
-    <v-navigation-drawer
-      width="240"
-      permanent
-      border="e"
-      app
-    >
-      <!-- Nav items -->
-      <v-list nav density="compact">
-        <v-list-item
-          v-for="item in navItems"
-          :key="item.route"
-          :prepend-icon="item.icon"
-          :title="item.label"
-          :to="item.route"
-          :value="item.route"
-          rounded="lg"
-          active-class="text-primary"
-          :active="route.path.startsWith(item.route)"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
-    <!-- Main Content -->
     <v-main>
-      <!-- Page title bar -->
-      <v-toolbar flat color="surface" border="b" height="48" class="px-4">
-        <v-toolbar-title class="text-subtitle-1 font-weight-medium">
-          {{ pageTitle }}
-        </v-toolbar-title>
-      </v-toolbar>
+      <v-container fluid class="pa-4 pb-0">
+        <!-- Page Header -->
+        <div class="d-flex align-center mb-4 mb-md-6 ga-3">
+          <v-icon icon="mdi-shield-crown" size="48" />
+          <div class="d-flex flex-column">
+            <span class="text-headline-small font-weight-bold">Admin Panel</span>
+            <span class="text-label-medium text-medium-emphasis">Manage system settings, users, and monitor activity</span>
+          </div>
+        </div>
+      </v-container>
 
-      <v-container fluid class="pa-4">
-        <router-view />
+      <v-container fluid class="pa-4 pt-0">
+        <v-row>
+          <!-- Left Sidebar with Nav Items -->
+          <v-col cols="12" md="3">
+            <v-card class="mb-4">
+              <v-list density="compact" nav>
+                <v-list-item
+                  v-for="item in navItems"
+                  :key="item.route"
+                  :prepend-icon="item.icon"
+                  :title="item.label"
+                  :to="item.route"
+                  :value="item.route"
+                  :active="isActive(item.route)"
+                  :ripple="true"
+                  rounded="lg"
+                  active-class="text-primary"
+                />
+              </v-list>
+            </v-card>
+          </v-col>
+
+          <!-- Main Content Area -->
+          <v-col cols="12" md="9">
+            <router-view />
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
@@ -49,8 +53,6 @@ import { useTheme } from 'vuetify'
 import AppBar from '@/components/app-bar/AppBar.vue'
 
 const route = useRoute()
-
-// ── Theme ─────────────────────────────────────────────────────────────────
 const vuetifyTheme = useTheme()
 const currentTheme = computed(() => vuetifyTheme.global.name.value)
 
@@ -63,6 +65,18 @@ const navItems = [
   { label: 'Settings', icon: 'mdi-cog-outline', route: '/admin/settings' },
 ]
 
-// ── Page title (driven by route meta) ─────────────────────────────────────
-const pageTitle = computed<string>(() => (route.meta?.pageTitle as string) ?? 'Admin Panel')
+function isActive(path: string): boolean {
+  return route.path.startsWith(path)
+}
 </script>
+
+<style scoped>
+.v-list-item--active {
+  background-color: rgba(var(--v-theme-primary), 0.08) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+.v-list-item--active .v-icon {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+</style>
