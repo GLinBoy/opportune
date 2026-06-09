@@ -15,23 +15,7 @@
           @click:clear="onClearSearch"
         />
       </v-col>
-      <v-col cols="12" sm="4" md="3" class="pl-sm-3 mt-3 mt-sm-0">
-        <v-select
-          v-model="statusFilter"
-          :items="statusOptions"
-          density="compact"
-          variant="outlined"
-          placeholder="All statuses"
-          clearable
-          hide-details
-          @update:model-value="applyFilters"
-        />
-      </v-col>
-      <v-col class="d-flex justify-end mt-3 mt-sm-0">
-        <v-btn variant="tonal" color="primary" prepend-icon="mdi-magnify" @click="applyFilters">
-          Search
-        </v-btn>
-      </v-col>
+
     </v-row>
 
     <!-- Data table -->
@@ -204,7 +188,7 @@
             <v-col cols="12">
               <v-select
                 v-model="editForm.status"
-                :items="statusOptions"
+                :items="['INTERESTED', 'NOT_INTERESTED', 'BLOCKED']"
                 label="Status"
                 density="compact"
                 variant="outlined"
@@ -272,13 +256,6 @@ const itemsPerPage = ref(15)
 
 // — Filter state —
 const searchText = ref('')
-const statusFilter = ref<string | null>(null)
-
-const statusOptions = [
-  { title: 'Interested', value: 'INTERESTED' },
-  { title: 'Not Interested', value: 'NOT_INTERESTED' },
-  { title: 'Blacklisted', value: 'BLOCKED' },
-]
 
 const headers = [
   { title: 'Company', key: 'name', sortable: false },
@@ -346,10 +323,7 @@ function buildFilter(): string | undefined {
   const parts: string[] = []
   if (searchText.value.trim()) {
     const q = encodeRsqlValue(searchText.value.trim())
-    parts.push(`name=ilike=*${q}*`)
-  }
-  if (statusFilter.value) {
-    parts.push(`status==${statusFilter.value}`)
+    parts.push(`(name=ilike="${q}",industry=ilike="${q}")`)
   }
   return parts.length ? parts.join(';') : undefined
 }
