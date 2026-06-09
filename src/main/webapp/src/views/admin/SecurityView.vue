@@ -1,305 +1,322 @@
 <template>
-  <v-container fluid class="pa-4">
-    <!-- Tab switcher -->
-    <v-tabs v-model="activeTab" class="mb-4" color="primary">
-      <v-tab value="active">
-        <v-icon start icon="mdi-account-multiple-outline" />
-        Live Sessions
-      </v-tab>
-      <v-tab value="audit">
-        <v-icon start icon="mdi-history" />
-        Revocation Audit Log
-      </v-tab>
-    </v-tabs>
+  <div>
+    <FormCard :collapsible="false">
+      <template #title>
+        <v-icon icon="mdi-shield-lock-outline" class="mr-2" />
+        Security
+      </template>
 
-    <!-- ─── LIVE SESSIONS ─── -->
-    <div v-if="activeTab === 'active'">
-      <!-- Filter toolbar -->
-      <v-row align="center" class="mb-4" no-gutters>
-        <v-col cols="12" sm="4" md="3">
-          <v-text-field
-            v-model="filterUser"
-            density="compact"
-            variant="outlined"
-            prepend-inner-icon="mdi-account-search-outline"
-            placeholder="Search by name or email…"
-            clearable
-            hide-details
-            @keyup.enter="loadSessions"
-            @click:clear="onClearFilters"
-          />
-        </v-col>
-        <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
-          <v-text-field
-            v-model="filterIp"
-            density="compact"
-            variant="outlined"
-            prepend-inner-icon="mdi-ip-network-outline"
-            placeholder="IP address…"
-            clearable
-            hide-details
-            @keyup.enter="loadSessions"
-            @click:clear="onClearFilters"
-          />
-        </v-col>
-        <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
-          <v-text-field
-            v-model="filterGeo"
-            density="compact"
-            variant="outlined"
-            prepend-inner-icon="mdi-map-marker-outline"
-            placeholder="Geo / country…"
-            clearable
-            hide-details
-            @keyup.enter="loadSessions"
-            @click:clear="onClearFilters"
-          />
-        </v-col>
-        <v-col cols="12" sm="2" md="2" class="pl-sm-2 mt-2 mt-sm-0">
-          <v-select
-            v-model="filterDevice"
-            :items="deviceOptions"
-            density="compact"
-            variant="outlined"
-            placeholder="Device"
-            clearable
-            hide-details
-            @update:model-value="() => loadSessions()"
-          />
-        </v-col>
-      </v-row>
+      <!-- Tab switcher -->
+      <v-tabs v-model="activeTab" color="primary" grow>
+        <v-tab value="active">
+          <v-icon start icon="mdi-account-multiple-outline" />
+          Live Sessions
+        </v-tab>
+        <v-tab value="audit">
+          <v-icon start icon="mdi-history" />
+          Revocation Audit Log
+        </v-tab>
+      </v-tabs>
 
-      <!-- Active sessions table -->
-      <v-card flat border rounded="lg">
-        <v-data-table-server
-          v-model:items-per-page="itemsPerPage"
-          :headers="activeHeaders"
-          :items="activeSessions"
-          :items-length="totalActive"
-          :loading="loadingActive"
-          :page="page"
-          item-value="refreshTokenId"
-          @update:options="onActiveTableOptions"
-        >
-          <!-- User column -->
-          <template #item.user="{ item }">
-            <div class="d-flex align-center py-1">
-              <UserAvatar :email="item.userEmail" :size="28" />
-              <div class="ml-3">
-                <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
-                <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
-              </div>
-            </div>
+      <v-divider class="mt-2 mb-4" />
+
+      <!-- ─── LIVE SESSIONS ─── -->
+      <div v-if="activeTab === 'active'">
+        <FormCard :collapsible="false">
+          <template #title>
+            <v-icon icon="mdi-account-multiple" class="mr-2" />
+            Active Sessions
           </template>
 
-          <!-- IP + Geo -->
-          <template #item.clientIp="{ item }">
-            <div>
-              <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
-              <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
-                <template #activator="{ props }">
-                  <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
-                    {{ item.clientGeo ?? '' }}
-                  </div>
-                </template>
-              </v-tooltip>
-            </div>
-          </template>
-
-          <!-- Device -->
-          <template #item.device="{ item }">
-            <div class="d-flex align-center gap-1">
-              <v-icon
-                :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
-                size="16"
-                color="medium-emphasis"
-                class="mx-1"
+          <!-- Filter toolbar -->
+          <v-row align="center" class="mb-4" density="compact">
+            <v-col cols="12" sm="4" md="3">
+              <v-text-field
+                v-model="filterUser"
+                density="compact"
+                variant="outlined"
+                prepend-inner-icon="mdi-account-search-outline"
+                placeholder="Search by name or email…"
+                clearable
+                hide-details
+                @keyup.enter="loadSessions"
+                @click:clear="onClearFilters"
               />
+            </v-col>
+            <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
+              <v-text-field
+                v-model="filterIp"
+                density="compact"
+                variant="outlined"
+                prepend-inner-icon="mdi-ip-network-outline"
+                placeholder="IP address…"
+                clearable
+                hide-details
+                @keyup.enter="loadSessions"
+                @click:clear="onClearFilters"
+              />
+            </v-col>
+            <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
+              <v-text-field
+                v-model="filterGeo"
+                density="compact"
+                variant="outlined"
+                prepend-inner-icon="mdi-map-marker-outline"
+                placeholder="Geo / country…"
+                clearable
+                hide-details
+                @keyup.enter="loadSessions"
+                @click:clear="onClearFilters"
+              />
+            </v-col>
+            <v-col cols="12" sm="2" md="2" class="pl-sm-2 mt-2 mt-sm-0">
+              <v-select
+                v-model="filterDevice"
+                :items="deviceOptions"
+                density="compact"
+                variant="outlined"
+                placeholder="Device"
+                clearable
+                hide-details
+                @update:model-value="() => loadSessions()"
+              />
+            </v-col>
+          </v-row>
+          <v-data-table-server
+            v-model:items-per-page="itemsPerPage"
+            :headers="activeHeaders"
+            :items="activeSessions"
+            :items-length="totalActive"
+            :loading="loadingActive"
+            :page="page"
+            item-value="refreshTokenId"
+            @update:options="onActiveTableOptions"
+          >
+            <!-- User column -->
+            <template #item.user="{ item }">
+              <div class="d-flex align-center py-1">
+                <UserAvatar :email="item.userEmail" :size="28" />
+                <div class="ml-3">
+                  <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
+                  <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
+                </div>
+              </div>
+            </template>
+
+            <!-- IP + Geo -->
+            <template #item.clientIp="{ item }">
               <div>
-                <div class="text-body-2">{{ item.browser ?? '—' }}</div>
-                <div class="text-caption text-medium-emphasis">{{ item.os ?? '' }}</div>
+                <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
+                <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
+                  <template #activator="{ props }">
+                    <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
+                      {{ item.clientGeo ?? '' }}
+                    </div>
+                  </template>
+                </v-tooltip>
               </div>
-            </div>
-          </template>
+            </template>
 
-          <!-- Login time -->
-          <template #item.loginAt="{ item }">
-            <div v-if="item.loginAt">
-              <div class="text-body-2">{{ formatDate(item.loginAt) }}</div>
-              <div class="text-caption text-medium-emphasis">{{ formatTime(item.loginAt) }}</div>
-            </div>
-            <span v-else>—</span>
-          </template>
-
-          <!-- Last active -->
-          <template #item.lastActiveAt="{ item }">
-            <div v-if="item.lastActiveAt">
-              <div class="text-body-2">{{ formatDate(item.lastActiveAt) }}</div>
-              <div class="text-caption text-medium-emphasis">{{ formatTime(item.lastActiveAt) }}</div>
-            </div>
-            <span v-else>—</span>
-          </template>
-
-          <!-- Actions -->
-          <template #item.actions="{ item }">
-            <div class="d-flex align-center ga-1 text-no-wrap">
-              <v-btn
-                size="small"
-                variant="text"
-                icon="mdi-logout"
-                title="Revoke session"
-                color="error"
-                @click="confirmRevoke(item)"
-              />
-              <v-menu>
-                <template #activator="{ props }">
-                  <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" />
-                </template>
-                <v-list density="compact" min-width="220">
-                  <v-list-item
-                    prepend-icon="mdi-account-cancel-outline"
-                    title="Revoke all sessions for this user"
-                    @click="confirmBulkByUser(item)"
-                  />
-                  <v-list-item
-                    prepend-icon="mdi-ip-network-outline"
-                    title="Revoke all sessions from this IP"
-                    @click="confirmBulkByIp(item)"
-                  />
-                </v-list>
-              </v-menu>
-            </div>
-          </template>
-
-          <!-- Empty -->
-          <template #no-data>
-            <div class="pa-8 text-center text-medium-emphasis">
-              <v-icon icon="mdi-shield-check-outline" size="48" class="mb-2" />
-              <div>No active sessions found</div>
-            </div>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </div>
-
-    <!-- ─── REVOCATION AUDIT LOG ─── -->
-    <div v-else>
-      <v-row align="center" class="mb-4" no-gutters>
-        <v-col cols="12" sm="4" md="3">
-          <v-text-field
-            v-model="auditFilterUser"
-            density="compact"
-            variant="outlined"
-            prepend-inner-icon="mdi-account-search-outline"
-            placeholder="Search by name or email…"
-            clearable
-            hide-details
-            @keyup.enter="loadAudit"
-            @click:clear="onClearAudit"
-          />
-        </v-col>
-        <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
-          <v-text-field
-            v-model="auditFilterIp"
-            density="compact"
-            variant="outlined"
-            prepend-inner-icon="mdi-ip-network-outline"
-            placeholder="IP address…"
-            clearable
-            hide-details
-            @keyup.enter="loadAudit"
-            @click:clear="onClearAudit"
-          />
-        </v-col>
-        <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
-          <v-select
-            v-model="auditFilterReason"
-            :items="revocationReasonOptions"
-            density="compact"
-            variant="outlined"
-            placeholder="Reason"
-            clearable
-            hide-details
-            @update:model-value="() => loadAudit()"
-          />
-        </v-col>
-      </v-row>
-
-      <v-card flat border rounded="lg">
-        <v-data-table-server
-          v-model:items-per-page="auditItemsPerPage"
-          :headers="auditHeaders"
-          :items="auditSessions"
-          :items-length="totalAudit"
-          :loading="loadingAudit"
-          :page="auditPage"
-          item-value="refreshTokenId"
-          @update:options="onAuditTableOptions"
-        >
-          <!-- User -->
-          <template #item.user="{ item }">
-            <div class="d-flex align-center py-1">
-              <UserAvatar :email="item.userEmail" :size="28" />
-              <div class="ml-3">
-                <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
-                <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
+            <!-- Device -->
+            <template #item.device="{ item }">
+              <div class="d-flex align-center gap-1">
+                <v-icon
+                  :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
+                  size="16"
+                  color="medium-emphasis"
+                  class="mx-1"
+                />
+                <div>
+                  <div class="text-body-2">{{ item.browser ?? '—' }}</div>
+                  <div class="text-caption text-medium-emphasis">{{ item.os ?? '' }}</div>
+                </div>
               </div>
-            </div>
+            </template>
+
+            <!-- Login time -->
+            <template #item.loginAt="{ item }">
+              <div v-if="item.loginAt">
+                <div class="text-body-2">{{ formatDate(item.loginAt) }}</div>
+                <div class="text-caption text-medium-emphasis">{{ formatTime(item.loginAt) }}</div>
+              </div>
+              <span v-else>—</span>
+            </template>
+
+            <!-- Last active -->
+            <template #item.lastActiveAt="{ item }">
+              <div v-if="item.lastActiveAt">
+                <div class="text-body-2">{{ formatDate(item.lastActiveAt) }}</div>
+                <div class="text-caption text-medium-emphasis">{{ formatTime(item.lastActiveAt) }}</div>
+              </div>
+              <span v-else>—</span>
+            </template>
+
+            <!-- Actions -->
+            <template #item.actions="{ item }">
+              <div class="d-flex align-center ga-1 text-no-wrap">
+                <v-btn
+                  size="small"
+                  variant="text"
+                  icon="mdi-logout"
+                  title="Revoke session"
+                  color="error"
+                  @click="confirmRevoke(item)"
+                />
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" />
+                  </template>
+                  <v-list density="compact" min-width="220">
+                    <v-list-item
+                      prepend-icon="mdi-account-cancel-outline"
+                      title="Revoke all sessions for this user"
+                      @click="confirmBulkByUser(item)"
+                    />
+                    <v-list-item
+                      prepend-icon="mdi-ip-network-outline"
+                      title="Revoke all sessions from this IP"
+                      @click="confirmBulkByIp(item)"
+                    />
+                  </v-list>
+                </v-menu>
+              </div>
+            </template>
+
+            <!-- Empty -->
+            <template #no-data>
+              <div class="pa-8 text-center text-medium-emphasis">
+                <v-icon icon="mdi-shield-check-outline" size="48" class="mb-2" />
+                <div>No active sessions found</div>
+              </div>
+            </template>
+          </v-data-table-server>
+        </FormCard>
+      </div>
+
+      <!-- ─── REVOCATION AUDIT LOG ─── -->
+      <div v-else>
+        <FormCard :collapsible="false">
+          <template #title>
+            <v-icon icon="mdi-history" class="mr-2" />
+            Revocation Audit Log
           </template>
 
-          <!-- IP + Geo -->
-          <template #item.clientIp="{ item }">
-            <div>
-              <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
-              <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
-                <template #activator="{ props }">
-                  <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
-                    {{ item.clientGeo ?? '' }}
-                  </div>
-                </template>
-              </v-tooltip>
-            </div>
-          </template>
-
-          <!-- Device -->
-          <template #item.device="{ item }">
-            <div class="d-flex align-center gap-1">
-              <v-icon
-                :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
-                size="16"
-                color="medium-emphasis"
-                class="mx-1"
+          <!-- Filter toolbar -->
+          <v-row align="center" class="mb-4" density="compact">
+            <v-col cols="12" sm="4" md="3">
+              <v-text-field
+                v-model="auditFilterUser"
+                density="compact"
+                variant="outlined"
+                prepend-inner-icon="mdi-account-search-outline"
+                placeholder="Search by name or email…"
+                clearable
+                hide-details
+                @keyup.enter="loadAudit"
+                @click:clear="onClearAudit"
               />
-              <span class="text-body-2">{{ item.browser ?? '—' }} / {{ item.os ?? '—' }}</span>
-            </div>
-          </template>
+            </v-col>
+            <v-col cols="12" sm="6" md="4" class="pl-sm-2 mt-2 mt-sm-0">
+              <v-text-field
+                v-model="auditFilterIp"
+                density="compact"
+                variant="outlined"
+                prepend-inner-icon="mdi-ip-network-outline"
+                placeholder="IP address…"
+                clearable
+                hide-details
+                @keyup.enter="loadAudit"
+                @click:clear="onClearAudit"
+              />
+            </v-col>
+            <v-col cols="12" sm="3" md="2" class="pl-sm-2 mt-2 mt-sm-0">
+              <v-select
+                v-model="auditFilterReason"
+                :items="revocationReasonOptions"
+                density="compact"
+                variant="outlined"
+                placeholder="Reason"
+                clearable
+                hide-details
+                @update:model-value="() => loadAudit()"
+              />
+            </v-col>
+          </v-row>
+          <v-data-table-server
+            v-model:items-per-page="auditItemsPerPage"
+            :headers="auditHeaders"
+            :items="auditSessions"
+            :items-length="totalAudit"
+            :loading="loadingAudit"
+            :page="auditPage"
+            item-value="refreshTokenId"
+            @update:options="onAuditTableOptions"
+          >
+            <!-- User -->
+            <template #item.user="{ item }">
+              <div class="d-flex align-center py-1">
+                <UserAvatar :email="item.userEmail" :size="28" />
+                <div class="ml-3">
+                  <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
+                  <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
+                </div>
+              </div>
+            </template>
 
-          <!-- Revocation reason -->
-          <template #item.revocationReason="{ item }">
-            <v-chip :color="reasonColor(item.revocationReason)" size="small" label>
-              {{ formatReason(item.revocationReason) }}
-            </v-chip>
-          </template>
+            <!-- IP + Geo -->
+            <template #item.clientIp="{ item }">
+              <div>
+                <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
+                <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
+                  <template #activator="{ props }">
+                    <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
+                      {{ item.clientGeo ?? '' }}
+                    </div>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
 
-          <!-- Revoked at -->
-          <template #item.revokedAt="{ item }">
-            <div v-if="item.revokedAt">
-              <div class="text-body-2">{{ formatDate(item.revokedAt) }}</div>
-              <div class="text-caption text-medium-emphasis">{{ formatTime(item.revokedAt) }}</div>
-            </div>
-            <span v-else>—</span>
-          </template>
+            <!-- Device -->
+            <template #item.device="{ item }">
+              <div class="d-flex align-center gap-1">
+                <v-icon
+                  :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
+                  size="16"
+                  color="medium-emphasis"
+                  class="mx-1"
+                />
+                <span class="text-body-2">{{ item.browser ?? '—' }} / {{ item.os ?? '—' }}</span>
+              </div>
+            </template>
 
-          <!-- Empty -->
-          <template #no-data>
-            <div class="pa-8 text-center text-medium-emphasis">
-              <v-icon icon="mdi-clipboard-check-outline" size="48" class="mb-2" />
-              <div>No revocation records found</div>
-            </div>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </div>
+            <!-- Revocation reason -->
+            <template #item.revocationReason="{ item }">
+              <v-chip :color="reasonColor(item.revocationReason)" size="small" label>
+                {{ formatReason(item.revocationReason) }}
+              </v-chip>
+            </template>
+
+            <!-- Revoked at -->
+            <template #item.revokedAt="{ item }">
+              <div v-if="item.revokedAt">
+                <div class="text-body-2">{{ formatDate(item.revokedAt) }}</div>
+                <div class="text-caption text-medium-emphasis">{{ formatTime(item.revokedAt) }}</div>
+              </div>
+              <span v-else>—</span>
+            </template>
+
+            <!-- Empty -->
+            <template #no-data>
+              <div class="pa-8 text-center text-medium-emphasis">
+                <v-icon icon="mdi-clipboard-check-outline" size="48" class="mb-2" />
+                <div>No revocation records found</div>
+              </div>
+            </template>
+          </v-data-table-server>
+        </FormCard>
+      </div>
+    </FormCard>
 
     <!-- Confirmation dialog -->
     <ConfirmDialog
@@ -312,7 +329,7 @@
     >
       {{ dialog.message }}
     </ConfirmDialog>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -322,6 +339,7 @@ import AdminSessionService from '../../services/admin/admin-session.service'
 import type { IAdminSessionListItem } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import UserAvatar from '../../components/UserAvatar.vue'
+import FormCard from '../../components/forms/FormCard.vue'
 
 const toast = useToastStore()
 const service = new AdminSessionService()
