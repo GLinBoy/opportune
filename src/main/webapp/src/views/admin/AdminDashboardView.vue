@@ -1,5 +1,10 @@
 <template>
-  <v-container fluid class="pa-4">
+  <FormCard :collapsible="false">
+    <template #title>
+      <v-icon icon="mdi-view-dashboard-outline" class="mr-2" />
+      Dashboard
+    </template>
+
     <!-- Row 1: KPI cards -->
     <DashboardKpiCards :cards="kpiCards" :loading="loading" class="mb-4" />
 
@@ -22,7 +27,7 @@
         <AdminAiQueueWidget :items="aiQueueItems" :loading="loading" />
       </v-col>
     </v-row>
-  </v-container>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +38,7 @@ import AdminUserTrend from '../../components/admin/dashboard/AdminUserTrend.vue'
 import AdminUserStatusDonut from '../../components/admin/dashboard/AdminUserStatusDonut.vue'
 import AdminAppStatusDonut from '../../components/admin/dashboard/AdminAppStatusDonut.vue'
 import AdminAiQueueWidget from '../../components/admin/dashboard/AdminAiQueueWidget.vue'
+import FormCard from '../../components/forms/FormCard.vue'
 
 const {
   kpis,
