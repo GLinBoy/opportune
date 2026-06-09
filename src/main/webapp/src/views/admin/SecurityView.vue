@@ -83,11 +83,9 @@
         >
           <!-- User column -->
           <template #item.user="{ item }">
-            <div class="d-flex align-center gap-2 py-1">
-              <v-avatar size="28" color="primary" class="text-caption font-weight-bold">
-                {{ userInitial(item) }}
-              </v-avatar>
-              <div>
+            <div class="d-flex align-center py-1">
+              <UserAvatar :email="item.userEmail" :size="28" />
+              <div class="ml-3">
                 <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
                 <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
               </div>
@@ -98,7 +96,13 @@
           <template #item.clientIp="{ item }">
             <div>
               <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
-              <div class="text-caption text-medium-emphasis">{{ item.clientGeo ?? '' }}</div>
+              <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
+                <template #activator="{ props }">
+                  <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
+                    {{ item.clientGeo ?? '' }}
+                  </div>
+                </template>
+              </v-tooltip>
             </div>
           </template>
 
@@ -109,6 +113,7 @@
                 :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
                 size="16"
                 color="medium-emphasis"
+                class="mx-1"
               />
               <div>
                 <div class="text-body-2">{{ item.browser ?? '—' }}</div>
@@ -119,41 +124,51 @@
 
           <!-- Login time -->
           <template #item.loginAt="{ item }">
-            {{ item.loginAt ? formatDateTime(item.loginAt) : '—' }}
+            <div v-if="item.loginAt">
+              <div class="text-body-2">{{ formatDate(item.loginAt) }}</div>
+              <div class="text-caption text-medium-emphasis">{{ formatTime(item.loginAt) }}</div>
+            </div>
+            <span v-else>—</span>
           </template>
 
           <!-- Last active -->
           <template #item.lastActiveAt="{ item }">
-            {{ item.lastActiveAt ? formatDateTime(item.lastActiveAt) : '—' }}
+            <div v-if="item.lastActiveAt">
+              <div class="text-body-2">{{ formatDate(item.lastActiveAt) }}</div>
+              <div class="text-caption text-medium-emphasis">{{ formatTime(item.lastActiveAt) }}</div>
+            </div>
+            <span v-else>—</span>
           </template>
 
           <!-- Actions -->
           <template #item.actions="{ item }">
-            <v-btn
-              size="small"
-              variant="text"
-              icon="mdi-logout"
-              title="Revoke session"
-              color="error"
-              @click="confirmRevoke(item)"
-            />
-            <v-menu>
-              <template #activator="{ props }">
-                <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" />
-              </template>
-              <v-list density="compact" min-width="220">
-                <v-list-item
-                  prepend-icon="mdi-account-cancel-outline"
-                  title="Revoke all sessions for this user"
-                  @click="confirmBulkByUser(item)"
-                />
-                <v-list-item
-                  prepend-icon="mdi-ip-network-outline"
-                  title="Revoke all sessions from this IP"
-                  @click="confirmBulkByIp(item)"
-                />
-              </v-list>
-            </v-menu>
+            <div class="d-flex align-center ga-1 text-no-wrap">
+              <v-btn
+                size="small"
+                variant="text"
+                icon="mdi-logout"
+                title="Revoke session"
+                color="error"
+                @click="confirmRevoke(item)"
+              />
+              <v-menu>
+                <template #activator="{ props }">
+                  <v-btn size="small" variant="text" icon="mdi-dots-vertical" v-bind="props" />
+                </template>
+                <v-list density="compact" min-width="220">
+                  <v-list-item
+                    prepend-icon="mdi-account-cancel-outline"
+                    title="Revoke all sessions for this user"
+                    @click="confirmBulkByUser(item)"
+                  />
+                  <v-list-item
+                    prepend-icon="mdi-ip-network-outline"
+                    title="Revoke all sessions from this IP"
+                    @click="confirmBulkByIp(item)"
+                  />
+                </v-list>
+              </v-menu>
+            </div>
           </template>
 
           <!-- Empty -->
@@ -223,11 +238,9 @@
         >
           <!-- User -->
           <template #item.user="{ item }">
-            <div class="d-flex align-center gap-2 py-1">
-              <v-avatar size="28" color="grey" class="text-caption font-weight-bold">
-                {{ userInitial(item) }}
-              </v-avatar>
-              <div>
+            <div class="d-flex align-center py-1">
+              <UserAvatar :email="item.userEmail" :size="28" />
+              <div class="ml-3">
                 <div class="text-body-2 font-weight-medium">{{ userFullName(item) }}</div>
                 <div class="text-caption text-medium-emphasis">{{ item.userEmail ?? '—' }}</div>
               </div>
@@ -238,7 +251,13 @@
           <template #item.clientIp="{ item }">
             <div>
               <div class="text-body-2">{{ item.clientIp ?? '—' }}</div>
-              <div class="text-caption text-medium-emphasis">{{ item.clientGeo ?? '' }}</div>
+              <v-tooltip location="top" max-width="360" :text="item.clientGeo ?? ''">
+                <template #activator="{ props }">
+                  <div v-bind="props" class="text-caption text-medium-emphasis text-no-wrap text-truncate" style="max-width: 220px">
+                    {{ item.clientGeo ?? '' }}
+                  </div>
+                </template>
+              </v-tooltip>
             </div>
           </template>
 
@@ -249,6 +268,7 @@
                 :icon="item.isMobile ? 'mdi-cellphone' : 'mdi-monitor'"
                 size="16"
                 color="medium-emphasis"
+                class="mx-1"
               />
               <span class="text-body-2">{{ item.browser ?? '—' }} / {{ item.os ?? '—' }}</span>
             </div>
@@ -263,7 +283,11 @@
 
           <!-- Revoked at -->
           <template #item.revokedAt="{ item }">
-            {{ item.revokedAt ? formatDateTime(item.revokedAt) : '—' }}
+            <div v-if="item.revokedAt">
+              <div class="text-body-2">{{ formatDate(item.revokedAt) }}</div>
+              <div class="text-caption text-medium-emphasis">{{ formatTime(item.revokedAt) }}</div>
+            </div>
+            <span v-else>—</span>
           </template>
 
           <!-- Empty -->
@@ -297,6 +321,7 @@ import { useToastStore } from '../../stores/toast'
 import AdminSessionService from '../../services/admin/admin-session.service'
 import type { IAdminSessionListItem } from '../../models'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import UserAvatar from '../../components/UserAvatar.vue'
 
 const toast = useToastStore()
 const service = new AdminSessionService()
@@ -403,17 +428,16 @@ function userFullName(item: IAdminSessionListItem) {
   return [item.userForename, item.userSurname].filter(Boolean).join(' ') || item.userEmail || '—'
 }
 
-function userInitial(item: IAdminSessionListItem) {
-  const f = item.userForename?.[0] ?? ''
-  const s = item.userSurname?.[0] ?? ''
-  return (f + s).toUpperCase() || (item.userEmail?.[0] ?? '?').toUpperCase()
-}
-
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+  })
+}
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
   })
