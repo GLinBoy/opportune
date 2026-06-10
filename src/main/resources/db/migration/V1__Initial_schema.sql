@@ -7,6 +7,10 @@ CREATE TABLE profile (
     password VARCHAR(255),
     job_title VARCHAR(255),
     location VARCHAR(255),
+    phone VARCHAR(30),
+    linkedin_url VARCHAR(500),
+    portfolio_url VARCHAR(500),
+    professional_summary TEXT,
     avatar VARCHAR(255),
     email_verification BOOLEAN,
     last_login TIMESTAMP,
@@ -154,6 +158,198 @@ CREATE TABLE profile_resume (
     CONSTRAINT uk_profile_resume_profile UNIQUE (profile_id)
 );
 
+-- Create WorkExperience table
+CREATE TABLE work_experience (
+    id UUID NOT NULL PRIMARY KEY,
+    job_title VARCHAR(200) NOT NULL,
+    company VARCHAR(200) NOT NULL,
+    location VARCHAR(200),
+    start_month SMALLINT,
+    start_year SMALLINT,
+    end_month SMALLINT,
+    end_year SMALLINT,
+    is_current BOOLEAN NOT NULL DEFAULT FALSE,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_work_experience_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create WorkExperienceBullet table
+CREATE TABLE work_experience_bullet (
+    id UUID NOT NULL PRIMARY KEY,
+    content TEXT NOT NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    work_experience_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_work_experience_bullet_work_experience FOREIGN KEY (work_experience_id) REFERENCES work_experience(id) ON DELETE CASCADE
+);
+
+-- Create Education table
+CREATE TABLE education (
+    id UUID NOT NULL PRIMARY KEY,
+    school VARCHAR(200) NOT NULL,
+    degree VARCHAR(200) NOT NULL,
+    field_of_study VARCHAR(200) NOT NULL,
+    start_year SMALLINT,
+    end_year SMALLINT,
+    is_current BOOLEAN NOT NULL DEFAULT FALSE,
+    gpa VARCHAR(10),
+    honors VARCHAR(200),
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_education_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create EducationCourse table
+CREATE TABLE education_course (
+    education_id UUID NOT NULL,
+    course_name VARCHAR(200) NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_education_course_education FOREIGN KEY (education_id) REFERENCES education(id) ON DELETE CASCADE
+);
+
+-- Create SkillGroup table
+CREATE TABLE skill_group (
+    id UUID NOT NULL PRIMARY KEY,
+    category VARCHAR(100) NOT NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_skill_group_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create SkillItem table
+CREATE TABLE skill_item (
+    skill_group_id UUID NOT NULL,
+    skill_name VARCHAR(100) NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_skill_item_skill_group FOREIGN KEY (skill_group_id) REFERENCES skill_group(id) ON DELETE CASCADE
+);
+
+-- Create ResumeProject table
+CREATE TABLE resume_project (
+    id UUID NOT NULL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    url VARCHAR(500),
+    start_month SMALLINT,
+    start_year SMALLINT,
+    end_month SMALLINT,
+    end_year SMALLINT,
+    is_current BOOLEAN NOT NULL DEFAULT FALSE,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_project_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create ResumeProjectTech table
+CREATE TABLE resume_project_tech (
+    resume_project_id UUID NOT NULL,
+    technology VARCHAR(100) NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_resume_project_tech_resume_project FOREIGN KEY (resume_project_id) REFERENCES resume_project(id) ON DELETE CASCADE
+);
+
+-- Create ResumeCertification table
+CREATE TABLE resume_certification (
+    id UUID NOT NULL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    issuing_organization VARCHAR(200),
+    issue_date TIMESTAMP,
+    expiration_date TIMESTAMP,
+    credential_id VARCHAR(100),
+    credential_url VARCHAR(500),
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_certification_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create ResumeLanguage table
+CREATE TABLE resume_language (
+    id UUID NOT NULL PRIMARY KEY,
+    language VARCHAR(100) NOT NULL,
+    proficiency VARCHAR(20) NOT NULL CHECK (proficiency IN ('NATIVE', 'FLUENT', 'CONVERSATIONAL', 'BASIC')),
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_language_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create VolunteerWork table
+CREATE TABLE volunteer_work (
+    id UUID NOT NULL PRIMARY KEY,
+    role VARCHAR(200) NOT NULL,
+    organization VARCHAR(200) NOT NULL,
+    location VARCHAR(200),
+    start_month SMALLINT,
+    start_year SMALLINT,
+    end_month SMALLINT,
+    end_year SMALLINT,
+    is_current BOOLEAN NOT NULL DEFAULT FALSE,
+    description TEXT,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_volunteer_work_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create ResumePublication table
+CREATE TABLE resume_publication (
+    id UUID NOT NULL PRIMARY KEY,
+    title VARCHAR(300) NOT NULL,
+    publisher VARCHAR(200),
+    publication_date TIMESTAMP,
+    url VARCHAR(500),
+    description TEXT,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_publication_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create ResumeAward table
+CREATE TABLE resume_award (
+    id UUID NOT NULL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    issuer VARCHAR(200),
+    award_date TIMESTAMP,
+    description TEXT,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_award_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
+-- Create ProfessionalAffiliation table
+CREATE TABLE professional_affiliation (
+    id UUID NOT NULL PRIMARY KEY,
+    organization VARCHAR(200) NOT NULL,
+    role VARCHAR(200),
+    start_year SMALLINT,
+    end_year SMALLINT,
+    is_current BOOLEAN NOT NULL DEFAULT FALSE,
+    description TEXT,
+    display_order INT NOT NULL DEFAULT 0,
+    profile_id UUID NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_professional_affiliation_profile FOREIGN KEY (profile_id) REFERENCES profile(id)
+);
+
 -- Create ApplicationResume table (extends Attachment with TABLE_PER_CLASS inheritance)
 CREATE TABLE application_resume (
     id UUID NOT NULL PRIMARY KEY,
@@ -240,6 +436,24 @@ CREATE INDEX idx_application_attachment_application ON application_attachment(ap
 CREATE INDEX idx_interview_attachment_interview_note ON interview_attachment(interview_note_id);
 CREATE INDEX idx_company_meta_data_meta_name ON company_meta_data(meta_name);
 CREATE INDEX idx_application_meta_data_meta_name ON application_meta_data(meta_name);
+
+-- Core resume data indexes
+CREATE INDEX idx_work_experience_profile ON work_experience(profile_id);
+CREATE INDEX idx_work_experience_bullet_work_experience ON work_experience_bullet(work_experience_id);
+CREATE INDEX idx_education_profile ON education(profile_id);
+CREATE INDEX idx_education_course_education ON education_course(education_id);
+CREATE INDEX idx_skill_group_profile ON skill_group(profile_id);
+CREATE INDEX idx_skill_item_skill_group ON skill_item(skill_group_id);
+
+-- Optional resume section indexes
+CREATE INDEX idx_resume_project_profile ON resume_project(profile_id);
+CREATE INDEX idx_resume_project_tech_resume_project ON resume_project_tech(resume_project_id);
+CREATE INDEX idx_resume_certification_profile ON resume_certification(profile_id);
+CREATE INDEX idx_resume_language_profile ON resume_language(profile_id);
+CREATE INDEX idx_volunteer_work_profile ON volunteer_work(profile_id);
+CREATE INDEX idx_resume_publication_profile ON resume_publication(profile_id);
+CREATE INDEX idx_resume_award_profile ON resume_award(profile_id);
+CREATE INDEX idx_professional_affiliation_profile ON professional_affiliation(profile_id);
 
 -- Session indexes
 -- Unique index on access_token_id: O(1) lookup / existence check by access token
