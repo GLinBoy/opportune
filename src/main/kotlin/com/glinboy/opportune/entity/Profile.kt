@@ -32,6 +32,18 @@ data class Profile(
 	@Column(name = "location")
 	val location: String? = null,
 
+	@Column(name = "phone")
+	val phone: String? = null,
+
+	@Column(name = "linkedin_url")
+	val linkedinUrl: String? = null,
+
+	@Column(name = "portfolio_url")
+	val portfolioUrl: String? = null,
+
+	@Column(name = "professional_summary")
+	val professionalSummary: String? = null,
+
 	@Column(name = "avatar")
 	val avatar: String? = null,
 
