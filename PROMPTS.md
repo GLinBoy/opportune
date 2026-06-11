@@ -190,6 +190,46 @@ Top-level output fields:
 
 ---
 
+### document-parser-system.st + document-parser-user.st ✅
+
+**Agent:** Document Parser Agent (see `AGENTS.md` §9.4)
+
+**Purpose:** Extracts structured work experience, education, and skills from a PDF resume. Returns a JSON preview that is never auto-saved — the user reviews and confirms before data is persisted.
+
+**Trigger:** User clicks "Extract from Resume" in the frontend, which calls `POST /api/profiles/resume/extract`. The endpoint returns the preview immediately; data is only saved when the user calls individual CRUD endpoints from the frontend dialog.
+
+**System prompt** (`document-parser-system.st`)
+
+Contains the agent role definition, JSON output schema (matching the internal DTOs), JSON safety rules (escaping, no literal newlines), and the "do not invent data" constraint. Loaded as **raw text** (not via `PromptTemplate`) because the embedded JSON schema contains curly braces.
+
+**Variables:** None (no runtime variable substitution needed).
+
+**User prompt** (`document-parser-user.st`)
+
+A short template that wraps the resume text in `---BEGIN RESUME TEXT---` and `---END RESUME TEXT---` delimiters for prompt injection defence.
+
+| Variable      | Type   | Source                                    |
+| ------------- | ------ | ----------------------------------------- |
+| `resumeText`  | String | Plain text extracted via `PdfResumeTextExtractorImpl` |
+
+**Expected output:** A single JSON object matching `ResumeExtractionResultDTO`:
+
+| Field             | Type              | Description                                        |
+| ----------------- | ----------------- | -------------------------------------------------- |
+| `work_experiences` | Array             | List of work experiences with job title, company, dates, bullets |
+| `education`       | Array             | List of education entries with school, degree, field, dates, courses |
+| `skill_groups`    | Array             | List of skill categories with individual skills    |
+
+**Service:** `DocumentParserServiceImpl.parseResumeData()`
+
+**Endpoint:** `POST /api/profiles/resume/extract`
+
+**Notes:**
+
+- The service strips any accidental ` ```json ` fences from the raw model response before parsing
+- Returns 404 if the current user has not uploaded a resume
+- The `extractText(inputStream, contentType)` method selects a `ResumeTextExtractor` implementation based on content type — currently only `PdfResumeTextExtractorImpl` is available
+
 ### Planned prompt files
 
 These files do not yet exist. They correspond to planned agents in `AGENTS.md`:
@@ -198,7 +238,6 @@ These files do not yet exist. They correspond to planned agents in `AGENTS.md`:
 | ----------------------------- | ------------------------------------- | ----------------- |
 | `resume-builder.st`           | Resume Builder Agent (§9.2)           | Streaming via SSE |
 | `cover-letter.st`             | Cover Letter Agent (§9.3)             | Streaming via SSE |
-| `document-parser.st`          | Document Parser Agent (§9.4)          | JSON output       |
 | `job-description-analyser.st` | Job Description Analyser Agent (§9.5) | Structured output |
 
 ---

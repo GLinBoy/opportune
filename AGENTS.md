@@ -404,16 +404,18 @@ Each _agent_ here is a distinct AI interaction with its own purpose, system prom
 | **Streaming**   | Yes                                                                     |
 | **Prompt file** | `src/main/resources/prompts/cover-letter.st` _(create this)_            |
 
-### 9.4 Document Parser Agent 🔲
+### 9.4 Document Parser Agent ✅
 
-| Property        | Value                                                             |
-| --------------- | ----------------------------------------------------------------- |
-| **Purpose**     | Extract structured data from an uploaded resume PDF or HTML paste |
-| **Trigger**     | User uploads a file or pastes HTML in the import flow             |
-| **Input**       | Raw text extracted via `pdfbox` (PDF) or `jsoup` (HTML)           |
-| **Output**      | JSON object matching the internal `Resume` domain model           |
-| **Streaming**   | No — full structured response required                            |
-| **Prompt file** | `src/main/resources/prompts/document-parser.st` _(create this)_   |
+| Property        | Value                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| **Purpose**     | Extract structured work experience, education, and skills from a PDF resume                        |
+| **Trigger**     | `POST /api/profiles/resume/extract` — user-initiated; returns a preview that is never auto-saved   |
+| **Input**       | Raw text extracted via `pdfbox` (PDF)                                                              |
+| **Output**      | JSON object matching `ResumeExtractionResultDTO` with `work_experiences`, `education`, `skill_groups` |
+| **Streaming**   | No — full structured JSON response required                                                        |
+| **Prompt files**| `document-parser-system.st` (system), `document-parser-user.st` (user)                             |
+| **Service**     | `DocumentParserServiceImpl.parseResumeData()`                                                      |
+| **Endpoint**    | `POST /api/profiles/resume/extract` → `ProfileResumeDataResource`                                 |
 
 ### 9.5 Job Description Analyser Agent 🔲
 
@@ -440,7 +442,8 @@ src/main/resources/prompts/
 ├── ai-analysis-user.st         # Application Analysis Agent — user prompt (variables: cleanJobDescription, extractedResumeText)
 ├── resume-builder.st           # Resume Builder Agent            [planned]
 ├── cover-letter.st             # Cover Letter Agent              [planned]
-├── document-parser.st          # Document Parser Agent           [planned]
+├── document-parser-system.st   # Document Parser Agent — system prompt (role + output schema)
+├── document-parser-user.st     # Document Parser Agent — user prompt (variable: resumeText)
 └── job-description-analyser.st # Job Description Analyser Agent  [planned]
 ```
 
