@@ -74,6 +74,14 @@
 
           <!-- API & Webhook Tab -->
           <ApiWebhookCard v-show="activeTab === 'api'" />
+
+          <!-- Resume Tab -->
+          <ResumeTab
+            v-show="activeTab === 'resume'"
+            :profile="profile"
+            @update:profile="profile = $event"
+            @change="markAsModified"
+          />
         </v-col>
       </v-row>
     </div>

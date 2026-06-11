@@ -7,6 +7,7 @@ import ProfileInfoCard from '../../components/profile/ProfileInfoCard.vue'
 import PasswordSecurityCard from '../../components/profile/PasswordSecurityCard.vue'
 import SessionsCard from '../../components/profile/SessionsCard.vue'
 import ApiWebhookCard from '../../components/profile/ApiWebhookCard.vue'
+import ResumeTab from '../../components/profile/resume/ResumeTab.vue'
 import { useToastStore } from '../../stores/toast'
 
 export default defineComponent({
@@ -16,7 +17,8 @@ export default defineComponent({
     ProfileInfoCard,
     PasswordSecurityCard,
     SessionsCard,
-    ApiWebhookCard
+    ApiWebhookCard,
+    ResumeTab
   },
   setup() {
     // Router
@@ -47,7 +49,8 @@ export default defineComponent({
       info: 'profile-settings',
       password: 'profile-security',
       sessions: 'profile-sessions',
-      api: 'profile-api'
+      api: 'profile-api',
+      resume: 'profile-resume'
     }
     const activeTab = computed({
       get: () => (route.meta.tab as string) || 'info',
@@ -76,6 +79,11 @@ export default defineComponent({
         value: 'api',
         title: 'API & Webhooks',
         icon: 'mdi-api'
+      },
+      {
+        value: 'resume',
+        title: 'Resume',
+        icon: 'mdi-file-account'
       }
     ]
 
