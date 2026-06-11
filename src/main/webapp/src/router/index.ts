@@ -157,6 +157,12 @@ const router = createRouter({
           component: ProfileView,
           meta: { tab: 'api' }
         },
+        {
+          path: 'resume',
+          name: 'profile-resume',
+          component: ProfileView,
+          meta: { tab: 'resume' }
+        },
       ],
     },
     {
