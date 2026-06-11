@@ -8,6 +8,10 @@ export interface IProfile {
   password?: string
   jobTitle?: string
   location?: string
+  phone?: string
+  linkedinUrl?: string
+  portfolioUrl?: string
+  professionalSummary?: string
   avatar?: string
   emailVerification?: boolean
   lastLogin?: Date
@@ -27,6 +31,10 @@ export class Profile implements IProfile {
     public password?: string,
     public jobTitle?: string,
     public location?: string,
+    public phone?: string,
+    public linkedinUrl?: string,
+    public portfolioUrl?: string,
+    public professionalSummary?: string,
     public avatar?: string,
     public emailVerification?: boolean,
     public lastLogin?: Date,
