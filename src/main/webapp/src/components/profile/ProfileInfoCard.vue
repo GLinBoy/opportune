@@ -16,6 +16,26 @@
         <v-icon icon="mdi-account-off" size="48" class="mb-2" />
         <p>Unable to load profile information.</p>
       </div>
+
+      <v-alert
+        type="info"
+        variant="tonal"
+        class="mt-4"
+        icon="mdi-file-account"
+        title="Resume & Structured Data"
+        text="Manage your resume upload, structured work experience, education, and skills in the dedicated Resume section."
+      >
+        <template #append>
+          <v-btn
+            variant="text"
+            color="primary"
+            size="small"
+            :to="{ name: 'profile-resume' }"
+          >
+            Go to Resume
+          </v-btn>
+        </template>
+      </v-alert>
     </template>
 
     <template #actions>
