@@ -2,10 +2,7 @@ package com.glinboy.opportune.web.rest
 
 import com.glinboy.opportune.config.OpenApiConfiguration
 import com.glinboy.opportune.dto.*
-import com.glinboy.opportune.service.EducationService
-import com.glinboy.opportune.service.ResumeDataService
-import com.glinboy.opportune.service.SkillGroupService
-import com.glinboy.opportune.service.WorkExperienceService
+import com.glinboy.opportune.service.*
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
@@ -24,10 +21,28 @@ class ProfileResumeDataResource(
 	private val resumeDataService: ResumeDataService,
 	private val workExperienceService: WorkExperienceService,
 	private val educationService: EducationService,
-	private val skillGroupService: SkillGroupService
+	private val skillGroupService: SkillGroupService,
+	private val documentParserService: DocumentParserService,
+	private val profileResumeService: ProfileResumeService,
+	private val fileService: FileService
 ) {
 
 	private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+	@PostMapping("/extract")
+	fun extractFromResume(): ResponseEntity<ResumeExtractionResultDTO> {
+		val resumeDTO = profileResumeService.findForCurrentUser()
+			.orElseThrow { NoSuchElementException("No resume upload found for the current user") }
+
+		val (resource, _) = profileResumeService.getFileResourceForCurrentUser()
+
+		val resumeText = resource.inputStream.use { inputStream ->
+			documentParserService.extractText(inputStream, resumeDTO.contentType ?: "application/pdf")
+		}
+
+		val result = documentParserService.parseResumeData(resumeText)
+		return ResponseEntity.ok(result)
+	}
 
 	@GetMapping
 	fun getAggregate(): ResponseEntity<ResumeAggregateDTO> =
