@@ -162,11 +162,25 @@
                   />
                 </v-col>
                 <v-col cols="12">
-                  <ProfileResumeField
-                    :profile-id="modelValue.id"
-                    :resume-id="modelValue.resumeId"
-                    @update:resume-id="updateField('resumeId', $event)"
-                  />
+                  <v-alert
+                    type="info"
+                    variant="tonal"
+                    icon="mdi-file-account"
+                    title="Resume & Structured Data"
+                    text="Upload and manage your resume, work experience, education, and skills in the dedicated Resume section."
+                    density="compact"
+                  >
+                    <template #append>
+                      <v-btn
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        :to="{ name: 'profile-resume' }"
+                      >
+                        Go to Resume
+                      </v-btn>
+                    </template>
+                  </v-alert>
                 </v-col>
               </v-row>
             </template>
@@ -181,7 +195,6 @@
 import { computed, ref } from 'vue'
 import { type IProfile, ProfileStatus } from '../../models'
 import CryptoJS from 'crypto-js'
-import ProfileResumeField from './ProfileResumeField.vue'
 import FormCard from '../forms/FormCard.vue'
 // import { AvatarService } from '../services' // Uncomment when avatar endpoint is ready
 
