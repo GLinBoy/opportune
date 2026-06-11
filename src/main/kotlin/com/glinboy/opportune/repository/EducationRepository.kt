@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface EducationRepository : JpaRepository<Education, UUID>, JpaSpecificationExecutor<Education>
+interface EducationRepository : JpaRepository<Education, UUID>, JpaSpecificationExecutor<Education> {
+	fun findAllByProfileIdOrderByDisplayOrderAsc(profileId: UUID): List<Education>
+}

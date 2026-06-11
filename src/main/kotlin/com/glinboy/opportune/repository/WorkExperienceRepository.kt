@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface WorkExperienceRepository : JpaRepository<WorkExperience, UUID>, JpaSpecificationExecutor<WorkExperience>
+interface WorkExperienceRepository : JpaRepository<WorkExperience, UUID>, JpaSpecificationExecutor<WorkExperience> {
+	fun findAllByProfileIdOrderByDisplayOrderAsc(profileId: UUID): List<WorkExperience>
+}
