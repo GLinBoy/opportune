@@ -33,6 +33,7 @@ class AiServiceImpl(
 	private val companyService: CompanyService,
 	private val applicationMetaDataService: ApplicationMetaDataService,
 	private val fileService: FileService,
+	private val resumeTextFormatterService: ResumeTextFormatterService,
 	private val properties: ApplicationProperties,
 	private val objectMapper: ObjectMapper,
 	chatClientBuilder: ChatClient.Builder,
@@ -69,17 +70,20 @@ class AiServiceImpl(
 			applicationDTO.rawContent ?: ""
 		}
 
-		// Pre-process: extract plain text from PDF resume
-		val extractedResumeText: String = if (resumeDTO.path != null) {
-			try {
-				val resource = fileService.loadFileAsResource(resumeDTO.path)
-				val bytes = resource.inputStream.use { it.readBytes() }
-				Loader.loadPDF(bytes).use { doc -> PDFTextStripper().getText(doc) }
-			} catch (e: Exception) {
-				log.warn("Could not extract text from resume PDF at ${resumeDTO.path}: ${e.message}")
-				""
+		// Pre-process: try structured resume text first, fall back to PDFBox
+		val extractedResumeText: String = resumeTextFormatterService.formatResumeAsText(applicationDTO.profileId!!)
+			.ifEmpty {
+				if (resumeDTO.path != null) {
+					try {
+						val resource = fileService.loadFileAsResource(resumeDTO.path)
+						val bytes = resource.inputStream.use { it.readBytes() }
+						Loader.loadPDF(bytes).use { doc -> PDFTextStripper().getText(doc) }
+					} catch (e: Exception) {
+						log.warn("Could not extract text from resume PDF at ${resumeDTO.path}: ${e.message}")
+						""
+					}
+				} else ""
 			}
-		} else ""
 
 		// Load prompt templates
 		val currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
