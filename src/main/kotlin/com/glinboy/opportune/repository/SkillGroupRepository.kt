@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface SkillGroupRepository : JpaRepository<SkillGroup, UUID>, JpaSpecificationExecutor<SkillGroup>
+interface SkillGroupRepository : JpaRepository<SkillGroup, UUID>, JpaSpecificationExecutor<SkillGroup> {
+	fun findAllByProfileIdOrderByDisplayOrderAsc(profileId: UUID): List<SkillGroup>
+}
