@@ -54,10 +54,116 @@ export interface IResumeAggregate {
   workExperiences?: IWorkExperience[]
   education?: IEducation[]
   skillGroups?: ISkillGroup[]
+  projects?: IResumeProject[]
+  certifications?: IResumeCertification[]
+  languages?: IResumeLanguage[]
+  volunteerWork?: IVolunteerWork[]
+  publications?: IResumePublication[]
+  awards?: IResumeAward[]
+  affiliations?: IProfessionalAffiliation[]
 }
 
 export interface IResumeExtractionResult {
   workExperiences?: IWorkExperience[]
   education?: IEducation[]
   skillGroups?: ISkillGroup[]
+}
+
+export interface IResumeProject {
+  id?: string
+  name?: string
+  description?: string
+  url?: string
+  startMonth?: number
+  startYear?: number
+  endMonth?: number
+  endYear?: number
+  isCurrent?: boolean
+  displayOrder?: number
+  profileId?: string
+  techStack?: string[]
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export type LanguageProficiency = 'NATIVE' | 'FLUENT' | 'CONVERSATIONAL' | 'BASIC'
+
+export interface IResumeCertification {
+  id?: string
+  name?: string
+  issuingOrganization?: string
+  issueDate?: string
+  expirationDate?: string
+  credentialId?: string
+  credentialUrl?: string
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export interface IResumeLanguage {
+  id?: string
+  language?: string
+  proficiency?: LanguageProficiency
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export interface IVolunteerWork {
+  id?: string
+  role?: string
+  organization?: string
+  location?: string
+  startMonth?: number
+  startYear?: number
+  endMonth?: number
+  endYear?: number
+  isCurrent?: boolean
+  description?: string
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export interface IResumePublication {
+  id?: string
+  title?: string
+  publisher?: string
+  publicationDate?: string
+  url?: string
+  description?: string
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export interface IResumeAward {
+  id?: string
+  title?: string
+  issuer?: string
+  awardDate?: string
+  description?: string
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
+}
+
+export interface IProfessionalAffiliation {
+  id?: string
+  organization?: string
+  role?: string
+  startYear?: number
+  endYear?: number
+  isCurrent?: boolean
+  description?: string
+  displayOrder?: number
+  profileId?: string
+  createdDate?: Date
+  lastModifiedDate?: Date
 }
