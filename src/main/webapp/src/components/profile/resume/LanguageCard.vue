@@ -1,0 +1,159 @@
+<template>
+  <v-card elevation="0" border rounded="lg" class="mb-4">
+    <div class="d-flex align-center pa-4 pb-0">
+      <v-icon icon="mdi-translate" color="primary" size="28" class="mr-3" />
+      <div class="flex-grow-1">
+        <div class="text-body-1 font-weight-medium">Languages</div>
+      </div>
+      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
+    </div>
+
+    <v-card-text>
+      <div v-if="store.languages.length === 0" class="text-center py-4 text-medium-emphasis">
+        <v-icon icon="mdi-translate" size="40" class="mb-2" />
+        <p class="text-body-2">No languages added yet.</p>
+      </div>
+
+      <div class="d-flex flex-wrap ga-2">
+        <v-chip
+          v-for="lang in store.languages"
+          :key="lang.id"
+          color="primary"
+          variant="outlined"
+          closable
+          @click:close="doDeleteChip(lang)"
+          @click="editLanguage(lang)"
+        >
+          {{ lang.language }} &middot; {{ formatProficiency(lang.proficiency) }}
+        </v-chip>
+      </div>
+    </v-card-text>
+
+    <FormDialog
+      v-model="showDialog"
+      :title="editingId ? 'Edit Language' : 'Add Language'"
+      icon="mdi-translate"
+      :loading="saving"
+      :valid="formValid"
+      @confirm="saveLanguage"
+      @cancel="showDialog = false"
+    >
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="form.language"
+            label="Language"
+            variant="outlined"
+            density="compact"
+            :rules="[rules.required]"
+            placeholder="e.g., English, Spanish"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            v-model="form.proficiency"
+            label="Proficiency"
+            variant="outlined"
+            density="compact"
+            :items="proficiencyItems"
+            :rules="[rules.required]"
+          />
+        </v-col>
+      </v-row>
+    </FormDialog>
+
+    <ConfirmDialog
+      v-model="deleteConfirm"
+      title="Delete Language"
+      variant="error"
+      confirm-text="Delete"
+      :loading="deleting"
+      @confirm="doDelete"
+    >
+      Are you sure you want to delete "{{ deleteTarget?.language }}"?
+    </ConfirmDialog>
+  </v-card>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed } from 'vue'
+import type { IResumeLanguage, LanguageProficiency } from '../../../models/resume-data.model'
+import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormDialog from '../../FormDialog.vue'
+import ConfirmDialog from '../../ConfirmDialog.vue'
+
+const store = useResumeDataStore()
+
+const proficiencyItems = [
+  { title: 'Native', value: 'NATIVE' },
+  { title: 'Fluent', value: 'FLUENT' },
+  { title: 'Conversational', value: 'CONVERSATIONAL' },
+  { title: 'Basic', value: 'BASIC' },
+]
+
+const showDialog = ref(false)
+const saving = ref(false)
+const editingId = ref<string | null>(null)
+const deleteConfirm = ref(false)
+const deleting = ref(false)
+const deleteTarget = ref<IResumeLanguage | null>(null)
+
+const form = reactive({
+  language: '',
+  proficiency: '' as LanguageProficiency | '',
+})
+
+const rules = { required: (v: string) => !!v || 'This field is required' }
+const formValid = computed(() => !!form.language && !!form.proficiency)
+
+function formatProficiency(p?: LanguageProficiency): string {
+  if (!p) return ''
+  return p.charAt(0) + p.slice(1).toLowerCase()
+}
+
+function openAdd() {
+  editingId.value = null
+  form.language = ''
+  form.proficiency = ''
+  showDialog.value = true
+}
+
+function editLanguage(lang: IResumeLanguage) {
+  editingId.value = lang.id || null
+  form.language = lang.language || ''
+  form.proficiency = lang.proficiency || ''
+  showDialog.value = true
+}
+
+async function saveLanguage() {
+  saving.value = true
+  try {
+    const dto: IResumeLanguage = { language: form.language, proficiency: form.proficiency as LanguageProficiency }
+    if (editingId.value) {
+      await store.updateLanguage(editingId.value, dto)
+    } else {
+      await store.createLanguage(dto)
+    }
+    showDialog.value = false
+  } finally {
+    saving.value = false
+  }
+}
+
+function doDeleteChip(lang: IResumeLanguage) {
+  deleteTarget.value = lang
+  deleteConfirm.value = true
+}
+
+async function doDelete() {
+  if (!deleteTarget.value?.id) return
+  deleting.value = true
+  try {
+    await store.deleteLanguage(deleteTarget.value.id)
+    deleteConfirm.value = false
+    deleteTarget.value = null
+  } finally {
+    deleting.value = false
+  }
+}
+</script>
