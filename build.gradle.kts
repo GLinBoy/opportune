@@ -1,14 +1,14 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "4.0.6"
+	kotlin("jvm") version "2.3.21"
+	kotlin("plugin.spring") version "2.3.21"
+	id("org.springframework.boot") version "4.1.0"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("plugin.jpa") version "2.2.21"
+	kotlin("plugin.jpa") version "2.3.21"
 	id("org.ec4j.editorconfig") version "0.1.0"
 	id("com.github.node-gradle.node") version "7.1.0"
-	id("com.github.ben-manes.versions") version "0.53.0" // THis is the latest version that supports Kotlin 1.x series, DO NOT UPGRADE
+	id("com.github.ben-manes.versions") version "0.54.0"
 }
 
 group = "com.glinboy"
@@ -17,7 +17,7 @@ description = "Craft smarter resumes and cover letters and track your job search
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(24)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -33,7 +33,7 @@ repositories {
 
 defaultTasks("bootRun")
 
-extra["springAiVersion"] = "2.0.0-M6"
+extra["springAiVersion"] = "2.0.0-RC2"
 
 // Function to load environment variables from .env files
 fun loadEnvFile(profile: String, warnIfMissing: Boolean = false): Map<String, String> {
@@ -77,10 +77,10 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
-	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.0")
-	implementation("nl.basjes.parse.useragent:yauaa:7.28.1")
-	implementation("com.maxmind.geoip2:geoip2:4.2.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.2")
+	implementation("nl.basjes.parse.useragent:yauaa:8.1.1")
+	implementation("com.maxmind.geoip2:geoip2:5.1.0")
 	implementation("org.apache.pdfbox:pdfbox:3.0.7")
 	implementation("org.jsoup:jsoup:1.22.2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -126,7 +126,7 @@ tasks.withType<Test> {
 
 // Node.js configuration
 node {
-	version = "24.14.0"
+	version = "24.16.0"
 	download = true
 	workDir = file("${project.projectDir}/.gradle/nodejs")
 	npmWorkDir = file("${project.projectDir}/.gradle/npm")
