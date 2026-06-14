@@ -150,11 +150,11 @@ class SymmetricJwtTokenServiceImpl(
 		.issuedAt(now)
 		.notBefore(now)
 		.id(UUID.randomUUID().toString())
-		.issuer(properties.info.name)    // FIXME Use application URL as issuer
+		.issuer(properties.info.name.orEmpty())    // FIXME Use application URL as issuer
 		.audience(listOf("${properties.info.name}-client"))
 		.subject(profileDTO.id.toString())
 		.claim(SecurityUtils.TYPE_CLAIM, SecurityUtils.TYPE_TOKEN_BEARER)
-		.claim(SecurityUtils.CLIENT_ID_CLAIM, properties.info.name)
+		.claim(SecurityUtils.CLIENT_ID_CLAIM, properties.info.name.orEmpty())
 		.claim(SecurityUtils.SESSION_STATE_CLAIM, UUID.randomUUID().toString())
 
 	private fun accessTokenClaimsBuilder(
@@ -165,10 +165,10 @@ class SymmetricJwtTokenServiceImpl(
 	): JwtClaimsSet.Builder = commonsClaimsBuilder(now, profileDTO)
 		.audience(listOf(SecurityUtils.AUDIENCE_ACCOUNT))
 		.expiresAt(now.plus(validityInSeconds, ChronoUnit.SECONDS))
-		.claim(SecurityUtils.EMAIL_CLAIM, profileDTO.email)
+		.claim(SecurityUtils.EMAIL_CLAIM, profileDTO.email.orEmpty())
 		.claim(SecurityUtils.EMAIL_VERIFIED_CLAIM, profileDTO.emailVerification ?: false)
-		.claim(SecurityUtils.FORENAME_CLAIM, profileDTO.forename)
-		.claim(SecurityUtils.SURNAME_CLAIM, profileDTO.surname)
+		.claim(SecurityUtils.FORENAME_CLAIM, profileDTO.forename.orEmpty())
+		.claim(SecurityUtils.SURNAME_CLAIM, profileDTO.surname.orEmpty())
 		.claim(SecurityUtils.NAME_CLAIM, "${profileDTO.forename.orEmpty()} ${profileDTO.surname.orEmpty()}".trim())
 		.claim(SecurityUtils.AUTHORITIES_CLAIM, authorities)
 
