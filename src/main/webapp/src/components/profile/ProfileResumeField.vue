@@ -149,6 +149,19 @@ const downloading = ref(false)
 const deleting = ref(false)
 const showDeleteDialog = ref(false)
 
+// Methods
+const fetchResumeInfo = async (resumeId: string) => {
+  loading.value = true
+  try {
+    resumeInfo.value = await resumeService.find(resumeId)
+  } catch (error) {
+    console.error('Failed to fetch resume info:', error)
+    resumeInfo.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
 // Fetch resume info when resumeId changes
 watch(
   () => props.resumeId,
@@ -167,19 +180,6 @@ onMounted(async () => {
     await fetchResumeInfo(props.resumeId)
   }
 })
-
-// Methods
-const fetchResumeInfo = async (resumeId: string) => {
-  loading.value = true
-  try {
-    resumeInfo.value = await resumeService.find(resumeId)
-  } catch (error) {
-    console.error('Failed to fetch resume info:', error)
-    resumeInfo.value = null
-  } finally {
-    loading.value = false
-  }
-}
 
 const handleAddFile = async (_error: FilePondErrorDescription | null, file: FilePondFile) => {
   if (_error) {

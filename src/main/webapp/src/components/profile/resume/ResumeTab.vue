@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="profile">
     <ContactSectionCard :profile="profile" @update="onContactUpdate" />
     <SummaryCard :profile="profile" @update="onContactUpdate" />
     <ResumeFileCard
@@ -73,6 +73,10 @@
       @save="onSaveAllExtracted"
       @cancel="showPreview = false"
     />
+  </div>
+  <div v-else class="text-center py-8 text-medium-emphasis">
+    <v-icon icon="mdi-file-account-off" size="48" class="mb-2" />
+    <p>Unable to load resume data.</p>
   </div>
 </template>
 
