@@ -1,7 +1,7 @@
 <template>
   <v-container class="d-flex align-center justify-center" fluid style="min-height: 100vh">
     <v-row align="center" justify="center" class="w-100">
-      <v-col cols="12" sm="8" md="5" lg="4">
+      <v-col cols="12" sm="8" md="5" lg="4" style="max-width: 500px; width: 100%">
         <v-card rounded="lg" elevation="8">
           <v-card-text class="text-center pt-6 pb-0">
             <AppLogo />
