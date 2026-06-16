@@ -3,13 +3,13 @@
     <v-menu min-width="200px" rounded transition="scale-y-transition" location="bottom right">
       <template v-slot:activator="{ props }">
         <v-btn icon v-bind="props">
-          <UserAvatar :email="userEmail" :size="32" />
+          <UserAvatar :email="userEmail" :avatar-url="profile?.avatar" :size="32" />
         </v-btn>
       </template>
       <v-card class="px-5">
         <v-card-text>
           <div class="mx-auto text-center">
-            <UserAvatar :email="userEmail" :size="48" class="my-2" />
+            <UserAvatar :email="userEmail" :avatar-url="profile?.avatar" :size="48" class="my-2" />
             <h3>{{ fullname }}</h3>
             <p class="text-caption mt-1">{{ userEmail }}</p>
             <v-divider class="my-3"></v-divider>
