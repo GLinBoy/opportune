@@ -84,9 +84,9 @@ class ProfileResource(
 	@PostMapping("/avatar", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun uploadAvatar(@RequestParam("avatar") file: MultipartFile): ResponseEntity<Map<String, String>> {
 		val currentUserId = SecurityUtils.getCurrentUserLoginID()
-		val filePath = fileService.uploadAvatar(currentUserId, file)
-		profileRepository.updateAvatar(currentUserId, filePath)
-		return ResponseEntity.ok(mapOf("avatarPath" to filePath))
+		val filename = fileService.uploadAvatar(currentUserId, file)
+		service.updateAvatarPath(currentUserId, filename)
+		return ResponseEntity.ok(mapOf("avatarPath" to filename))
 	}
 
 	@DeleteMapping("/avatar")
@@ -94,9 +94,9 @@ class ProfileResource(
 		val currentUserId = SecurityUtils.getCurrentUserLoginID()
 		val profile = profileRepository.findById(currentUserId)
 			.orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found") }
-		profile.avatar?.let { avatarPath ->
-			fileService.deleteAvatar(avatarPath)
-			profileRepository.updateAvatar(currentUserId, null)
+		profile.avatar?.let { filename ->
+			fileService.deleteAvatar(currentUserId, filename)
+			service.clearAvatarPath(currentUserId)
 		}
 		return ResponseEntity.noContent().build()
 	}
@@ -106,11 +106,11 @@ class ProfileResource(
 		val currentUserId = SecurityUtils.getCurrentUserLoginID()
 		val profile = profileRepository.findById(currentUserId)
 			.orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found") }
-		val avatarPath = profile.avatar
+		val filename = profile.avatar
 			?: return ResponseEntity.notFound().build()
-		val resource = fileService.getAvatar(avatarPath)
+		val resource = fileService.loadAvatar(currentUserId, filename)
 		val contentType = try {
-			Files.probeContentType(Path.of(avatarPath)) ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
+			Files.probeContentType(Path.of(filename)) ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
 		} catch (e: Exception) {
 			MediaType.APPLICATION_OCTET_STREAM_VALUE
 		}

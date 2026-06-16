@@ -17,4 +17,6 @@ interface ProfileService : GenericService<UUID, ProfileDTO>, UserDetailsService 
 	fun initiatePasswordReset(passwordResetInitiationRequestDTO: PasswordResetInitiationRequestDTO)
 	fun finalizePasswordReset(passwordResetFinalizationRequestDTO: PasswordResetFinalizationRequestDTO)
 	fun changePassword(passwordUpdateRequestDTO: PasswordUpdateRequestDTO)
+	fun updateAvatarPath(id: UUID, path: String?)
+	fun clearAvatarPath(id: UUID)
 }

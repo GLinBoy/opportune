@@ -33,10 +33,10 @@ export default class AvatarService {
      * @param profileId - The profile ID
      * @returns Promise<void>
      */
-    deleteAvatar(profileId: string): Promise<void> {
+    deleteAvatar(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             apiClient
-                .delete(`/api/profiles/${profileId}/avatar`)
+                .delete('/api/profiles/avatar')
                 .then(() => { resolve() })
                 .catch((err: unknown) => {
                     reject(err instanceof Error ? err : new Error(String(err)))
@@ -46,14 +46,15 @@ export default class AvatarService {
 
     /**
      * Get avatar URL for a profile
-     * @param avatarPath - The avatar file path from the profile
+     * @param avatarPath - The avatar filename or Gravatar URL
+     * @param profileId - The profile ID (required for internal avatars)
      * @returns Full URL to the avatar image
      */
-    getAvatarUrl(avatarPath: string): string {
+    getAvatarUrl(avatarPath: string, profileId?: string): string {
         if (avatarPath.startsWith('http')) {
             return avatarPath // External URL (like Gravatar)
         }
-        return `/api/files${avatarPath}` // Internal file storage
+        return `/api/public/avatars/${profileId}` // Public avatar endpoint
     }
 
     /**

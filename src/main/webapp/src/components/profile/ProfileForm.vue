@@ -1,202 +1,199 @@
 <template>
-  <div>
-    <v-form>
-      <v-row>
-        <!-- Avatar Section -->
-        <v-col cols="12" md="4">
-          <FormCard :collapsible="false">
-            <template #title>
-              <v-icon icon="mdi-account-circle" class="mr-2" />
-              Avatar
+  <v-form>
+    <v-row>
+      <!-- Row 1: Avatar + Name/Email -->
+      <v-col cols="12" md="4" class="d-flex flex-column align-center">
+        <div style="position: relative; display: inline-block;">
+          <v-avatar
+            size="120"
+            class="cursor-pointer"
+            @click="triggerFileInput"
+          >
+            <v-img :src="avatarUrl" :alt="fullName" />
+            <v-overlay
+              v-if="uploadingAvatar"
+              absolute
+              class="align-center justify-center"
+              contained
+            >
+              <v-progress-circular indeterminate size="28" color="primary" />
+            </v-overlay>
+          </v-avatar>
+
+          <v-tooltip v-if="avatarSource" :text="avatarSource.tooltip" location="bottom">
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                :icon="avatarSource.icon"
+                size="x-small"
+                color="primary"
+                class="position-absolute"
+                style="bottom: -2px; right: -2px; background: rgb(var(--v-theme-surface)); border-radius: 50%; padding: 2px;"
+              />
             </template>
+          </v-tooltip>
 
-            <template #default>
-              <div class="d-flex flex-column align-center">
-                <v-avatar size="80" class="mb-4">
-                  <v-img :src="avatarUrl" :alt="fullName" />
-                </v-avatar>
-
-                <div class="w-100">
-                  <v-file-input
-                    v-model="avatarFile"
-                    label="Upload Avatar"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-camera"
-                    accept="image/*"
-                    density="compact"
-                    :loading="uploadingAvatar"
-                    clearable
-                    @update:model-value="handleAvatarUpload"
-                  />
-
-                  <div class="d-flex align-center mt-2">
-                    <v-btn
-                      v-if="!isUsingGravatar"
-                      color="primary"
-                      variant="text"
-                      size="small"
-                      prepend-icon="mdi-web"
-                      @click="useGravatar"
-                    >
-                      Use Gravatar
-                    </v-btn>
-                    <v-spacer />
-                    <p class="text-caption text-medium-emphasis ma-0">
-                      {{
-                        isUsingGravatar
-                          ? 'Using Gravatar based on email'
-                          : 'Using custom uploaded image'
-                      }}
-                    </p>
-                  </div>
-
-                  <!-- Account Information -->
-                  <v-divider class="my-4" />
-                  <h4 class="text-subtitle-2 mb-3 d-flex align-center">
-                    <v-icon icon="mdi-cog" class="mr-2" size="small" />
-                    Account Information
-                  </h4>
-
-                  <v-select
-                    :model-value="modelValue.status"
-                    :items="statusOptions"
-                    label="Account Status"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-account-check"
-                    density="compact"
-                    readonly
-                    class="mb-3"
-                  />
-
-                  <v-text-field
-                    :model-value="lastLoginFormatted"
-                    label="Last Login"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-clock"
-                    density="compact"
-                    readonly
-                    class="mb-3"
-                  />
-
-                  <v-text-field
-                    :model-value="modelValue.subscription"
-                    label="Subscription Plan"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-credit-card"
-                    density="compact"
-                    readonly
-                    class="mb-3"
-                  />
-
-                  <v-switch
-                    :model-value="modelValue.emailVerification"
-                    label="Email Verified"
-                    color="success"
-                    readonly
-                  />
-                </div>
-              </div>
+          <v-tooltip v-if="isUploadedAvatar" text="Remove avatar" location="top">
+            <template #activator="{ props }">
+              <v-icon
+                v-bind="props"
+                icon="mdi-close-circle"
+                size="small"
+                color="error"
+                class="position-absolute"
+                style="top: -6px; right: -6px; cursor: pointer; background: rgb(var(--v-theme-surface)); border-radius: 50%;"
+                @click.stop="handleRemoveAvatar"
+              />
             </template>
-          </FormCard>
-        </v-col>
+          </v-tooltip>
+        </div>
 
-        <!-- Personal Information -->
-        <v-col cols="12" md="8">
-          <FormCard :collapsible="false">
-            <template #title>
-              <v-icon icon="mdi-account-details" class="mr-2" />
-              Your Details
-            </template>
+        <p class="text-caption text-medium-emphasis mt-2">Click avatar to upload</p>
 
-            <template #default>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :model-value="modelValue.forename"
-                    label="First Name"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-account"
-                    :rules="[rules.required]"
-                    @update:model-value="updateField('forename', $event)"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :model-value="modelValue.surname"
-                    label="Last Name"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-account"
-                    :rules="[rules.required]"
-                    @update:model-value="updateField('surname', $event)"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    :model-value="modelValue.email"
-                    label="Email Address"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-email"
-                    type="email"
-                    :rules="[rules.required, rules.email]"
-                    @update:model-value="updateField('email', $event)"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :model-value="modelValue.jobTitle"
-                    label="Job Title"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-briefcase"
-                    placeholder="e.g., Senior Software Engineer"
-                    @update:model-value="updateField('jobTitle', $event)"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :model-value="modelValue.location"
-                    label="Location"
-                    variant="outlined"
-                    prepend-inner-icon="mdi-map-marker"
-                    placeholder="e.g., San Francisco, CA"
-                    @update:model-value="updateField('location', $event)"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <v-alert
-                    type="info"
-                    variant="tonal"
-                    icon="mdi-file-account"
-                    title="Resume & Structured Data"
-                    text="Upload and manage your resume, work experience, education, and skills in the dedicated Resume section."
-                    density="compact"
-                  >
-                    <template #append>
-                      <v-btn
-                        variant="text"
-                        color="primary"
-                        size="small"
-                        :to="{ name: 'profile-resume' }"
-                      >
-                        Go to Resume
-                      </v-btn>
-                    </template>
-                  </v-alert>
-                </v-col>
-              </v-row>
-            </template>
-          </FormCard>
-        </v-col>
-      </v-row>
-    </v-form>
-  </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          hidden
+          @change="handleFileSelected"
+        />
+      </v-col>
+
+      <v-col cols="12" md="8">
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="modelValue.forename"
+              label="First Name"
+              variant="outlined"
+              prepend-inner-icon="mdi-account"
+              :rules="[rules.required]"
+              @update:model-value="updateField('forename', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              :model-value="modelValue.surname"
+              label="Last Name"
+              variant="outlined"
+              prepend-inner-icon="mdi-account"
+              :rules="[rules.required]"
+              @update:model-value="updateField('surname', $event)"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              :model-value="modelValue.email"
+              label="Email Address"
+              variant="outlined"
+              prepend-inner-icon="mdi-email"
+              type="email"
+              readonly
+              :rules="[rules.required, rules.email]"
+            >
+              <template #append-inner>
+                <v-tooltip
+                  :text="modelValue.emailVerification ? 'Email verified' : 'Email not verified'"
+                  location="top"
+                >
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      :icon="modelValue.emailVerification ? 'mdi-check-circle' : 'mdi-alert-circle-outline'"
+                      :color="modelValue.emailVerification ? 'success' : 'warning'"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
+            </v-text-field>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+
+    <!-- Row 2: Job Title + Location -->
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-text-field
+          :model-value="modelValue.jobTitle"
+          label="Job Title"
+          variant="outlined"
+          prepend-inner-icon="mdi-briefcase"
+          placeholder="e.g., Senior Software Engineer"
+          @update:model-value="updateField('jobTitle', $event)"
+        />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field
+          :model-value="modelValue.location"
+          label="Location"
+          variant="outlined"
+          prepend-inner-icon="mdi-map-marker"
+          placeholder="e.g., San Francisco, CA"
+          @update:model-value="updateField('location', $event)"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- Row 3: Phone + LinkedIn + Portfolio -->
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-text-field
+          :model-value="modelValue.phone"
+          label="Phone"
+          variant="outlined"
+          prepend-inner-icon="mdi-phone"
+          placeholder="+1 (555) 123-4567"
+          @update:model-value="updateField('phone', $event)"
+        />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-text-field
+          :model-value="modelValue.linkedinUrl"
+          label="LinkedIn URL"
+          variant="outlined"
+          prepend-inner-icon="mdi-linkedin"
+          placeholder="https://linkedin.com/in/..."
+          @update:model-value="updateField('linkedinUrl', $event)"
+        />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-text-field
+          :model-value="modelValue.portfolioUrl"
+          label="Portfolio URL"
+          variant="outlined"
+          prepend-inner-icon="mdi-web"
+          placeholder="https://..."
+          @update:model-value="updateField('portfolioUrl', $event)"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- Row 4: Professional Summary -->
+    <v-row>
+      <v-col cols="12">
+        <v-textarea
+          :model-value="modelValue.professionalSummary"
+          label="Professional Summary"
+          variant="outlined"
+          placeholder="Write a brief summary of your professional background, key achievements, and career goals..."
+          rows="5"
+          auto-grow
+          hint="This summary will be used by AI to tailor your cover letters and interview introductions."
+          persistent-hint
+          @update:model-value="updateField('professionalSummary', $event)"
+        />
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { type IProfile, ProfileStatus } from '../../models'
-import CryptoJS from 'crypto-js'
-import FormCard from '../forms/FormCard.vue'
-// import { AvatarService } from '../services' // Uncomment when avatar endpoint is ready
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
+import { type IProfile } from '../../models'
+import AvatarService from '../../services/avatar.service'
+import { useToastStore } from '../../stores/toast'
+import apiClient from '../../services/api'
 
 const props = defineProps<{
   modelValue: IProfile
@@ -207,11 +204,38 @@ const emit = defineEmits<{
   change: []
 }>()
 
-// Avatar upload state
-const avatarFile = ref<File[]>([])
-const uploadingAvatar = ref(false)
+const avatarService = new AvatarService()
+const toast = useToastStore()
 
-// Computed properties
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploadingAvatar = ref(false)
+const avatarBlobUrl = ref('')
+
+const fetchAvatarBlob = async () => {
+  if (avatarBlobUrl.value) {
+    URL.revokeObjectURL(avatarBlobUrl.value)
+    avatarBlobUrl.value = ''
+  }
+  if (props.modelValue.avatar && !props.modelValue.avatar.startsWith('http')) {
+    try {
+      const response = await apiClient.get('/api/profiles/avatar', {
+        responseType: 'blob',
+      })
+      avatarBlobUrl.value = URL.createObjectURL(response.data)
+    } catch {
+      console.error('Failed to load avatar')
+    }
+  }
+}
+
+watch(() => props.modelValue.avatar, fetchAvatarBlob)
+onMounted(fetchAvatarBlob)
+onUnmounted(() => {
+  if (avatarBlobUrl.value) {
+    URL.revokeObjectURL(avatarBlobUrl.value)
+  }
+})
+
 const fullName = computed(() => {
   if (props.modelValue.forename && props.modelValue.surname) {
     return `${props.modelValue.forename} ${props.modelValue.surname}`
@@ -221,38 +245,31 @@ const fullName = computed(() => {
 
 const gravatarUrl = computed(() => {
   if (!props.modelValue.email) return ''
-
-  const trimmedEmail = props.modelValue.email.trim().toLowerCase()
-  const hash = CryptoJS.MD5(trimmedEmail).toString()
-  return `https://www.gravatar.com/avatar/${hash}?s=80&d=mp&r=g`
-})
-
-const isUsingGravatar = computed(() => {
-  return !props.modelValue.avatar || props.modelValue.avatar === gravatarUrl.value
+  return avatarService.getGravatarUrl(props.modelValue.email, 120)
 })
 
 const avatarUrl = computed(() => {
-  if (isUsingGravatar.value) {
-    return gravatarUrl.value
+  if (props.modelValue.avatar) {
+    if (props.modelValue.avatar.startsWith('http')) {
+      return props.modelValue.avatar
+    }
+    return avatarBlobUrl.value || gravatarUrl.value
   }
-  return props.modelValue.avatar || gravatarUrl.value
+  return gravatarUrl.value
 })
 
-const lastLoginFormatted = computed(() => {
-  if (props.modelValue.lastLogin) {
-    return new Date(props.modelValue.lastLogin).toLocaleString()
+const isUploadedAvatar = computed(() => {
+  return !!props.modelValue.avatar && !props.modelValue.avatar.startsWith('http')
+})
+
+const avatarSource = computed(() => {
+  if (!props.modelValue.avatar) return null
+  if (props.modelValue.avatar.startsWith('http')) {
+    return { icon: 'mdi-web', tooltip: 'Using Gravatar' }
   }
-  return 'Never'
+  return { icon: 'mdi-upload', tooltip: 'Uploaded avatar' }
 })
 
-const statusOptions = computed(() => {
-  return Object.values(ProfileStatus).map((status) => ({
-    title: status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-    value: status,
-  }))
-})
-
-// Validation rules
 const rules = {
   required: (value: string) => !!value || 'This field is required',
   email: (value: string) => {
@@ -261,7 +278,6 @@ const rules = {
   },
 }
 
-// Methods
 const updateField = (field: keyof IProfile, value: string | boolean | undefined | null) => {
   const updatedProfile = {
     ...props.modelValue,
@@ -271,50 +287,65 @@ const updateField = (field: keyof IProfile, value: string | boolean | undefined 
   emit('change')
 }
 
-const useGravatar = () => {
-  updateField('avatar', gravatarUrl.value)
+const triggerFileInput = () => {
+  fileInput.value?.click()
 }
 
-const handleAvatarUpload = async (files: File | File[]) => {
-  const fileArray = Array.isArray(files) ? files : [files]
-
-  if (!fileArray || fileArray.length === 0) return
-
-  const file = fileArray[0]
+const handleFileSelected = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
   if (!file) return
 
   if (!file.type.startsWith('image/')) {
-    alert('Please select an image file')
+    toast.error('Please select an image file')
+    input.value = ''
     return
   }
 
   const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
-    alert('File size must be less than 5MB')
+    toast.error('File size must be less than 5MB')
+    input.value = ''
     return
   }
 
   uploadingAvatar.value = true
-
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const timestamp = new Date().getTime()
-    const fileName = `avatar_${props.modelValue.id}_${timestamp}.${file.name.split('.').pop()}`
-    const avatarPath = `/uploads/avatars/${fileName}`
-    updateField('avatar', avatarPath)
-
-    console.log('Avatar upload simulated:', {
-      originalFile: file.name,
-      size: file.size,
-      type: file.type,
-      simulatedPath: avatarPath,
-    })
+    const profileId = props.modelValue.id
+    if (!profileId) {
+      toast.error('Profile ID not available')
+      return
+    }
+    const response = await avatarService.uploadAvatar(profileId, file)
+    updateField('avatar', response.avatarPath)
+    toast.success('Avatar uploaded successfully')
   } catch (error) {
     console.error('Failed to upload avatar:', error)
-    alert('Failed to upload avatar. Please try again.')
+    toast.error('Failed to upload avatar. Please try again.')
   } finally {
     uploadingAvatar.value = false
-    avatarFile.value = []
+    input.value = ''
+  }
+}
+
+const handleRemoveAvatar = async () => {
+  if (!props.modelValue.avatar) return
+
+  uploadingAvatar.value = true
+  try {
+    const profileId = props.modelValue.id
+    if (!profileId) {
+      toast.error('Profile ID not available')
+      return
+    }
+    await avatarService.deleteAvatar()
+    updateField('avatar', null)
+    toast.success('Avatar removed successfully')
+  } catch (error) {
+    console.error('Failed to remove avatar:', error)
+    toast.error('Failed to remove avatar. Please try again.')
+  } finally {
+    uploadingAvatar.value = false
   }
 }
 </script>
