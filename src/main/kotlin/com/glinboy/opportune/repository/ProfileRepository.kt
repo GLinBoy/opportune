@@ -33,6 +33,10 @@ interface ProfileRepository : JpaRepository<Profile, UUID>, JpaSpecificationExec
 	@Query("UPDATE Profile p SET p.password = :password WHERE p.id = :id")
 	fun updatePassword(id: UUID, password: String)
 
+	@Modifying
+	@Query("UPDATE Profile p SET p.avatar = :avatar WHERE p.id = :id")
+	fun updateAvatar(@Param("id") id: UUID, @Param("avatar") avatar: String?)
+
 	@Query("SELECT p.status AS status, COUNT(p) AS total FROM Profile p GROUP BY p.status")
 	fun countByStatusGrouped(): List<ProfileStatusCountProjection>
 

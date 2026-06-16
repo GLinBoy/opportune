@@ -48,6 +48,29 @@ class LocalFileService(private val properties: ApplicationProperties) : FileServ
 		return targetPath.toString()
 	}
 
+	override fun uploadAvatar(profileId: UUID, file: MultipartFile): String {
+		val avatarDir = Paths.get(properties.files.basePath, profileId.toString(), "avatars")
+
+		if (!Files.exists(avatarDir)) {
+			Files.createDirectories(avatarDir)
+		}
+
+		val originalFilename = file.originalFilename ?: "avatar"
+		val extension = originalFilename.substringAfterLast('.', "")
+		val newFilename = "${UUID.randomUUID()}${if (extension.isNotEmpty()) ".$extension" else ""}"
+		val targetPath: Path = avatarDir.resolve(newFilename)
+
+		Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
+
+		return targetPath.toString()
+	}
+
+	override fun deleteAvatar(filePath: String) {
+		deleteFile(filePath)
+	}
+
+	override fun getAvatar(path: String): Resource = loadFileAsResource(path)
+
 	override fun uploadAttachment(file: MultipartFile, userId: String, noteId: String): String {
 		val attachmentPath = Paths.get(properties.files.basePath, userId, "interview-notes", noteId)
 
