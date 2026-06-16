@@ -55,21 +55,29 @@ class LocalFileService(private val properties: ApplicationProperties) : FileServ
 			Files.createDirectories(avatarDir)
 		}
 
-		val originalFilename = file.originalFilename ?: "avatar"
+		val originalFilename = file.originalFilename ?: "avatar.jpg"
 		val extension = originalFilename.substringAfterLast('.', "")
-		val newFilename = "${UUID.randomUUID()}${if (extension.isNotEmpty()) ".$extension" else ""}"
-		val targetPath: Path = avatarDir.resolve(newFilename)
+		val filename = "avatar.${extension}"
+		val targetPath: Path = avatarDir.resolve(filename)
 
 		Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
-		return targetPath.toString()
+		return filename
 	}
 
-	override fun deleteAvatar(filePath: String) {
-		deleteFile(filePath)
+	override fun deleteAvatar(profileId: UUID, filename: String) {
+		val filePath = Paths.get(properties.files.basePath, profileId.toString(), "avatars", filename)
+		Files.deleteIfExists(filePath)
 	}
 
-	override fun getAvatar(path: String): Resource = loadFileAsResource(path)
+	override fun loadAvatar(profileId: UUID, filename: String): Resource {
+		val filePath = Paths.get(properties.files.basePath, profileId.toString(), "avatars", filename)
+		val resource = UrlResource(filePath.toUri())
+		if (resource.exists() && resource.isReadable) {
+			return resource
+		}
+		throw ResponseStatusException(HttpStatus.NOT_FOUND, "Avatar not found")
+	}
 
 	override fun uploadAttachment(file: MultipartFile, userId: String, noteId: String): String {
 		val attachmentPath = Paths.get(properties.files.basePath, userId, "interview-notes", noteId)

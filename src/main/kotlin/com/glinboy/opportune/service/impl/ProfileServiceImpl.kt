@@ -171,6 +171,16 @@ class ProfileServiceImpl(
 	}
 
 	@Transactional
+	override fun updateAvatarPath(id: UUID, path: String?) {
+		repository.updateAvatar(id, path)
+	}
+
+	@Transactional
+	override fun clearAvatarPath(id: UUID) {
+		repository.updateAvatar(id, null)
+	}
+
+	@Transactional
 	override fun changePassword(passwordUpdateRequestDTO: PasswordUpdateRequestDTO) {
 		val currentUserId = UUID.fromString(SecurityUtils.getCurrentUserLogin())
 		SecurityUtils.getCurrentUserLogin()

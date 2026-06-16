@@ -10,8 +10,8 @@ interface FileService {
 	fun delete()
 	fun uploadResume(file: MultipartFile): String
 	fun uploadAvatar(profileId: UUID, file: MultipartFile): String
-	fun deleteAvatar(filePath: String)
-	fun getAvatar(path: String): Resource
+	fun deleteAvatar(profileId: UUID, filename: String)
+	fun loadAvatar(profileId: UUID, filename: String): Resource
 	fun uploadAttachment(file: MultipartFile, userId: String, noteId: String): String
 	fun loadFileAsResource(path: String): Resource
 	fun deleteFile(path: String)
