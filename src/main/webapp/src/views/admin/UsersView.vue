@@ -48,7 +48,7 @@
         <!-- Name -->
         <template #item.name="{ item }">
           <div class="d-flex align-center gap-2 py-1">
-            <UserAvatar :email="item.email" :avatar-url="item.avatar" :size="32" />
+            <UserAvatar :email="item.email" :avatar-url="item.avatar" :profile-id="item.id" :size="32" />
             <div class="ml-3">
               <div class="text-body-2 font-weight-medium">{{ fullName(item) }}</div>
               <div class="text-caption text-medium-emphasis">{{ item.email }}</div>

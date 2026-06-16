@@ -30,6 +30,7 @@
             <UserAvatar
               :email="detail.profile.email"
               :avatar-url="detail.profile.avatar"
+              :profile-id="detail.profile.id"
               :size="72"
             />
           </v-col>
