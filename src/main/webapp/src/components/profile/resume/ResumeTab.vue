@@ -1,7 +1,5 @@
 <template>
   <div v-if="profile">
-    <ContactSectionCard :profile="profile" @update="onContactUpdate" />
-    <SummaryCard :profile="profile" @update="onContactUpdate" />
     <ResumeFileCard
       :profile-id="profile.id"
       :resume-id="profile.resumeId"
@@ -84,8 +82,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import type { IProfile } from '../../../models'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
-import ContactSectionCard from './ContactSectionCard.vue'
-import SummaryCard from './SummaryCard.vue'
 import ResumeFileCard from './ResumeFileCard.vue'
 import SkillsCard from './SkillsCard.vue'
 import WorkExperienceCard from './WorkExperienceCard.vue'
@@ -156,11 +152,6 @@ async function onSaveAllExtracted(result: IResumeExtractionResult) {
 
 function onResumeIdUpdate(value: string | undefined) {
   emit('update:profile', { ...props.profile, resumeId: value })
-  emit('change')
-}
-
-function onContactUpdate(field: string, value: string | undefined | boolean) {
-  emit('update:profile', { ...props.profile, [field]: value })
   emit('change')
 }
 
