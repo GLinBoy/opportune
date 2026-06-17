@@ -1,14 +1,14 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <div class="d-flex align-center pa-4 pb-0">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-certificate" color="primary" size="28" class="mr-3" />
-      <div class="flex-grow-1">
-        <div class="text-body-1 font-weight-medium">Certifications</div>
-      </div>
-      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
-    </div>
+      Certifications
+    </template>
 
-    <v-card-text>
+    <template #default>
+      <div class="d-flex justify-end mb-2">
+        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
+      </div>
       <div v-if="store.certifications.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-certificate-outline" size="40" class="mb-2" />
         <p class="text-body-2">No certifications added yet.</p>
@@ -33,56 +33,56 @@
           </template>
         </v-tooltip>
       </div>
-    </v-card-text>
+      <FormDialog
+        v-model="showDialog"
+        :title="editingId ? 'Edit Certification' : 'Add Certification'"
+        icon="mdi-certificate"
+        :loading="saving"
+        :valid="formValid"
+        @confirm="saveCertification"
+        @cancel="showDialog = false"
+      >
+        <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="form.name" label="Certification Name" variant="outlined" density="compact" :rules="[rules.required]" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.issuingOrganization" label="Issuing Organization" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field v-model="form.issueDate" label="Issue Date" type="date" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-text-field v-model="form.expirationDate" label="Expiration Date" type="date" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.credentialId" label="Credential ID" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.credentialUrl" label="Credential URL" variant="outlined" density="compact" />
+          </v-col>
+        </v-row>
+      </FormDialog>
 
-    <FormDialog
-      v-model="showDialog"
-      :title="editingId ? 'Edit Certification' : 'Add Certification'"
-      icon="mdi-certificate"
-      :loading="saving"
-      :valid="formValid"
-      @confirm="saveCertification"
-      @cancel="showDialog = false"
-    >
-      <v-row>
-        <v-col cols="12">
-          <v-text-field v-model="form.name" label="Certification Name" variant="outlined" density="compact" :rules="[rules.required]" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.issuingOrganization" label="Issuing Organization" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="6" md="3">
-          <v-text-field v-model="form.issueDate" label="Issue Date" type="date" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="6" md="3">
-          <v-text-field v-model="form.expirationDate" label="Expiration Date" type="date" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.credentialId" label="Credential ID" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.credentialUrl" label="Credential URL" variant="outlined" density="compact" />
-        </v-col>
-      </v-row>
-    </FormDialog>
-
-    <ConfirmDialog
-      v-model="deleteConfirm"
-      title="Delete Certification"
-      variant="error"
-      confirm-text="Delete"
-      :loading="deleting"
-      @confirm="doDelete"
-    >
-      Are you sure you want to delete "{{ deleteTarget?.name }}"?
-    </ConfirmDialog>
-  </v-card>
+      <ConfirmDialog
+        v-model="deleteConfirm"
+        title="Delete Certification"
+        variant="error"
+        confirm-text="Delete"
+        :loading="deleting"
+        @confirm="doDelete"
+      >
+        Are you sure you want to delete "{{ deleteTarget?.name }}"?
+      </ConfirmDialog>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import type { IResumeCertification } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 import ConfirmDialog from '../../ConfirmDialog.vue'
 

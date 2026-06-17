@@ -1,14 +1,14 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <div class="d-flex align-center pa-4 pb-0">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-trophy" color="primary" size="28" class="mr-3" />
-      <div class="flex-grow-1">
-        <div class="text-body-1 font-weight-medium">Awards</div>
-      </div>
-      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
-    </div>
+      Awards
+    </template>
 
-    <v-card-text>
+    <template #default>
+      <div class="d-flex justify-end mb-2">
+        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
+      </div>
       <div v-if="store.awards.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-trophy-outline" size="40" class="mb-2" />
         <p class="text-body-2">No awards added yet.</p>
@@ -39,50 +39,50 @@
           {{ award.description.substring(0, 120) }}{{ award.description.length > 120 ? '...' : '' }}
         </div>
       </div>
-    </v-card-text>
+      <FormDialog
+        v-model="showDialog"
+        :title="editingId ? 'Edit Award' : 'Add Award'"
+        icon="mdi-trophy"
+        :loading="saving"
+        :valid="formValid"
+        @confirm="saveAward"
+        @cancel="showDialog = false"
+      >
+        <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="form.title" label="Award Title" variant="outlined" density="compact" :rules="[rules.required]" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.issuer" label="Issuer" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.awardDate" label="Award Date" type="date" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea v-model="form.description" label="Description" variant="outlined" density="compact" rows="2" />
+          </v-col>
+        </v-row>
+      </FormDialog>
 
-    <FormDialog
-      v-model="showDialog"
-      :title="editingId ? 'Edit Award' : 'Add Award'"
-      icon="mdi-trophy"
-      :loading="saving"
-      :valid="formValid"
-      @confirm="saveAward"
-      @cancel="showDialog = false"
-    >
-      <v-row>
-        <v-col cols="12">
-          <v-text-field v-model="form.title" label="Award Title" variant="outlined" density="compact" :rules="[rules.required]" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.issuer" label="Issuer" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.awardDate" label="Award Date" type="date" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12">
-          <v-textarea v-model="form.description" label="Description" variant="outlined" density="compact" rows="2" />
-        </v-col>
-      </v-row>
-    </FormDialog>
-
-    <ConfirmDialog
-      v-model="deleteConfirm"
-      title="Delete Award"
-      variant="error"
-      confirm-text="Delete"
-      :loading="deleting"
-      @confirm="doDelete"
-    >
-      Are you sure you want to delete "{{ deleteTarget?.title }}"?
-    </ConfirmDialog>
-  </v-card>
+      <ConfirmDialog
+        v-model="deleteConfirm"
+        title="Delete Award"
+        variant="error"
+        confirm-text="Delete"
+        :loading="deleting"
+        @confirm="doDelete"
+      >
+        Are you sure you want to delete "{{ deleteTarget?.title }}"?
+      </ConfirmDialog>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import type { IResumeAward } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 import ConfirmDialog from '../../ConfirmDialog.vue'
 

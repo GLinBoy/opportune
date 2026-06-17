@@ -1,14 +1,14 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <div class="d-flex align-center pa-4 pb-0">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-book-open-page-variant" color="primary" size="28" class="mr-3" />
-      <div class="flex-grow-1">
-        <div class="text-body-1 font-weight-medium">Publications</div>
-      </div>
-      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
-    </div>
+      Publications
+    </template>
 
-    <v-card-text>
+    <template #default>
+      <div class="d-flex justify-end mb-2">
+        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
+      </div>
       <div v-if="store.publications.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-book-open-page-variant-outline" size="40" class="mb-2" />
         <p class="text-body-2">No publications added yet.</p>
@@ -36,53 +36,53 @@
           </v-tooltip>
         </div>
       </div>
-    </v-card-text>
+      <FormDialog
+        v-model="showDialog"
+        :title="editingId ? 'Edit Publication' : 'Add Publication'"
+        icon="mdi-book-open-page-variant"
+        :loading="saving"
+        :valid="formValid"
+        @confirm="savePublication"
+        @cancel="showDialog = false"
+      >
+        <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="form.title" label="Title" variant="outlined" density="compact" :rules="[rules.required]" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.publisher" label="Publisher" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.publicationDate" label="Publication Date" type="date" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field v-model="form.url" label="URL" variant="outlined" density="compact" />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea v-model="form.description" label="Description" variant="outlined" density="compact" rows="2" />
+          </v-col>
+        </v-row>
+      </FormDialog>
 
-    <FormDialog
-      v-model="showDialog"
-      :title="editingId ? 'Edit Publication' : 'Add Publication'"
-      icon="mdi-book-open-page-variant"
-      :loading="saving"
-      :valid="formValid"
-      @confirm="savePublication"
-      @cancel="showDialog = false"
-    >
-      <v-row>
-        <v-col cols="12">
-          <v-text-field v-model="form.title" label="Title" variant="outlined" density="compact" :rules="[rules.required]" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.publisher" label="Publisher" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field v-model="form.publicationDate" label="Publication Date" type="date" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12">
-          <v-text-field v-model="form.url" label="URL" variant="outlined" density="compact" />
-        </v-col>
-        <v-col cols="12">
-          <v-textarea v-model="form.description" label="Description" variant="outlined" density="compact" rows="2" />
-        </v-col>
-      </v-row>
-    </FormDialog>
-
-    <ConfirmDialog
-      v-model="deleteConfirm"
-      title="Delete Publication"
-      variant="error"
-      confirm-text="Delete"
-      :loading="deleting"
-      @confirm="doDelete"
-    >
-      Are you sure you want to delete "{{ deleteTarget?.title }}"?
-    </ConfirmDialog>
-  </v-card>
+      <ConfirmDialog
+        v-model="deleteConfirm"
+        title="Delete Publication"
+        variant="error"
+        confirm-text="Delete"
+        :loading="deleting"
+        @confirm="doDelete"
+      >
+        Are you sure you want to delete "{{ deleteTarget?.title }}"?
+      </ConfirmDialog>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import type { IResumePublication } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 import ConfirmDialog from '../../ConfirmDialog.vue'
 
