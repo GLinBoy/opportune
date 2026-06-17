@@ -66,6 +66,11 @@ export default defineComponent({
         icon: 'mdi-account'
       },
       {
+        value: 'resume',
+        title: 'Resume',
+        icon: 'mdi-file-account'
+      },
+      {
         value: 'password',
         title: 'Password & Security',
         icon: 'mdi-lock'
@@ -79,11 +84,6 @@ export default defineComponent({
         value: 'api',
         title: 'API & Webhooks',
         icon: 'mdi-api'
-      },
-      {
-        value: 'resume',
-        title: 'Resume',
-        icon: 'mdi-file-account'
       }
     ]
 
