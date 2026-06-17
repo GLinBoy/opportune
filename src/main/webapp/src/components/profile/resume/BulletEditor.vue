@@ -8,11 +8,13 @@
       <template #prepend>
         <span class="bullet-number text-caption text-medium-emphasis mr-1">{{ index + 1 }}.</span>
       </template>
-      <v-text-field
+      <v-textarea
         :model-value="bullet.content"
         variant="outlined"
         density="compact"
         hide-details
+        auto-grow
+        rows="2"
         placeholder="Describe an accomplishment or responsibility..."
         class="bullet-input"
         @update:model-value="updateBullet(index, $event as string)"
@@ -38,11 +40,29 @@
     >
       Add bullet point
     </v-btn>
+    <div v-if="dirty" class="d-flex ga-2 mt-2">
+      <v-btn
+        color="success"
+        prepend-icon="mdi-content-save"
+        size="small"
+        @click="emitBullets"
+      >
+        Save
+      </v-btn>
+      <v-btn
+        color="warning"
+        prepend-icon="mdi-undo"
+        size="small"
+        @click="revertBullets"
+      >
+        Revert
+      </v-btn>
+    </div>
   </v-list>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { IWorkExperienceBullet } from '../../../models/resume-data.model'
 
 const props = defineProps<{
@@ -57,6 +77,15 @@ const localBullets = ref<IWorkExperienceBullet[]>(props.bullets.length
   ? [...props.bullets]
   : [{ content: '', displayOrder: 0 }]
 )
+
+const dirty = computed(() => {
+  const current = localBullets.value
+  const original = props.bullets
+  const effectiveCurrent = current.filter(b => b.content)
+  const effectiveOriginal = original.filter(b => b.content)
+  if (effectiveCurrent.length !== effectiveOriginal.length) return true
+  return effectiveCurrent.some((b, i) => b.content !== effectiveOriginal[i]?.content)
+})
 
 watch(
   () => props.bullets,
@@ -77,9 +106,16 @@ function emitBullets() {
   })))
 }
 
+function revertBullets() {
+  if (props.bullets.length === 0) {
+    localBullets.value = [{ content: '', displayOrder: 0 }]
+  } else {
+    localBullets.value = props.bullets.map((b, i) => ({ ...b, displayOrder: i }))
+  }
+}
+
 function addBullet() {
   localBullets.value.push({ content: '', displayOrder: localBullets.value.length })
-  emitBullets()
 }
 
 function removeBullet(index: number) {
@@ -87,13 +123,11 @@ function removeBullet(index: number) {
   if (localBullets.value.length === 0) {
     localBullets.value.push({ content: '', displayOrder: 0 })
   }
-  emitBullets()
 }
 
 function updateBullet(index: number, content: string) {
   if (localBullets.value[index]) {
     localBullets.value[index].content = content
-    emitBullets()
   }
 }
 </script>

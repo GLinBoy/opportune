@@ -8,10 +8,18 @@
     <template #title>
       <div class="w-100">
         <div class="d-flex align-center w-100">
-          <v-icon icon="mdi-briefcase" color="primary" size="28" class="mr-3 flex-shrink-0" />
-          <span class="text-body-1 font-weight-medium">{{ workExperience.jobTitle || 'Untitled' }}</span>
-          <span class="text-caption text-medium-emphasis mx-1">&middot;</span>
-          <span class="text-caption text-medium-emphasis flex-grow-1">{{ workExperience.company }}</span>
+          <v-icon icon="mdi-briefcase" color="primary" size="24" class="mr-2 flex-shrink-0" />
+          <div class="flex-grow-1">
+            <div class="text-body-1 font-weight-medium">
+              {{ workExperience.jobTitle || 'Untitled' }}
+              <span class="text-medium-emphasis"> at </span>
+              {{ workExperience.company || 'Unknown Company' }}
+            </div>
+            <div class="text-caption text-medium-emphasis">
+              <template v-if="workExperience.location">{{ workExperience.location }} &middot; </template>
+              {{ dateRange }}
+            </div>
+          </div>
           <v-tooltip text="Edit" location="top">
             <template #activator="{ props: tp }">
               <v-btn v-bind="tp" icon="mdi-pencil" variant="text" size="small" color="primary" @click="editDialog = true" />
@@ -22,10 +30,6 @@
               <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="small" color="error" @click="confirmDelete = true" />
             </template>
           </v-tooltip>
-        </div>
-        <div class="text-caption text-medium-emphasis ml-10">
-          <template v-if="workExperience.location">{{ workExperience.location }} <span class="mx-1">&middot;</span> </template>
-          {{ dateRange }}
         </div>
       </div>
     </template>

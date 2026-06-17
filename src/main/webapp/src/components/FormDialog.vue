@@ -36,6 +36,7 @@
           @click="onCancel"
         />
         <v-btn
+          v-if="!hideConfirm"
           :text="confirmText"
           color="primary"
           variant="flat"
@@ -63,6 +64,7 @@ export interface FormDialogProps {
   loading?: boolean
   valid?: boolean | null
   maxWidth?: string | number
+  hideConfirm?: boolean
 }
 
 const props = withDefaults(defineProps<FormDialogProps>(), {
@@ -72,6 +74,7 @@ const props = withDefaults(defineProps<FormDialogProps>(), {
   valid: true,
   maxWidth: 600,
   icon: undefined,
+  hideConfirm: false,
 })
 
 const emit = defineEmits<{
