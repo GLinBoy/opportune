@@ -1,10 +1,10 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <v-card-title class="pa-4 pb-0 d-flex align-center">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-file-account" color="primary" class="mr-2" />
       <span class="text-body-1 font-weight-semibold">Resume File</span>
-    </v-card-title>
-    <v-card-text class="pa-4">
+    </template>
+    <template #default>
       <ProfileResumeField
         :profile-id="profileId"
         :resume-id="resumeId"
@@ -35,11 +35,12 @@
         <v-progress-circular indeterminate size="24" class="mr-3" />
         <span class="text-body-2">Extracting data from your resume...</span>
       </div>
-    </v-card-text>
-  </v-card>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
+import FormCard from '../../forms/FormCard.vue'
 import ProfileResumeField from '../ProfileResumeField.vue'
 
 defineProps<{

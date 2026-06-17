@@ -1,16 +1,14 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <div class="d-flex align-center pa-4 pb-0">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-lightning-bolt" color="primary" size="28" class="mr-3" />
-      <div class="flex-grow-1">
-        <div class="text-body-1 font-weight-medium">
-          Skills
-        </div>
-      </div>
-      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="showAddForm = true" />
-    </div>
+      Skills
+    </template>
 
-    <v-card-text>
+    <template #default>
+      <div class="d-flex justify-end mb-2">
+        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="showAddForm = true" />
+      </div>
       <div v-if="skillGroups.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-lightning-bolt-outline" size="40" class="mb-2" />
         <p class="text-body-2">No skills added yet. Extract from your resume or add manually.</p>
@@ -43,47 +41,47 @@
           </v-chip>
         </div>
       </div>
-    </v-card-text>
-
-    <FormDialog
-      v-model="showFormDialog"
-      :title="editingId ? 'Edit Skill Group' : 'Add Skill Group'"
-      icon="mdi-lightning-bolt"
-      :loading="saving"
-      :valid="formValid"
-      @confirm="saveGroup"
-      @cancel="showFormDialog = false"
-    >
-      <v-text-field
-        v-model="form.category"
-        label="Category"
-        variant="outlined"
-        density="compact"
-        :rules="[rules.required]"
-        placeholder="e.g., Programming Languages"
-        class="mb-3"
-      />
-      <v-combobox
-        v-model="form.skills"
-        label="Skills"
-        variant="outlined"
-        density="compact"
-        multiple
-        chips
-        deletable-chips
-        small-chips
-        append-icon="mdi-plus"
-        hint="Type a skill and press Enter"
-        persistent-hint
-      />
-    </FormDialog>
-  </v-card>
+      <FormDialog
+        v-model="showFormDialog"
+        :title="editingId ? 'Edit Skill Group' : 'Add Skill Group'"
+        icon="mdi-lightning-bolt"
+        :loading="saving"
+        :valid="formValid"
+        @confirm="saveGroup"
+        @cancel="showFormDialog = false"
+      >
+        <v-text-field
+          v-model="form.category"
+          label="Category"
+          variant="outlined"
+          density="compact"
+          :rules="[rules.required]"
+          placeholder="e.g., Programming Languages"
+          class="mb-3"
+        />
+        <v-combobox
+          v-model="form.skills"
+          label="Skills"
+          variant="outlined"
+          density="compact"
+          multiple
+          chips
+          deletable-chips
+          small-chips
+          append-icon="mdi-plus"
+          hint="Type a skill and press Enter"
+          persistent-hint
+        />
+      </FormDialog>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import type { ISkillGroup } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 
 const store = useResumeDataStore()

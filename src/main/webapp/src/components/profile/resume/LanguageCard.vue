@@ -1,14 +1,14 @@
 <template>
-  <v-card elevation="0" border rounded="lg" class="mb-4">
-    <div class="d-flex align-center pa-4 pb-0">
+  <FormCard collapsible default-open class="mb-4">
+    <template #title>
       <v-icon icon="mdi-translate" color="primary" size="28" class="mr-3" />
-      <div class="flex-grow-1">
-        <div class="text-body-1 font-weight-medium">Languages</div>
-      </div>
-      <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
-    </div>
+      Languages
+    </template>
 
-    <v-card-text>
+    <template #default>
+      <div class="d-flex justify-end mb-2">
+        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
+      </div>
       <div v-if="store.languages.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-translate" size="40" class="mb-2" />
         <p class="text-body-2">No languages added yet.</p>
@@ -27,58 +27,58 @@
           {{ lang.language }} &middot; {{ formatProficiency(lang.proficiency) }}
         </v-chip>
       </div>
-    </v-card-text>
+      <FormDialog
+        v-model="showDialog"
+        :title="editingId ? 'Edit Language' : 'Add Language'"
+        icon="mdi-translate"
+        :loading="saving"
+        :valid="formValid"
+        @confirm="saveLanguage"
+        @cancel="showDialog = false"
+      >
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="form.language"
+              label="Language"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+              placeholder="e.g., English, Spanish"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-select
+              v-model="form.proficiency"
+              label="Proficiency"
+              variant="outlined"
+              density="compact"
+              :items="proficiencyItems"
+              :rules="[rules.required]"
+            />
+          </v-col>
+        </v-row>
+      </FormDialog>
 
-    <FormDialog
-      v-model="showDialog"
-      :title="editingId ? 'Edit Language' : 'Add Language'"
-      icon="mdi-translate"
-      :loading="saving"
-      :valid="formValid"
-      @confirm="saveLanguage"
-      @cancel="showDialog = false"
-    >
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="form.language"
-            label="Language"
-            variant="outlined"
-            density="compact"
-            :rules="[rules.required]"
-            placeholder="e.g., English, Spanish"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-select
-            v-model="form.proficiency"
-            label="Proficiency"
-            variant="outlined"
-            density="compact"
-            :items="proficiencyItems"
-            :rules="[rules.required]"
-          />
-        </v-col>
-      </v-row>
-    </FormDialog>
-
-    <ConfirmDialog
-      v-model="deleteConfirm"
-      title="Delete Language"
-      variant="error"
-      confirm-text="Delete"
-      :loading="deleting"
-      @confirm="doDelete"
-    >
-      Are you sure you want to delete "{{ deleteTarget?.language }}"?
-    </ConfirmDialog>
-  </v-card>
+      <ConfirmDialog
+        v-model="deleteConfirm"
+        title="Delete Language"
+        variant="error"
+        confirm-text="Delete"
+        :loading="deleting"
+        @confirm="doDelete"
+      >
+        Are you sure you want to delete "{{ deleteTarget?.language }}"?
+      </ConfirmDialog>
+    </template>
+  </FormCard>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import type { IResumeLanguage, LanguageProficiency } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 import ConfirmDialog from '../../ConfirmDialog.vue'
 

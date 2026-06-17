@@ -11,9 +11,7 @@
     <div v-for="we in store.workExperiences" :key="we.id">
       <WorkExperienceCard :work-experience="we" />
     </div>
-    <div v-for="edu in store.education" :key="edu.id">
-      <EducationCard :education-item="edu" />
-    </div>
+    <EducationCard />
 
     <ProjectCard />
     <CertificationCard />
@@ -182,7 +180,8 @@ interface AddableSection {
 
 const addableSections = computed<AddableSection[]>(() => {
   const sections: AddableSection[] = []
-  sections.push({ key: 'work-experience', label: 'Work Experience', icon: 'mdi-briefcase' })
+    sections.push({ key: 'work-experience', label: 'Work Experience', icon: 'mdi-briefcase' })
+  if (!store.education || store.education.length === 0) sections.push({ key: 'education', label: 'Education', icon: 'mdi-school' })
   if (!store.projects || store.projects.length === 0) sections.push({ key: 'projects', label: 'Projects', icon: 'mdi-code-braces' })
   if (!store.certifications || store.certifications.length === 0) sections.push({ key: 'certifications', label: 'Certifications', icon: 'mdi-certificate' })
   if (!store.languages || store.languages.length === 0) sections.push({ key: 'languages', label: 'Languages', icon: 'mdi-translate' })
@@ -224,6 +223,9 @@ function onResumeIdUpdate(value: string | undefined) {
 function onAddSection(sectionKey: string) {
   if (sectionKey === 'work-experience') {
     showAddWorkExperience.value = true
+    return
+  }
+  if (sectionKey === 'education') {
     return
   }
   showPreview.value = false
