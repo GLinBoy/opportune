@@ -52,10 +52,29 @@
         icon="mdi-school"
         :loading="saving"
         :valid="formValid"
+        hide-confirm
         @confirm="saveEducation"
-        @cancel="showDialog = false"
+        @cancel="revertForm"
       >
         <v-row>
+          <v-col cols="12" class="d-flex ga-2 pb-0">
+            <v-btn
+              v-if="dirty"
+              color="success"
+              prepend-icon="mdi-content-save"
+              @click="saveEducation"
+            >
+              Save
+            </v-btn>
+            <v-btn
+              color="secondary"
+              variant="outlined"
+              prepend-icon="mdi-undo"
+              @click="revertForm"
+            >
+              Cancel
+            </v-btn>
+          </v-col>
           <v-col cols="12" md="6">
             <v-text-field v-model="form.school" label="School" variant="outlined" density="compact" :rules="[rules.required]" />
           </v-col>
@@ -149,11 +168,36 @@ const form = reactive({
   courses: [] as string[],
 })
 
+const formSnapshot = reactive({
+  school: '',
+  degree: '',
+  fieldOfStudy: '',
+  startYear: undefined as number | undefined,
+  endYear: undefined as number | undefined,
+  isCurrent: false,
+  gpa: '',
+  honors: '',
+  courses: [] as string[],
+})
+
 const rules = {
   required: (v: string) => !!v || 'This field is required',
 }
 
 const formValid = computed(() => !!form.school && !!form.degree && !!form.fieldOfStudy)
+
+const dirty = computed(() => {
+  if (!editingId.value) return true
+  return form.school !== formSnapshot.school
+    || form.degree !== formSnapshot.degree
+    || form.fieldOfStudy !== formSnapshot.fieldOfStudy
+    || form.startYear !== formSnapshot.startYear
+    || form.endYear !== formSnapshot.endYear
+    || form.isCurrent !== formSnapshot.isCurrent
+    || form.gpa !== formSnapshot.gpa
+    || form.honors !== formSnapshot.honors
+    || JSON.stringify(form.courses) !== JSON.stringify(formSnapshot.courses)
+})
 
 function formatDate(startYear?: number | null, endYear?: number | null, isCurrent?: boolean | null): string {
   const end = isCurrent ? 'Present' : endYear || ''
@@ -173,9 +217,22 @@ function resetForm() {
   form.courses = []
 }
 
+function takeSnapshot() {
+  formSnapshot.school = form.school
+  formSnapshot.degree = form.degree
+  formSnapshot.fieldOfStudy = form.fieldOfStudy
+  formSnapshot.startYear = form.startYear
+  formSnapshot.endYear = form.endYear
+  formSnapshot.isCurrent = form.isCurrent
+  formSnapshot.gpa = form.gpa
+  formSnapshot.honors = form.honors
+  formSnapshot.courses = [...form.courses]
+}
+
 function openAdd() {
   editingId.value = null
   resetForm()
+  takeSnapshot()
   showDialog.value = true
 }
 
@@ -190,7 +247,23 @@ function editEducation(edu: IEducation) {
   form.gpa = edu.gpa || ''
   form.honors = edu.honors || ''
   form.courses = edu.courses ? [...edu.courses] : []
+  takeSnapshot()
   showDialog.value = true
+}
+
+function revertForm() {
+  form.school = formSnapshot.school
+  form.degree = formSnapshot.degree
+  form.fieldOfStudy = formSnapshot.fieldOfStudy
+  form.startYear = formSnapshot.startYear
+  form.endYear = formSnapshot.endYear
+  form.isCurrent = formSnapshot.isCurrent
+  form.gpa = formSnapshot.gpa
+  form.honors = formSnapshot.honors
+  form.courses = [...formSnapshot.courses]
+  if (!editingId.value) {
+    showDialog.value = false
+  }
 }
 
 async function saveEducation() {
@@ -202,6 +275,7 @@ async function saveEducation() {
     } else {
       await store.createEducation(dto)
     }
+    takeSnapshot()
     showDialog.value = false
   } finally {
     saving.value = false
