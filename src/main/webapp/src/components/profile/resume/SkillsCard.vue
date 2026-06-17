@@ -14,10 +14,26 @@
         <p class="text-body-2">No skills added yet. Extract from your resume or add manually.</p>
       </div>
 
-      <div v-for="sg in skillGroups" :key="sg.id" class="mb-3">
+      <div v-for="(sg, index) in skillGroups" :key="sg.id" class="mb-3">
         <div class="d-flex align-center mb-1">
           <span class="text-subtitle-2 font-weight-medium">{{ sg.category }}</span>
           <v-spacer />
+          <v-menu v-model="addSkillMenu[sg.id || index]" :close-on-content-click="false">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon="mdi-plus" variant="text" size="x-small" color="primary" class="mr-1" />
+            </template>
+            <v-card min-width="250" class="pa-2">
+              <v-text-field
+                v-model="newSkillText"
+                label="New skill"
+                variant="outlined"
+                density="compact"
+                hide-details
+                @keyup.enter="confirmAddSkill(sg)"
+              />
+              <v-btn color="primary" size="small" class="mt-2" @click="confirmAddSkill(sg)">Add</v-btn>
+            </v-card>
+          </v-menu>
           <v-tooltip text="Edit" location="top">
             <template #activator="{ props: tp }">
               <v-btn v-bind="tp" icon="mdi-pencil" variant="text" size="x-small" color="primary" class="mr-1" @click="editSkillGroup(sg)" />
@@ -36,6 +52,8 @@
             size="small"
             color="primary"
             variant="outlined"
+            closable
+            @click:close="deleteSkill(sg, i)"
           >
             {{ skill }}
           </v-chip>
@@ -58,19 +76,6 @@
           :rules="[rules.required]"
           placeholder="e.g., Programming Languages"
           class="mb-3"
-        />
-        <v-combobox
-          v-model="form.skills"
-          label="Skills"
-          variant="outlined"
-          density="compact"
-          multiple
-          chips
-          deletable-chips
-          small-chips
-          append-icon="mdi-plus"
-          hint="Type a skill and press Enter"
-          persistent-hint
         />
       </FormDialog>
     </template>
@@ -113,6 +118,9 @@ const rules = {
 
 const formValid = computed(() => !!form.category)
 
+const addSkillMenu = reactive<Record<string, boolean>>({})
+const newSkillText = ref('')
+
 function editSkillGroup(sg: ISkillGroup) {
   editingId.value = sg.id || null
   form.category = sg.category || ''
@@ -141,6 +149,24 @@ async function saveGroup() {
 async function deleteGroup(sg: ISkillGroup) {
   if (sg.id) {
     await store.deleteSkillGroup(sg.id)
+  }
+}
+
+async function deleteSkill(sg: ISkillGroup, skillIndex: number) {
+  sg.skills?.splice(skillIndex, 1)
+  if (sg.id) {
+    await store.updateSkillGroup(sg.id, { category: sg.category, skills: sg.skills })
+  }
+}
+
+function confirmAddSkill(sg: ISkillGroup) {
+  const skill = newSkillText.value.trim()
+  if (!skill) return
+  if (!sg.skills) sg.skills = []
+  sg.skills.push(skill)
+  newSkillText.value = ''
+  if (sg.id) {
+    store.updateSkillGroup(sg.id, { category: sg.category, skills: sg.skills })
   }
 }
 </script>
