@@ -76,7 +76,7 @@ import ExtractionPreviewDialog from './ExtractionPreviewDialog.vue'
 import type { IResumeExtractionResult } from '../../../models/resume-data.model'
 
 const props = defineProps<{
-  profile: IProfile
+  profile: IProfile | null
 }>()
 
 const emit = defineEmits<{
