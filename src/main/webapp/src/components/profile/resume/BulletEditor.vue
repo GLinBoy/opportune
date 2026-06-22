@@ -30,33 +30,36 @@
         />
       </template>
     </v-list-item>
-    <v-btn
-      variant="text"
-      color="primary"
-      size="small"
-      prepend-icon="mdi-plus"
-      class="mt-1"
-      @click="addBullet"
-    >
-      Add bullet point
-    </v-btn>
-    <div v-if="dirty" class="d-flex ga-2 mt-2">
+    <div class="d-flex ga-2 mt-1 align-center">
       <v-btn
-        color="success"
-        prepend-icon="mdi-content-save"
+        variant="text"
+        color="primary"
         size="small"
-        @click="emitBullets"
+        prepend-icon="mdi-plus"
+        @click="addBullet"
       >
-        Save
+        Add bullet point
       </v-btn>
-      <v-btn
-        color="warning"
-        prepend-icon="mdi-undo"
-        size="small"
-        @click="revertBullets"
-      >
-        Revert
-      </v-btn>
+      <template v-if="dirty">
+        <v-btn
+          variant="text"
+          color="success"
+          prepend-icon="mdi-content-save"
+          size="small"
+          @click="emitBullets"
+        >
+          Save
+        </v-btn>
+        <v-btn
+          variant="text"
+          color="warning"
+          prepend-icon="mdi-undo"
+          size="small"
+          @click="revertBullets"
+        >
+          Revert
+        </v-btn>
+      </template>
     </div>
   </v-list>
 </template>
