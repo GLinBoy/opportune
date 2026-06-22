@@ -1,14 +1,20 @@
 <template>
-  <FormCard collapsible default-open class="mb-4">
+  <FormCard v-model="cardOpen" collapsible default-open class="mb-4">
     <template #title>
       <v-icon icon="mdi-lightning-bolt" color="primary" size="28" class="mr-3" />
       Skills
+      <v-spacer />
+      <v-btn
+        v-if="cardOpen"
+        icon="mdi-plus"
+        variant="text"
+        color="primary"
+        size="small"
+        @click.stop="showAddForm = true"
+      />
     </template>
 
     <template #default>
-      <div class="d-flex justify-end mb-2">
-        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="showAddForm = true" />
-      </div>
       <div v-if="skillGroups.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-lightning-bolt-outline" size="40" class="mb-2" />
         <p class="text-body-2">No skills added yet. Extract from your resume or add manually.</p>
@@ -92,6 +98,7 @@ import FormDialog from '../../FormDialog.vue'
 const store = useResumeDataStore()
 const skillGroups = computed(() => store.skillGroups)
 
+const cardOpen = ref(true)
 const showFormDialog = ref(false)
 const saving = ref(false)
 const editingId = ref<string | null>(null)

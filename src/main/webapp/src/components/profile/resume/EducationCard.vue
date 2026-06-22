@@ -1,14 +1,20 @@
 <template>
-  <FormCard collapsible default-open class="mb-4">
+  <FormCard v-model="cardOpen" collapsible default-open class="mb-4">
     <template #title>
       <v-icon icon="mdi-school" color="primary" size="28" class="mr-3" />
       Education
+      <v-spacer />
+      <v-btn
+        v-if="cardOpen"
+        icon="mdi-plus"
+        variant="text"
+        color="primary"
+        size="small"
+        @click.stop="openAdd"
+      />
     </template>
 
     <template #default>
-      <div class="d-flex justify-end mb-2">
-        <v-btn icon="mdi-plus" variant="text" color="primary" size="small" @click="openAdd" />
-      </div>
 
       <div v-if="store.education.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-school-outline" size="40" class="mb-2" />
@@ -149,6 +155,7 @@ import ConfirmDialog from '../../ConfirmDialog.vue'
 
 const store = useResumeDataStore()
 
+const cardOpen = ref(true)
 const showDialog = ref(false)
 const saving = ref(false)
 const editingId = ref<string | null>(null)
