@@ -25,21 +25,50 @@
           <v-icon icon="mdi-briefcase-outline" size="small" color="primary" class="mr-2 mt-1" />
           <div class="flex-grow-1">
             <div class="text-subtitle-2 font-weight-medium">
-              {{ we.jobTitle || 'Untitled' }}<template v-if="we.company"> &middot; {{ we.company }}</template>
+              {{ we.jobTitle || 'Untitled'
+              }}<template v-if="we.company"> &middot; {{ we.company }}</template>
             </div>
             <div class="text-caption text-medium-emphasis">
               <template v-if="we.location">{{ we.location }} &middot; </template>
               {{ formatDateRange(we) }}
             </div>
           </div>
+          <v-tooltip text="Add bullet" location="top">
+            <template #activator="{ props: tp }">
+              <v-btn
+                v-bind="tp"
+                icon="mdi-plus-circle-outline"
+                variant="text"
+                size="x-small"
+                color="primary"
+                class="mr-1"
+                @click="openAddBullet(we)"
+              />
+            </template>
+          </v-tooltip>
           <v-tooltip text="Edit" location="top">
             <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-pencil" variant="text" size="x-small" color="primary" class="mr-1" @click="openEdit(we)" />
+              <v-btn
+                v-bind="tp"
+                icon="mdi-pencil"
+                variant="text"
+                size="x-small"
+                color="primary"
+                class="mr-1"
+                @click="openEdit(we)"
+              />
             </template>
           </v-tooltip>
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="deleteTarget = we" />
+              <v-btn
+                v-bind="tp"
+                icon="mdi-delete"
+                variant="text"
+                size="x-small"
+                color="error"
+                @click="deleteTarget = we"
+              />
             </template>
           </v-tooltip>
         </div>
@@ -81,16 +110,41 @@
             />
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field v-model="form.location" label="Location" variant="outlined" density="compact" />
+            <v-text-field
+              v-model="form.location"
+              label="Location"
+              variant="outlined"
+              density="compact"
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <v-switch v-model="form.isCurrent" label="I currently work here" color="primary" hide-details />
+            <v-switch
+              v-model="form.isCurrent"
+              label="I currently work here"
+              color="primary"
+              hide-details
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field v-model="form.startMonth" label="Start Month" type="number" variant="outlined" density="compact" min="1" max="12" />
+            <v-text-field
+              v-model="form.startMonth"
+              label="Start Month"
+              type="number"
+              variant="outlined"
+              density="compact"
+              min="1"
+              max="12"
+            />
           </v-col>
           <v-col cols="6" md="3">
-            <v-text-field v-model="form.startYear" label="Start Year" type="number" variant="outlined" density="compact" min="1900" />
+            <v-text-field
+              v-model="form.startYear"
+              label="Start Year"
+              type="number"
+              variant="outlined"
+              density="compact"
+              min="1900"
+            />
           </v-col>
           <v-col cols="6" md="3">
             <v-text-field
@@ -118,6 +172,27 @@
         </v-row>
       </FormDialog>
 
+      <FormDialog
+        v-model="showBulletDialog"
+        title="Add Bullet Point"
+        icon="mdi-plus-circle-outline"
+        :loading="savingBullet"
+        :valid="!!bulletText"
+        @confirm="saveBullet"
+        @cancel="showBulletDialog = false"
+      >
+        <v-textarea
+          v-model="bulletText"
+          label="Bullet point"
+          variant="outlined"
+          density="compact"
+          rows="3"
+          placeholder="Describe an accomplishment or responsibility..."
+          :rules="[rules.required]"
+          hide-details
+        />
+      </FormDialog>
+
       <ConfirmDialog
         v-model="deleteConfirm"
         title="Delete Work Experience"
@@ -126,7 +201,8 @@
         :loading="deleting"
         @confirm="doDelete"
       >
-        Are you sure you want to delete "{{ deleteTarget?.jobTitle }}" at {{ deleteTarget?.company }}?
+        Are you sure you want to delete "{{ deleteTarget?.jobTitle }}" at
+        {{ deleteTarget?.company }}?
       </ConfirmDialog>
     </template>
   </FormCard>
@@ -150,6 +226,10 @@ const editingId = ref<string | null>(null)
 const deleteConfirm = ref(false)
 const deleting = ref(false)
 const deleteTarget = ref<IWorkExperience | null>(null)
+const showBulletDialog = ref(false)
+const savingBullet = ref(false)
+const bulletText = ref('')
+const bulletTarget = ref<IWorkExperience | null>(null)
 
 const form = reactive({
   jobTitle: '',
@@ -240,5 +320,28 @@ async function doDelete() {
 
 async function onUpdateBullets(workExperienceId: string, bullets: IWorkExperienceBullet[]) {
   await store.replaceBullets(workExperienceId, bullets)
+}
+
+function openAddBullet(we: IWorkExperience) {
+  bulletTarget.value = we
+  bulletText.value = ''
+  showBulletDialog.value = true
+}
+
+async function saveBullet() {
+  if (!bulletTarget.value?.id || !bulletText.value.trim()) return
+  savingBullet.value = true
+  try {
+    const current = bulletTarget.value.bullets ?? []
+    const newBullet: IWorkExperienceBullet = {
+      content: bulletText.value.trim(),
+      displayOrder: current.length,
+    }
+    await store.replaceBullets(bulletTarget.value.id, [...current, newBullet])
+    showBulletDialog.value = false
+    bulletTarget.value = null
+  } finally {
+    savingBullet.value = false
+  }
 }
 </script>
