@@ -67,7 +67,7 @@
                 variant="text"
                 size="x-small"
                 color="error"
-                @click="deleteTarget = we"
+                @click="deleteTarget = we; deleteConfirm = true"
               />
             </template>
           </v-tooltip>
