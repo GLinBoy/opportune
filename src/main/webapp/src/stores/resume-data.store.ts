@@ -27,7 +27,15 @@ export const useResumeDataStore = defineStore('resumeData', () => {
   const extracting = ref(false)
   const extractionResult = ref<IResumeExtractionResult | null>(null)
 
-  const workExperiences = computed(() => aggregate.value.workExperiences ?? [])
+  const workExperiences = computed(() => {
+    const list = aggregate.value.workExperiences ?? []
+    return [...list].sort((a, b) => {
+      const aYear = a.startYear ?? 0
+      const bYear = b.startYear ?? 0
+      if (bYear !== aYear) return bYear - aYear
+      return (b.startMonth ?? 0) - (a.startMonth ?? 0)
+    })
+  })
   const education = computed(() => aggregate.value.education ?? [])
   const skillGroups = computed(() => aggregate.value.skillGroups ?? [])
   const projects = computed(() => aggregate.value.projects ?? [])
