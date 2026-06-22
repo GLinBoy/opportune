@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" border rounded="lg">
     <v-card-title class="pa-5 pb-4 text-body-1 font-weight-semibold d-flex align-center">
-      <span class="flex-grow-1">
+      <span class="flex-grow-1 d-flex align-center">
         <slot name="title" />
       </span>
       <v-btn
@@ -12,7 +12,7 @@
         size="small"
         :aria-label="isOpen ? 'Collapse section' : 'Expand section'"
         :aria-expanded="isOpen"
-        @click="isOpen = !isOpen"
+        @click="toggle"
       />
     </v-card-title>
     <v-expand-transition>
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 defineOptions({
   name: 'FormCard',
@@ -43,7 +43,26 @@ const props = defineProps({
   collapsible: { type: Boolean, default: true },
   defaultOpen: { type: Boolean, default: true },
   showToggle: { type: Boolean, default: true },
+  modelValue: { type: Boolean, default: undefined },
 })
 
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean]
+}>()
+
 const isOpen = ref(props.defaultOpen)
+
+watch(() => props.modelValue, (val) => {
+  if (val !== undefined) {
+    isOpen.value = val
+  }
+})
+
+function toggle() {
+  const next = !isOpen.value
+  isOpen.value = next
+  if (props.modelValue !== undefined) {
+    emit('update:modelValue', next)
+  }
+}
 </script>
