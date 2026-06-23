@@ -17,7 +17,7 @@ class SkillGroupMapper : GenericMapper<SkillGroupDTO, SkillGroup> {
 			createdDate = Instant.now(),
 			lastModifiedDate = Instant.now(),
 			profile = dto.profileId?.let { Profile(id = it) } ?: Profile(id = SecurityUtils.getCurrentUserLoginID()),
-			skills = dto.skills.toMutableList()
+			skills = dto.skills.distinct().toMutableList()
 		)
 	}
 
@@ -29,7 +29,7 @@ class SkillGroupMapper : GenericMapper<SkillGroupDTO, SkillGroup> {
 			createdDate = entity.createdDate,
 			lastModifiedDate = Instant.now(),
 			profile = entity.profile,
-			skills = dto.skills.toMutableList().toMutableList()
+			skills = dto.skills.distinct().toMutableList()
 		)
 	}
 
