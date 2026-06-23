@@ -1,0 +1,15 @@
+package com.glinboy.opportune.enums
+
+enum class EmploymentType {
+	FULL_TIME,
+	PART_TIME,
+	SELF_EMPLOYED,
+	FREELANCE,
+	CONTRACT,
+	INTERNSHIP,
+	APPRENTICESHIP,
+	CO_OP,
+	LIFETIME_CIVIL_SERVANT,
+	CIVIL_SERVICE_INTERNSHIP,
+	WORK_STUDY
+}
