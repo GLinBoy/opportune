@@ -78,18 +78,21 @@ export const useResumeDataStore = defineStore('resumeData', () => {
     try {
       if (result.workExperiences) {
         for (const we of result.workExperiences) {
+          if (!we.jobTitle || !we.company) continue
           await service.createWorkExperience(we)
           saved++
         }
       }
       if (result.education) {
         for (const edu of result.education) {
+          if (!edu.school || !edu.degree || !edu.fieldOfStudy) continue
           await service.createEducation(edu)
           saved++
         }
       }
       if (result.skillGroups) {
         for (const sg of result.skillGroups) {
+          if (!sg.category || !sg.skills?.length) continue
           await service.createSkillGroup(sg)
           saved++
         }
