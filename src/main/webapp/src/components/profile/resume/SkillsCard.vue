@@ -4,14 +4,19 @@
       <v-icon icon="mdi-lightning-bolt" color="primary" size="28" class="mr-3" />
       Skills
       <v-spacer />
-      <v-btn
-        v-if="cardOpen"
-        icon="mdi-plus"
-        variant="text"
-        color="primary"
-        size="small"
-        @click.stop="showAddForm = true"
-      />
+      <v-tooltip text="Add skill group" location="top">
+        <template #activator="{ props: tp }">
+          <v-btn
+            v-if="cardOpen"
+            v-bind="tp"
+            icon="mdi-plus"
+            variant="text"
+            color="primary"
+            size="small"
+            @click.stop="showAddForm = true"
+          />
+        </template>
+      </v-tooltip>
     </template>
 
     <template #default>
@@ -26,18 +31,24 @@
           <v-spacer />
           <v-menu v-model="addSkillMenu[sg.id || index]" :close-on-content-click="false">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-plus" variant="text" size="x-small" color="primary" class="mr-1" />
+              <v-tooltip text="Add skill" location="top">
+                <template #activator="{ props: tp }">
+                  <v-btn v-bind="{ ...props, ...tp }" icon="mdi-plus-circle-outline" variant="text" size="x-small" color="primary" class="mr-1" />
+                </template>
+              </v-tooltip>
             </template>
-            <v-card min-width="250" class="pa-2">
-              <v-text-field
-                v-model="newSkillText"
-                label="New skill"
-                variant="outlined"
-                density="compact"
-                hide-details
-                @keyup.enter="confirmAddSkill(sg)"
-              />
-              <v-btn color="primary" size="small" class="mt-2" @click="confirmAddSkill(sg)">Add</v-btn>
+            <v-card min-width="280" class="pa-2">
+              <div class="d-flex align-center ga-2">
+                <v-text-field
+                  v-model="newSkillText"
+                  label="New skill"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  @keyup.enter="confirmAddSkill(sg)"
+                />
+                <v-btn icon="mdi-check" color="primary" variant="text" size="small" @click="confirmAddSkill(sg)" />
+              </div>
             </v-card>
           </v-menu>
           <v-tooltip text="Edit" location="top">
