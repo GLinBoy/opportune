@@ -28,7 +28,9 @@ export interface IEducation {
   school?: string
   degree?: string
   fieldOfStudy?: string
+  startMonth?: number
   startYear?: number
+  endMonth?: number
   endYear?: number
   isCurrent?: boolean
   gpa?: string

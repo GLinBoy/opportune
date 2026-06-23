@@ -40,6 +40,7 @@ Rules:
 - Preserve the original wording from the resume for job titles, company names, school names, degrees, and skill names
 - For work experience dates: use month (1-12) and year (4-digit) separately; set startMonth/startYear and endMonth/endYear
 - Set isCurrent to true for any position where the end date is "Present", "Current", or the end date is missing and the role appears ongoing
+- For education dates: use month (1-12) and year (4-digit) separately; set startMonth/startYear and endMonth/endYear
 - For education: set isCurrent to true if end year is blank/missing or marked "Present"
 - Extract all skills mentioned in the resume and group them logically (e.g., "Programming Languages", "Frameworks", "Tools", "Languages")
 - If no logical grouping is evident from the resume, use "Skills" as the category name
@@ -77,7 +78,9 @@ Respond with a single JSON object matching this schema exactly:
       "school": "string",
       "degree": "string",
       "field_of_study": "string",
+      "start_month": 0,
       "start_year": 0,
+      "end_month": 0,
       "end_year": 0,
       "is_current": false,
       "gpa": "string",

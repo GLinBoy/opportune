@@ -21,8 +21,14 @@ data class Education(
 	@Column(name = "field_of_study", nullable = false)
 	val fieldOfStudy: String? = null,
 
+	@Column(name = "start_month")
+	val startMonth: Short? = null,
+
 	@Column(name = "start_year")
 	val startYear: Short? = null,
+
+	@Column(name = "end_month")
+	val endMonth: Short? = null,
 
 	@Column(name = "end_year")
 	val endYear: Short? = null,
