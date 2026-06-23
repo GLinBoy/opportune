@@ -1,5 +1,7 @@
 package com.glinboy.opportune.entity
 
+import com.glinboy.opportune.enums.EmploymentType
+import com.glinboy.opportune.enums.LocationType
 import jakarta.persistence.*
 import java.time.Instant
 import java.util.*
@@ -18,8 +20,12 @@ data class WorkExperience(
 	@Column(name = "company", nullable = false)
 	val company: String? = null,
 
-	@Column(name = "location")
-	val location: String? = null,
+	@Column(name = "industry")
+	val industry: String? = null,
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "employment_type")
+	val employmentType: EmploymentType? = null,
 
 	@Column(name = "start_month")
 	val startMonth: Short? = null,
@@ -35,6 +41,16 @@ data class WorkExperience(
 
 	@Column(name = "is_current", nullable = false)
 	val isCurrent: Boolean = false,
+
+	@Column(name = "location")
+	val location: String? = null,
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "location_type")
+	val locationType: LocationType? = null,
+
+	@Column(name = "description", columnDefinition = "TEXT")
+	val description: String? = null,
 
 	@Column(name = "display_order", nullable = false)
 	val displayOrder: Int = 0,
