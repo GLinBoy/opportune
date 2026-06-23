@@ -173,6 +173,7 @@
           placeholder="Describe an accomplishment or responsibility..."
           :rules="[rules.required]"
           hide-details
+          autofocus
         />
       </FormDialog>
 
