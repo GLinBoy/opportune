@@ -45,6 +45,7 @@
                   variant="outlined"
                   density="compact"
                   hide-details
+                  autofocus
                   @keyup.enter="confirmAddSkill(sg)"
                 />
                 <v-btn icon="mdi-check" color="primary" variant="text" size="small" @click="confirmAddSkill(sg)" />
@@ -93,6 +94,7 @@
           :rules="[rules.required]"
           placeholder="e.g., Programming Languages"
           class="mb-3"
+          autofocus
         />
       </FormDialog>
 
