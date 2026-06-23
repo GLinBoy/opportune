@@ -6,16 +6,35 @@ export interface IWorkExperienceBullet {
   lastModifiedDate?: Date
 }
 
+export type EmploymentType =
+  | 'FULL_TIME'
+  | 'PART_TIME'
+  | 'SELF_EMPLOYED'
+  | 'FREELANCE'
+  | 'CONTRACT'
+  | 'INTERNSHIP'
+  | 'APPRENTICESHIP'
+  | 'CO_OP'
+  | 'LIFETIME_CIVIL_SERVANT'
+  | 'CIVIL_SERVICE_INTERNSHIP'
+  | 'WORK_STUDY'
+
+export type LocationType = 'ON_SITE' | 'REMOTE' | 'HYBRID'
+
 export interface IWorkExperience {
   id?: string
   jobTitle?: string
   company?: string
-  location?: string
+  industry?: string
+  employmentType?: EmploymentType
   startMonth?: number
   startYear?: number
   endMonth?: number
   endYear?: number
   isCurrent?: boolean
+  location?: string
+  locationType?: LocationType
+  description?: string
   displayOrder?: number
   profileId?: string
   bullets?: IWorkExperienceBullet[]
