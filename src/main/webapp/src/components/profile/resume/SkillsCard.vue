@@ -103,10 +103,12 @@
 import { ref, reactive, computed } from 'vue'
 import type { ISkillGroup } from '../../../models/resume-data.model'
 import { useResumeDataStore } from '../../../stores/resume-data.store'
+import { useToastStore } from '../../../stores/toast'
 import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
 
 const store = useResumeDataStore()
+const toast = useToastStore()
 const skillGroups = computed(() => store.skillGroups)
 
 const cardOpen = ref(true)
@@ -181,6 +183,10 @@ function confirmAddSkill(sg: ISkillGroup) {
   const skill = newSkillText.value.trim()
   if (!skill) return
   if (!sg.skills) sg.skills = []
+  if (sg.skills.some(s => s.trim().toLowerCase() === skill.toLowerCase())) {
+    toast.warning(`"${skill}" already exists in this group`, 3000)
+    return
+  }
   sg.skills.push(skill)
   newSkillText.value = ''
   if (sg.id) {
