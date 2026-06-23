@@ -40,6 +40,10 @@ Rules:
 - Preserve the original wording from the resume for job titles, company names, school names, degrees, and skill names
 - For work experience dates: use month (1-12) and year (4-digit) separately; set startMonth/startYear and endMonth/endYear
 - Set isCurrent to true for any position where the end date is "Present", "Current", or the end date is missing and the role appears ongoing
+- For employment_type: infer from context (e.g. "Intern" → INTERNSHIP, "Contractor" → CONTRACT, "Freelance" → FREELANCE); leave null if uncertain
+- For industry: extract the company's industry if clearly stated near the company name; leave null otherwise
+- For location_type: leave null — this is rarely available in resumes
+- For description: extract any introductory paragraph or role summary that appears above the bullet points for a work entry; preserve original wording; leave null if none exists
 - For education dates: use month (1-12) and year (4-digit) separately; set startMonth/startYear and endMonth/endYear
 - For education: set isCurrent to true if end year is blank/missing or marked "Present"
 - Extract all skills mentioned in the resume and group them logically (e.g., "Programming Languages", "Frameworks", "Tools", "Languages")
@@ -58,12 +62,16 @@ Respond with a single JSON object matching this schema exactly:
     {
       "job_title": "string",
       "company": "string",
-      "location": "string",
+      "industry": "string",
+      "employment_type": "string",
       "start_month": 0,
       "start_year": 0,
       "end_month": 0,
       "end_year": 0,
       "is_current": false,
+      "location": "string",
+      "location_type": "string",
+      "description": "string",
       "display_order": 0,
       "bullets": [
         {
