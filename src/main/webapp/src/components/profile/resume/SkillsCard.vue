@@ -58,7 +58,7 @@
           </v-tooltip>
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="deleteGroup(sg)" />
+              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="confirmDeleteGroup(sg)" />
             </template>
           </v-tooltip>
         </div>
@@ -95,6 +95,17 @@
           class="mb-3"
         />
       </FormDialog>
+
+      <ConfirmDialog
+        v-model="deleteConfirm"
+        title="Delete Skill Group"
+        variant="error"
+        confirm-text="Delete"
+        :loading="deleting"
+        @confirm="doDeleteGroup"
+      >
+        Are you sure you want to delete "{{ deleteTarget?.category }}"?
+      </ConfirmDialog>
     </template>
   </FormCard>
 </template>
@@ -106,6 +117,7 @@ import { useResumeDataStore } from '../../../stores/resume-data.store'
 import { useToastStore } from '../../../stores/toast'
 import FormCard from '../../forms/FormCard.vue'
 import FormDialog from '../../FormDialog.vue'
+import ConfirmDialog from '../../ConfirmDialog.vue'
 
 const store = useResumeDataStore()
 const toast = useToastStore()
@@ -140,6 +152,9 @@ const formValid = computed(() => !!form.category)
 
 const addSkillMenu = reactive<Record<string, boolean>>({})
 const newSkillText = ref('')
+const deleteConfirm = ref(false)
+const deleting = ref(false)
+const deleteTarget = ref<ISkillGroup | null>(null)
 
 function editSkillGroup(sg: ISkillGroup) {
   editingId.value = sg.id || null
@@ -166,9 +181,20 @@ async function saveGroup() {
   }
 }
 
-async function deleteGroup(sg: ISkillGroup) {
-  if (sg.id) {
-    await store.deleteSkillGroup(sg.id)
+function confirmDeleteGroup(sg: ISkillGroup) {
+  deleteTarget.value = sg
+  deleteConfirm.value = true
+}
+
+async function doDeleteGroup() {
+  if (!deleteTarget.value?.id) return
+  deleting.value = true
+  try {
+    await store.deleteSkillGroup(deleteTarget.value.id)
+    deleteConfirm.value = false
+    deleteTarget.value = null
+  } finally {
+    deleting.value = false
   }
 }
 
