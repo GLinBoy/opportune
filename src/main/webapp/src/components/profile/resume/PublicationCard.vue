@@ -20,26 +20,43 @@
         <p class="text-body-2">No publications added yet.</p>
       </div>
 
-      <div v-for="pub in store.publications" :key="pub.id" class="mb-2 pa-2 rounded">
-        <div class="d-flex align-center">
-          <v-icon icon="mdi-book-open-page-variant-outline" size="small" color="primary" class="mr-2" />
+      <div v-for="pub in store.publications" :key="pub.id" class="mb-3 pa-2 rounded">
+        <div class="d-flex align-start">
+          <v-icon icon="mdi-book-open-page-variant-outline" size="small" color="primary" class="mr-2 mt-1" />
           <div class="flex-grow-1">
-            <div class="text-body-2 font-weight-medium">{{ pub.title }}</div>
-            <div class="text-caption text-medium-emphasis">
+            <div class="text-subtitle-1 font-weight-medium d-flex align-center">
+              <span>{{ pub.title }}</span>
+              <a
+                v-if="pub.url"
+                :href="pub.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ml-2 text-caption text-primary text-decoration-none d-flex align-center"
+              >
+                ( Show Publication
+                <v-icon icon="mdi-open-in-new" size="14" class="mr-1" /> )
+              </a>
+            </div>
+            <div class="text-body-2 text-medium-emphasis">
               {{ pub.publisher }}
               <template v-if="pub.publicationDate"> &middot; {{ pub.publicationDate }} </template>
             </div>
+            <div v-if="pub.description" class="text-body-2 mt-1">
+              {{ pub.description }}
+            </div>
           </div>
-          <v-tooltip text="Edit" location="top">
-            <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-pencil" variant="text" size="x-small" color="primary" class="mr-1" @click="editPublication(pub)" />
-            </template>
-          </v-tooltip>
-          <v-tooltip text="Delete" location="top">
-            <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="deleteTarget = pub" />
-            </template>
-          </v-tooltip>
+          <div class="d-flex flex-shrink-0 ml-2">
+            <v-tooltip text="Edit" location="top">
+              <template #activator="{ props: tp }">
+                <v-btn v-bind="tp" icon="mdi-pencil" variant="text" size="x-small" color="primary" class="mr-1" @click="editPublication(pub)" />
+              </template>
+            </v-tooltip>
+            <v-tooltip text="Delete" location="top">
+              <template #activator="{ props: tp }">
+                <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="confirmDelete(pub)" />
+              </template>
+            </v-tooltip>
+          </div>
         </div>
       </div>
       <FormDialog
@@ -55,10 +72,10 @@
           <v-col cols="12">
             <v-text-field v-model="form.title" label="Title" variant="outlined" density="compact" :rules="[rules.required]" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.publisher" label="Publisher" variant="outlined" density="compact" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.publicationDate" label="Publication Date" type="date" variant="outlined" density="compact" />
           </v-col>
           <v-col cols="12">
@@ -150,6 +167,11 @@ async function savePublication() {
   } finally {
     saving.value = false
   }
+}
+
+function confirmDelete(pub: IResumePublication) {
+  deleteTarget.value = pub
+  deleteConfirm.value = true
 }
 
 async function doDelete() {
