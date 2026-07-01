@@ -113,8 +113,10 @@ export interface IResumeCertification {
   id?: string
   name?: string
   issuingOrganization?: string
-  issueDate?: string
-  expirationDate?: string
+  issueMonth?: number
+  issueYear?: number
+  expirationMonth?: number
+  expirationYear?: number
   credentialId?: string
   credentialUrl?: string
   displayOrder?: number

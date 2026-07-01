@@ -2,7 +2,6 @@ package com.glinboy.opportune.entity
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.time.LocalDate
 import java.util.*
 
 @Entity
@@ -19,11 +18,17 @@ data class ResumeCertification(
 	@Column(name = "issuing_organization")
 	val issuingOrganization: String? = null,
 
-	@Column(name = "issue_date")
-	val issueDate: LocalDate? = null,
+	@Column(name = "issue_month")
+	val issueMonth: Short? = null,
 
-	@Column(name = "expiration_date")
-	val expirationDate: LocalDate? = null,
+	@Column(name = "issue_year")
+	val issueYear: Short? = null,
+
+	@Column(name = "expiration_month")
+	val expirationMonth: Short? = null,
+
+	@Column(name = "expiration_year")
+	val expirationYear: Short? = null,
 
 	@Column(name = "credential_id")
 	val credentialId: String? = null,
