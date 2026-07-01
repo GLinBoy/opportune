@@ -37,11 +37,11 @@
           </v-tooltip>
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="deleteTarget = award" />
+              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="confirmDelete(award)" />
             </template>
           </v-tooltip>
         </div>
-        <div v-if="award.description" class="text-caption text-medium-emphasis mt-1 ml-8">
+        <div v-if="award.description" class="text-body-2 mt-1 ml-8">
           {{ award.description.substring(0, 120) }}{{ award.description.length > 120 ? '...' : '' }}
         </div>
       </div>
@@ -58,10 +58,10 @@
           <v-col cols="12">
             <v-text-field v-model="form.title" label="Award Title" variant="outlined" density="compact" :rules="[rules.required]" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.issuer" label="Issuer" variant="outlined" density="compact" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.awardDate" label="Award Date" type="date" variant="outlined" density="compact" />
           </v-col>
           <v-col cols="12">
@@ -147,6 +147,11 @@ async function saveAward() {
   } finally {
     saving.value = false
   }
+}
+
+function confirmDelete(award: IResumeAward) {
+  deleteTarget.value = award
+  deleteConfirm.value = true
 }
 
 async function doDelete() {
