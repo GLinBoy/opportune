@@ -1,5 +1,5 @@
 <template>
-  <FormCard v-model="cardOpen" collapsible default-open class="mb-4">
+  <FormCard v-model="cardOpen" collapsible default-open class="mb-16">
     <template #title>
       <v-icon icon="mdi-account-group" color="primary" size="28" class="mr-3" />
       Professional Affiliations
@@ -39,12 +39,12 @@
           </v-tooltip>
           <v-tooltip text="Delete" location="top">
             <template #activator="{ props: tp }">
-              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="deleteTarget = aff" />
+              <v-btn v-bind="tp" icon="mdi-delete" variant="text" size="x-small" color="error" @click="confirmDelete(aff)" />
             </template>
           </v-tooltip>
         </div>
-        <div v-if="aff.description" class="text-caption text-medium-emphasis mt-1 ml-8">
-          {{ aff.description.substring(0, 120) }}{{ aff.description.length > 120 ? '...' : '' }}
+        <div v-if="aff.description" class="text-body-2 mt-1 ml-8">
+          {{ aff.description }}
         </div>
       </div>
       <FormDialog
@@ -57,20 +57,20 @@
         @cancel="showDialog = false"
       >
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.organization" label="Organization" variant="outlined" density="compact" :rules="[rules.required]" />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.role" label="Role" variant="outlined" density="compact" />
           </v-col>
-          <v-col cols="12" md="6">
-            <v-switch v-model="form.isCurrent" label="Currently active" color="primary" hide-details />
-          </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12">
             <v-text-field v-model="form.startYear" label="Start Year" type="number" variant="outlined" density="compact" min="1900" />
           </v-col>
-          <v-col cols="6" md="3">
+          <v-col cols="12">
             <v-text-field v-model="form.endYear" label="End Year" type="number" variant="outlined" density="compact" min="1900" :disabled="form.isCurrent" />
+          </v-col>
+          <v-col cols="12">
+            <v-switch v-model="form.isCurrent" label="Currently active" color="primary" hide-details />
           </v-col>
           <v-col cols="12">
             <v-textarea v-model="form.description" label="Description" variant="outlined" density="compact" rows="2" />
@@ -135,6 +135,11 @@ function openAdd() {
   editingId.value = null
   resetForm()
   showDialog.value = true
+}
+
+function confirmDelete(aff: IProfessionalAffiliation) {
+  deleteTarget.value = aff
+  deleteConfirm.value = true
 }
 
 function editAffiliation(aff: IProfessionalAffiliation) {
