@@ -1,8 +1,9 @@
 package com.glinboy.opportune.enums
 
 enum class LanguageProficiency {
-	NATIVE,
-	FLUENT,
-	CONVERSATIONAL,
-	BASIC
+	ELEMENTARY,
+	LIMITED_WORKING,
+	PROFESSIONAL_WORKING,
+	FULL_PROFESSIONAL,
+	NATIVE_OR_BILINGUAL
 }

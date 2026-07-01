@@ -43,7 +43,7 @@
         @cancel="showDialog = false"
       >
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field
               v-model="form.language"
               label="Language"
@@ -53,7 +53,9 @@
               placeholder="e.g., English, Spanish"
             />
           </v-col>
-          <v-col cols="12" md="6">
+        </v-row>
+        <v-row>
+          <v-col cols="12">
             <v-select
               v-model="form.proficiency"
               label="Proficiency"
@@ -93,10 +95,11 @@ const store = useResumeDataStore()
 const cardOpen = ref(true)
 
 const proficiencyItems = [
-  { title: 'Native', value: 'NATIVE' },
-  { title: 'Fluent', value: 'FLUENT' },
-  { title: 'Conversational', value: 'CONVERSATIONAL' },
-  { title: 'Basic', value: 'BASIC' },
+  { title: 'Elementary proficiency', value: 'ELEMENTARY' },
+  { title: 'Limited working proficiency', value: 'LIMITED_WORKING' },
+  { title: 'Professional working proficiency', value: 'PROFESSIONAL_WORKING' },
+  { title: 'Full professional proficiency', value: 'FULL_PROFESSIONAL' },
+  { title: 'Native or bilingual proficiency', value: 'NATIVE_OR_BILINGUAL' },
 ]
 
 const showDialog = ref(false)
@@ -114,9 +117,17 @@ const form = reactive({
 const rules = { required: (v: string) => !!v || 'This field is required' }
 const formValid = computed(() => !!form.language && !!form.proficiency)
 
+const proficiencyDisplay: Record<LanguageProficiency, string> = {
+  ELEMENTARY: 'Elementary proficiency',
+  LIMITED_WORKING: 'Limited working proficiency',
+  PROFESSIONAL_WORKING: 'Professional working proficiency',
+  FULL_PROFESSIONAL: 'Full professional proficiency',
+  NATIVE_OR_BILINGUAL: 'Native or bilingual proficiency',
+}
+
 function formatProficiency(p?: LanguageProficiency): string {
   if (!p) return ''
-  return p.charAt(0) + p.slice(1).toLowerCase()
+  return proficiencyDisplay[p]
 }
 
 function openAdd() {

@@ -107,7 +107,7 @@ export interface IResumeProject {
   lastModifiedDate?: Date
 }
 
-export type LanguageProficiency = 'NATIVE' | 'FLUENT' | 'CONVERSATIONAL' | 'BASIC'
+export type LanguageProficiency = 'ELEMENTARY' | 'LIMITED_WORKING' | 'PROFESSIONAL_WORKING' | 'FULL_PROFESSIONAL' | 'NATIVE_OR_BILINGUAL'
 
 export interface IResumeCertification {
   id?: string
