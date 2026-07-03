@@ -14,6 +14,7 @@
             <p class="text-caption mt-1">{{ userEmail }}</p>
             <v-divider class="my-3"></v-divider>
             <v-btn
+              block
               color="primary"
               variant="text"
               prepend-icon="mdi-card-account-details-outline"
@@ -24,6 +25,7 @@
             <template v-if="isAdmin">
               <v-divider class="my-3"></v-divider>
               <v-btn
+                block
                 color="primary"
                 variant="text"
                 prepend-icon="mdi-shield-crown-outline"
@@ -33,7 +35,13 @@
               </v-btn>
             </template>
             <v-divider class="my-3"></v-divider>
-            <v-btn color="primary" variant="text" prepend-icon="mdi-logout" @click="handleLogout">
+            <v-btn
+              block
+              color="primary"
+              variant="text"
+              prepend-icon="mdi-logout"
+              @click="handleLogout"
+            >
               Logout
             </v-btn>
           </div>
