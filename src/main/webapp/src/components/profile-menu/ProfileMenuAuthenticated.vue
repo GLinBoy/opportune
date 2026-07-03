@@ -52,21 +52,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth.store'
+import { useProfileStore } from '../../stores/profile.store'
 import ProfileService from '../../services/profile.service'
-import type { IProfile } from '../../models'
 import UserAvatar from '@/components/UserAvatar.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const profileStore = useProfileStore()
 
 const isAdmin = computed(() => authStore.isAdmin)
 const profileService = new ProfileService()
 
-const profile = ref<IProfile | null>(null)
-const isLoading = ref(false)
+const profile = computed(() => profileStore.profile)
 
 const userEmail = computed(() => profile.value?.email || '')
 const fullname = computed(() => {
@@ -78,16 +78,12 @@ const fullname = computed(() => {
 
 const loadProfile = async () => {
   try {
-    isLoading.value = true
     const data = await profileService.getCurrentProfile()
-    profile.value = data
+    profileStore.setProfile(data)
   } catch (error) {
     console.error('Failed to load profile:', error)
-    // Clear auth tokens and redirect to login if profile cannot be loaded
     authStore.clearAuth()
     router.push('/auth/login')
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -102,18 +98,17 @@ const goToAdmin = () => {
 const handleLogout = async () => {
   try {
     await authStore.logout()
-    // Redirect to login page
     router.push('/auth/login')
   } catch (error) {
     console.error('Logout error:', error)
-    // Even if API call fails, clear local auth and redirect
     authStore.clearAuth()
     router.push('/auth/login')
   }
 }
 
-// Load profile on component mount
 onMounted(() => {
-  loadProfile()
+  if (!profileStore.profile) {
+    loadProfile()
+  }
 })
 </script>

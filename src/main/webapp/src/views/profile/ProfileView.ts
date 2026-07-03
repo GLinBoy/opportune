@@ -9,6 +9,7 @@ import SessionsCard from '../../components/profile/SessionsCard.vue'
 import ApiWebhookCard from '../../components/profile/ApiWebhookCard.vue'
 import ResumeTab from '../../components/profile/resume/ResumeTab.vue'
 import { useToastStore } from '../../stores/toast'
+import { useProfileStore } from '../../stores/profile.store'
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -102,6 +103,7 @@ export default defineComponent({
     ]
 
     const toast = useToastStore()
+    const profileStore = useProfileStore()
 
     const markAsModified = () => {
       hasChanges.value = true
@@ -113,6 +115,7 @@ export default defineComponent({
       try {
         await profileService().getCurrentProfile().then(data => {
           profile.value = data
+          profileStore.setProfile(data)
           hasChanges.value = false
         })
       } catch (error) {
@@ -131,6 +134,7 @@ export default defineComponent({
       try {
         await profileService().update(profile.value).then(data => {
           profile.value = data
+          profileStore.setProfile(data)
           hasChanges.value = false
         })
         toast.success('Profile updated successfully!')
@@ -255,6 +259,10 @@ export default defineComponent({
         loadSessions()
       }
     }, { immediate: true })
+
+    watch(profile, (newProfile) => {
+      profileStore.setProfile(newProfile)
+    })
 
     return {
       // Data
