@@ -344,7 +344,12 @@ npm run test:e2e
 
 - Flyway scripts live in `src/main/resources/db/migration/`.
 - Naming: `V<version>__<description>.sql` (e.g. `V2__add_resume_score_columns.sql`).
-- Never modify an already-applied migration — always create a new one.
+- **Pre-release policy:** until the first production release, the schema is still fluid. Fold every
+  schema change directly into `V1__Initial_schema.sql`; do **not** add a new versioned migration.
+  New `V<n>__*.sql` migrations are introduced only after the first release is shipped.
+- After the first release: never modify an already-applied migration — always create a new one.
+- Editing `V1__*.sql` after a database has applied it invalidates the Flyway checksum, so existing
+  development databases must be reset (delete the local H2 file under `build/h2db/`).
 
 ---
 
