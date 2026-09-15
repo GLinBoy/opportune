@@ -69,6 +69,23 @@ CREATE TABLE session (
     CONSTRAINT fk_session_profile FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
 );
 
+-- Create Webhook token table
+-- Raw token values are NEVER persisted: only the SHA-256 hex digest of the token is stored
+-- (token_hash). The raw token is returned exactly once at generation time.
+-- endpoint_identifier is the public path segment; every token owns exactly one endpoint.
+CREATE TABLE webhook_token (
+    id                   UUID         NOT NULL PRIMARY KEY,
+    endpoint_identifier  VARCHAR(64)  NOT NULL UNIQUE,
+    token_hash           VARCHAR(64)  NOT NULL UNIQUE,
+    status               VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'REVOKED')),
+    last_used_at         TIMESTAMP,
+    revoked_at           TIMESTAMP,
+    profile_id           UUID         NOT NULL,
+    created_date         TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    last_modified_date   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_webhook_token_profile FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
+);
+
 -- Create Company table
 CREATE TABLE company (
     id UUID NOT NULL PRIMARY KEY,
@@ -475,6 +492,12 @@ CREATE INDEX idx_session_refresh_token_expiration     ON session(refresh_token_e
 CREATE INDEX idx_session_access_token_expiration      ON session(access_token_expiration);
 -- Status-only: bulk revocation / audit queries
 CREATE INDEX idx_session_status                       ON session(status);
+
+-- Webhook token indexes
+-- Unique lookup indexes for the token-authenticated webhook path, plus per-profile listing.
+CREATE UNIQUE INDEX idx_webhook_token_token_hash          ON webhook_token(token_hash);
+CREATE UNIQUE INDEX idx_webhook_token_endpoint_identifier ON webhook_token(endpoint_identifier);
+CREATE INDEX        idx_webhook_token_profile_id          ON webhook_token(profile_id);
 
 -- System settings singleton table.
 -- Always contains exactly one row (id = 00000000-0000-0000-0000-000000000001).
