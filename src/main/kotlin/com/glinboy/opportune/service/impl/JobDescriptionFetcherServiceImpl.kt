@@ -32,8 +32,7 @@ class JobDescriptionFetcherServiceImpl(
 		log.info("Fetching job description from URL: {}", url)
 
 		// Find the first strategy that can handle this URL
-		val strategy = parserStrategies.firstOrNull { it.canHandle(url) }
-			?: throw IllegalStateException("No parser strategy found that can handle URL: $url")
+		val strategy = findStrategy(url)
 
 		log.debug("Selected parser strategy: {} for URL: {}", strategy.getSourceType(), url)
 
@@ -46,5 +45,30 @@ class JobDescriptionFetcherServiceImpl(
 			throw e
 		}
 	}
+
+	override fun parseContent(url: String, html: String): JobDescriptionContentDTO {
+		require(url.isNotBlank()) { "URL cannot be blank" }
+		require(html.isNotBlank()) { "HTML content cannot be blank" }
+
+		log.info("Parsing captured job description for URL: {}", url)
+
+		// Find the first strategy that can handle this URL
+		val strategy = findStrategy(url)
+
+		log.debug("Selected parser strategy: {} for URL: {}", strategy.getSourceType(), url)
+
+		return try {
+			val result = strategy.parseContent(url, html)
+			log.info("Successfully parsed captured job description from {} (source: {})", url, result.sourceType)
+			result
+		} catch (e: Exception) {
+			log.error("Failed to parse captured job description for URL: {}", url, e)
+			throw e
+		}
+	}
+
+	private fun findStrategy(url: String): JobDescriptionParserStrategy =
+		parserStrategies.firstOrNull { it.canHandle(url) }
+			?: throw IllegalStateException("No parser strategy found that can handle URL: $url")
 }
 

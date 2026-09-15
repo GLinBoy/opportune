@@ -43,6 +43,13 @@ class LinkedInJobDescriptionParserStrategy(
 		return result.copy(sourceType = SOURCE_TYPE)
 	}
 
+	override fun parseContent(url: String, html: String): JobDescriptionContentDTO {
+		log.debug("Parsing captured LinkedIn job posting from URL: {}", url)
+
+		// The content is already captured; reuse the default parsing and tag the source
+		return defaultStrategy.parseContent(url, html).copy(sourceType = SOURCE_TYPE)
+	}
+
 	override fun getSourceType(): String = SOURCE_TYPE
 }
 
