@@ -73,7 +73,18 @@
           />
 
           <!-- API & Webhook Tab -->
-          <ApiWebhookCard v-show="activeTab === 'api'" />
+          <ApiWebhookCard
+            v-show="activeTab === 'api'"
+            :tokens="webhookTokens"
+            :loading="webhookTokensLoading"
+            :generating="webhookTokenGenerating"
+            :generated="generatedWebhookToken"
+            :revoking-id="revokingWebhookTokenId"
+            @refresh="loadWebhookTokens"
+            @generate="generateWebhookToken"
+            @revoke="revokeWebhookToken"
+            @dismiss-generated="dismissGeneratedWebhookToken"
+          />
 
           <!-- Resume Tab -->
           <ResumeTab
