@@ -11,7 +11,11 @@ class CorsConfiguration : WebMvcConfigurer {
 
   override fun addCorsMappings(registry: CorsRegistry) {
     registry.addMapping("/**")
-            .allowedOrigins("http://localhost:8080", "http://localhost:9090")
+            .allowedOriginPatterns(
+                    "http://localhost:8080",
+                    "http://localhost:9090",
+                    "chrome-extension://*"
+            )
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
