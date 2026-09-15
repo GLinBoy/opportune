@@ -18,5 +18,17 @@ interface JobDescriptionFetcherService {
 	 * @throws Exception if fetching or parsing fails
 	 */
 	fun fetchJobDescription(url: String): JobDescriptionContentDTO
+
+	/**
+	 * Parse an already-fetched HTML body for the given URL, selecting the
+	 * appropriate parser strategy based on the URL (LinkedIn, Indeed, or default).
+	 * No network call is performed.
+	 *
+	 * @param url The URL the HTML was captured from
+	 * @param html The already-fetched HTML content
+	 * @return JobDescriptionContentDTO containing the parsed content
+	 * @throws IllegalArgumentException if the URL or HTML is blank
+	 */
+	fun parseContent(url: String, html: String): JobDescriptionContentDTO
 }
 

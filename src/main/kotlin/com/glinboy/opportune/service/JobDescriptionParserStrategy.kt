@@ -25,6 +25,16 @@ interface JobDescriptionParserStrategy {
 	fun fetchContent(url: String): JobDescriptionContentDTO
 
 	/**
+	 * Parse already-fetched HTML content into a job description without
+	 * performing any network call.
+	 *
+	 * @param url The URL the HTML was captured from
+	 * @param html The already-fetched HTML body
+	 * @return JobDescriptionContentDTO containing the parsed content
+	 */
+	fun parseContent(url: String, html: String): JobDescriptionContentDTO
+
+	/**
 	 * Get the source type identifier for this strategy
 	 *
 	 * @return The source type (e.g., "linkedin", "indeed", "default")

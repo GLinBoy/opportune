@@ -64,21 +64,26 @@ class DefaultJobDescriptionParserStrategy : JobDescriptionParserStrategy {
 				log.warn("Non-successful status code {} for URL: {}", response.statusCode(), url)
 			}
 
-			val responseBody = response.body()
-			val pageTitle = extractTitle(responseBody)
-
-			return JobDescriptionContentDTO(
-				content = responseBody,
-				url = url,
-				sourceType = SOURCE_TYPE,
+			return parseContent(url, response.body()).copy(
 				statusCode = response.statusCode(),
-				contentType = response.headers().firstValue("Content-Type").orElse(null),
-				title = pageTitle
+				contentType = response.headers().firstValue("Content-Type").orElse(null)
 			)
 		} catch (e: Exception) {
 			log.error("Error fetching content from URL: {}", url, e)
 			throw RuntimeException("Failed to fetch content from URL: ${e.message}", e)
 		}
+	}
+
+	override fun parseContent(url: String, html: String): JobDescriptionContentDTO {
+		log.debug("Parsing captured content using default strategy for URL: {}", url)
+
+		return JobDescriptionContentDTO(
+			content = html,
+			url = url,
+			sourceType = SOURCE_TYPE,
+			statusCode = 200,
+			title = extractTitle(html)
+		)
 	}
 
 	override fun getSourceType(): String = SOURCE_TYPE
