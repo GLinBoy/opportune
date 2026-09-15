@@ -71,4 +71,16 @@ class WebhookTokenServiceImpl(
 		repository.findByTokenHash(tokenHash)
 			.filter { it.status == WebhookTokenStatus.ACTIVE && it.endpointIdentifier == endpointIdentifier }
 			.orElse(null)
+
+	@Transactional
+	override fun authenticate(tokenHash: String, endpointIdentifier: String): UUID? {
+		val webhookToken = findActiveTokenByHashAndEndpoint(tokenHash, endpointIdentifier) ?: return null
+		repository.save(
+			webhookToken.copy(
+				lastUsedAt = Instant.now(),
+				lastModifiedDate = Instant.now()
+			)
+		)
+		return webhookToken.profile?.id
+	}
 }
