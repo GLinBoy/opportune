@@ -1,7 +1,14 @@
 import { ref, computed, watch, onMounted, defineComponent, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { type IProfile, type IPasswordChangeRequest, type ISession } from '../../models'
+import {
+  type IProfile,
+  type IPasswordChangeRequest,
+  type ISession,
+  type IWebhookToken,
+  type IWebhookTokenGeneration
+} from '../../models'
 import ProfileService from '../../services/profile.service'
+import WebhookTokenService from '../../services/webhook-token.service'
 import { useAuthStore } from '../../stores/auth.store'
 import ProfileInfoCard from '../../components/profile/ProfileInfoCard.vue'
 import PasswordSecurityCard from '../../components/profile/PasswordSecurityCard.vue'
@@ -28,6 +35,7 @@ export default defineComponent({
 
     // Services and dependencies
     const profileService = inject('profileService', () => new ProfileService())
+    const webhookTokenService = new WebhookTokenService()
     const authStore = useAuthStore()
 
     // Main data state
@@ -249,6 +257,65 @@ export default defineComponent({
       }
     }
 
+    // Webhook token state
+    const webhookTokens = ref<IWebhookToken[]>([])
+    const webhookTokensLoading = ref(false)
+    const webhookTokenGenerating = ref(false)
+    const generatedWebhookToken = ref<IWebhookTokenGeneration | null>(null)
+    const revokingWebhookTokenId = ref<string | null>(null)
+
+    // Load webhook tokens
+    const loadWebhookTokens = async () => {
+      webhookTokensLoading.value = true
+      try {
+        const response = await webhookTokenService.getWebhookTokens()
+        webhookTokens.value = response.data
+      } catch (error) {
+        console.error('Failed to load webhook tokens:', error)
+        toast.error('Failed to load webhook tokens. Please try again.')
+      } finally {
+        webhookTokensLoading.value = false
+      }
+    }
+
+    // Generate a webhook token (raw token is shown only once, held in memory until dismissed)
+    const generateWebhookToken = async () => {
+      webhookTokenGenerating.value = true
+      try {
+        generatedWebhookToken.value = await webhookTokenService.generateWebhookToken()
+        toast.success('Webhook token generated. Copy it now — it will not be shown again.')
+        await loadWebhookTokens()
+      } catch (error) {
+        console.error('Failed to generate webhook token:', error)
+        toast.error('Failed to generate webhook token. Please try again.')
+      } finally {
+        webhookTokenGenerating.value = false
+      }
+    }
+
+    // Revoke a webhook token
+    const revokeWebhookToken = async (id: string) => {
+      revokingWebhookTokenId.value = id
+      try {
+        await webhookTokenService.revokeWebhookToken(id)
+        if (generatedWebhookToken.value?.dto.id === id) {
+          generatedWebhookToken.value = null
+        }
+        toast.success('Webhook token revoked successfully.')
+        await loadWebhookTokens()
+      } catch (error) {
+        console.error('Failed to revoke webhook token:', error)
+        toast.error('Failed to revoke webhook token. Please try again.')
+      } finally {
+        revokingWebhookTokenId.value = null
+      }
+    }
+
+    // Discard the one-time reveal so the raw token no longer lives in component state
+    const dismissGeneratedWebhookToken = () => {
+      generatedWebhookToken.value = null
+    }
+
     // Lifecycle
     onMounted(() => {
       loadProfile()
@@ -257,6 +324,14 @@ export default defineComponent({
     watch(() => route.meta.tab, (newTab) => {
       if (newTab === 'sessions' && sessions.value.length === 0) {
         loadSessions()
+      }
+      if (newTab === 'api') {
+        if (webhookTokens.value.length === 0) {
+          loadWebhookTokens()
+        }
+      } else {
+        // Never keep the one-time raw token around after leaving the tab
+        generatedWebhookToken.value = null
       }
     }, { immediate: true })
 
@@ -282,13 +357,23 @@ export default defineComponent({
       sessionsLoading,
       terminatingSessionId,
       highlightedSessionId,
+      // Webhook token data
+      webhookTokens,
+      webhookTokensLoading,
+      webhookTokenGenerating,
+      generatedWebhookToken,
+      revokingWebhookTokenId,
       // Methods
       markAsModified,
       saveProfile,
       validatePasswordForm,
       changePassword,
       loadSessions,
-      terminateSession
+      terminateSession,
+      loadWebhookTokens,
+      generateWebhookToken,
+      revokeWebhookToken,
+      dismissGeneratedWebhookToken
     }
   }
 })
