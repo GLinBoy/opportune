@@ -121,46 +121,10 @@ class ApplicationServiceImpl(
 		return try {
 			log.info("Submitting application URL: {}", submission.url)
 
-			// Fetch job description content
-			val content = jobDescriptionFetcherService.fetchJobDescription(submission.url)
-			log.debug("Successfully fetched content from {} (source: {})", submission.url, content.sourceType)
-
 			// Get current user's profile ID
 			val currentUserId = SecurityUtils.getCurrentUserLoginID()
 
-			// Check if application with this URL already exists for this user
-			val existingApplication = repository.findOne(
-				Specification.allOf<Application>()
-					.and { root, _, criteriaBuilder ->
-						criteriaBuilder.equal(root.get<UUID>("profile").get<UUID>("id"), currentUserId)
-					}
-					.and { root, _, criteriaBuilder ->
-						criteriaBuilder.equal(root.get<String>("url"), submission.url)
-					}
-			)
-
-			if (existingApplication.isPresent) {
-				log.warn("Application with URL {} already exists for user {}", submission.url, currentUserId)
-				throw ResponseStatusException(
-					HttpStatus.CONFLICT,
-					"An application with this URL already exists"
-				)
-			}
-
-			// Create ApplicationDTO with fetched content
-			val applicationDTO = ApplicationDTO(
-				url = submission.url,
-				title = content.title,
-				rawContent = content.content,
-				status = ApplicationStatus.INITIATED,
-				profileId = currentUserId
-			)
-
-			// Save using the service's save method
-			val savedApplication = save(applicationDTO)
-			log.info("Created new application with ID {} from URL {}", savedApplication.id, submission.url)
-
-			Optional.of(savedApplication)
+			Optional.of(createApplicationFromPage(currentUserId, submission.url, null))
 		} catch (e: ResponseStatusException) {
 			// Re-throw ResponseStatusException as-is
 			throw e
@@ -171,6 +135,63 @@ class ApplicationServiceImpl(
 				"Failed to fetch job description from URL: ${e.message}"
 			)
 		}
+	}
+
+	@Transactional
+	override fun createApplicationFromPage(profileId: UUID, url: String, html: String?): ApplicationDTO {
+		val content = resolveJobDescriptionContent(url, html)
+		log.debug("Resolved job description content from {} (source: {})", url, content.sourceType)
+
+		// Check if application with this URL already exists for this user
+		val existingApplication = repository.findOne(
+			Specification.allOf<Application>()
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<UUID>("profile").get<UUID>("id"), profileId)
+				}
+				.and { root, _, criteriaBuilder ->
+					criteriaBuilder.equal(root.get<String>("url"), url)
+				}
+		)
+
+		if (existingApplication.isPresent) {
+			log.warn("Application with URL {} already exists for user {}", url, profileId)
+			throw ResponseStatusException(
+				HttpStatus.CONFLICT,
+				"An application with this URL already exists"
+			)
+		}
+
+		val applicationDTO = ApplicationDTO(
+			url = url,
+			title = content.title,
+			rawContent = content.content,
+			status = ApplicationStatus.INITIATED,
+			profileId = profileId
+		)
+
+		val savedApplication = save(applicationDTO)
+		log.info("Created new application with ID {} from URL {}", savedApplication.id, url)
+		return savedApplication
+	}
+
+	/**
+	 * Parses the captured page content when present, falling back to a server-side fetch if the
+	 * captured HTML is absent or cannot be parsed.
+	 */
+	private fun resolveJobDescriptionContent(url: String, html: String?): JobDescriptionContentDTO {
+		if (!html.isNullOrBlank()) {
+			try {
+				log.debug("Parsing captured page content for {}", url)
+				return jobDescriptionFetcherService.parseContent(url, html)
+			} catch (e: Exception) {
+				log.warn(
+					"Failed to parse captured page content for {} ({}); falling back to server fetch",
+					url,
+					e.javaClass.simpleName
+				)
+			}
+		}
+		return jobDescriptionFetcherService.fetchJobDescription(url)
 	}
 
 	override fun getUserSummery(currentUserID: UUID): UserDashboardSummaryDTO {

@@ -14,6 +14,7 @@ interface ApplicationService : GenericService<UUID, ApplicationDTO> {
 	fun findAllApplicationsForCurrentUser(pageable: Pageable): Page<ApplicationProjection>
 	fun getApplicationDetailsForCurrentUser(id: UUID): Optional<ApplicationDetailsDTO>
 	fun submitApplicationUrl(submission: ApplicationUrlSubmissionDTO): Optional<ApplicationDTO>
+	fun createApplicationFromPage(profileId: UUID, url: String, html: String?): ApplicationDTO
 	fun getUserSummery(currentUserID: UUID): UserDashboardSummaryDTO
 	fun getApplicationStatusDistribution(): List<ApplicationStatusCountDTO>
 	fun getAiQueueCount(): Long
