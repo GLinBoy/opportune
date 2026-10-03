@@ -81,7 +81,7 @@ npm run format
 | Tool       | Version                                                           |
 | ---------- | ----------------------------------------------------------------- |
 | JDK        | 24 (managed by Gradle toolchain — downloaded automatically)       |
-| Node.js    | 24.x (managed by `node-gradle` plugin — downloaded automatically) |
+| Node.js    | 24.21.0 LTS (managed by `node-gradle` plugin — downloaded automatically; pinned in `.nvmrc`) |
 | PostgreSQL | 14+ (only required for `prod` profile; dev uses H2 in-memory)     |
 
 ### Environment files

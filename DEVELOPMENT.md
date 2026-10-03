@@ -57,7 +57,7 @@ Keep new files in the most specific folder that matches their responsibility.
 Make sure you have these installed locally:
 
 - JDK 24 (managed by Gradle toolchain — downloaded automatically if not present)
-- Node.js 24.x (managed by `node-gradle` plugin — downloaded automatically)
+- Node.js 24.21.0 LTS (managed by `node-gradle` plugin — downloaded automatically; pinned in `.nvmrc`)
 - Git
 - PostgreSQL 14+ (only required for the `prod` profile; dev uses H2 in-memory)
 - An IDE suited to the stack, for example IntelliJ IDEA and/or VS Code

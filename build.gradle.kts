@@ -127,7 +127,7 @@ tasks.withType<Test> {
 
 // Node.js configuration
 node {
-	version = "24.16.0"
+	version = "24.21.0"
 	download = true
 	workDir = file("${project.projectDir}/.gradle/nodejs")
 	npmWorkDir = file("${project.projectDir}/.gradle/npm")
