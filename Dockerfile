@@ -1,4 +1,4 @@
-FROM eclipse-temurin:24-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /workspace/app
 
 # Copy Gradle wrapper and build files
@@ -17,7 +17,7 @@ RUN ./gradlew build -x test
 RUN mkdir -p build/libs/dependency && (cd build/libs/dependency; jar -xf ../opportune-*.jar)
 
 
-FROM eclipse-temurin:24-jre-alpine AS runner
+FROM eclipse-temurin:25-jre-alpine AS runner
 VOLUME /tmp
 
 RUN addgroup -S app && adduser -S spring-app -G app
