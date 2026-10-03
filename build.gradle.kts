@@ -1,4 +1,5 @@
 import com.github.gradle.node.npm.task.NpmTask
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
 	kotlin("jvm") version "2.3.21"
@@ -8,7 +9,7 @@ plugins {
 	kotlin("plugin.jpa") version "2.3.21"
 	id("org.ec4j.editorconfig") version "0.1.0"
 	id("com.github.node-gradle.node") version "7.1.0"
-	id("com.github.ben-manes.versions") version "0.54.0"
+	id("com.github.ben-manes.versions") version "0.64.0"
 }
 
 group = "com.glinboy"
@@ -201,4 +202,8 @@ tasks.clean {
 
 tasks.getByName<Jar>("jar") {
 	enabled = false
+}
+
+tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+    rejectPreReleases = true
 }
