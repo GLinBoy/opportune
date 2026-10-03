@@ -34,7 +34,7 @@ repositories {
 
 defaultTasks("bootRun")
 
-extra["springAiVersion"] = "2.0.0-RC2"
+extra["springAiVersion"] = "2.0.1"
 
 // Function to load environment variables from .env files
 fun loadEnvFile(profile: String, warnIfMissing: Boolean = false): Map<String, String> {
@@ -78,12 +78,12 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.2")
-	implementation("nl.basjes.parse.useragent:yauaa:8.1.1")
-	implementation("com.maxmind.geoip2:geoip2:5.1.0")
-	implementation("org.apache.pdfbox:pdfbox:3.0.7")
-	implementation("org.jsoup:jsoup:1.22.2")
+	implementation("nl.basjes.parse.useragent:yauaa:8.2.0")
+	implementation("com.maxmind.geoip2:geoip2:5.2.0")
+	implementation("org.apache.pdfbox:pdfbox:3.0.8")
+	implementation("org.jsoup:jsoup:1.23.2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
