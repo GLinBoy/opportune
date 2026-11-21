@@ -2,11 +2,11 @@ import com.github.gradle.node.npm.task.NpmTask
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-	kotlin("jvm") version "2.3.21"
-	kotlin("plugin.spring") version "2.3.21"
+	kotlin("jvm") version "2.4.21"
+	kotlin("plugin.spring") version "2.4.21"
 	id("org.springframework.boot") version "4.2.0"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("plugin.jpa") version "2.3.21"
+	kotlin("plugin.jpa") version "2.4.21"
 	id("org.ec4j.editorconfig") version "0.1.0"
 	id("com.github.node-gradle.node") version "7.1.0"
 	id("com.github.ben-manes.versions") version "0.64.0"
