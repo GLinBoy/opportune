@@ -18,7 +18,7 @@ description = "Craft smarter resumes and cover letters and track your job search
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(26)
 	}
 }
 
