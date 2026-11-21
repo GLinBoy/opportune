@@ -9,7 +9,7 @@ plugins {
 	kotlin("plugin.jpa") version "2.4.21"
 	id("org.ec4j.editorconfig") version "0.1.0"
 	id("com.github.node-gradle.node") version "7.1.0"
-	id("com.github.ben-manes.versions") version "0.64.0"
+	id("io.github.ben-manes.versions") version "0.67.0"
 }
 
 group = "com.glinboy"
@@ -78,12 +78,12 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
-	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.2")
-	implementation("nl.basjes.parse.useragent:yauaa:8.2.0")
-	implementation("com.maxmind.geoip2:geoip2:5.2.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.1")
+	implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:7.0.3")
+	implementation("nl.basjes.parse.useragent:yauaa:8.3.0")
+	implementation("com.maxmind.geoip2:geoip2:5.3.0")
 	implementation("org.apache.pdfbox:pdfbox:3.0.8")
-	implementation("org.jsoup:jsoup:1.23.2")
+	implementation("org.jsoup:jsoup:1.24.1")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
