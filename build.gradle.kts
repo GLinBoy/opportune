@@ -34,6 +34,34 @@ repositories {
 
 defaultTasks("bootRun")
 
+editorconfig {
+	// Generated, vendor, and tooling directories are not part of the source tree.
+	// Scanning them makes editorconfigCheck slow and memory-hungry (node_modules alone is ~500 MB).
+	excludes = listOf(
+		"**/.git/**",
+		"**/.gradle/**",
+		"**/.idea/**",
+		"**/.kotlin/**",
+		"**/.lsp/**",
+		"**/.pids/**",
+		"**/.logs/**",
+		"**/.clj-kondo/**",
+		"**/build/**",
+		"**/target/**",
+		"**/bin/**",
+		"**/node_modules/**",
+		"**/cypress/screenshots/**",
+		"**/cypress/videos/**",
+		"**/cypress/downloads/**",
+		"**/.github/java-upgrade/**",
+		"**/.github/modernize/**",
+		"**/package-lock.json",
+		"**/.env",
+		"**/.env.*",
+		"**/*.hprof",
+	)
+}
+
 extra["springAiVersion"] = "2.0.1"
 
 // Function to load environment variables from .env files
