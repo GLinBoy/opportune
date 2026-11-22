@@ -58,13 +58,14 @@ server:
 management:
   endpoints:
     web:
+      base-path: /management          # Aligns with SecurityConfiguration and SpaWebFilter
       exposure:
-        include: health,info,metrics,prometheus  # Wildcard only in dev (see application-dev.yml)
+        include: health               # Minimum public surface: health and its probes (see application-dev.yml for dev)
   endpoint:
     health:
       show-details: when-authorized
       probes:
-        enabled: true                 # /actuator/health/liveness and /readiness for Kubernetes
+        enabled: true                 # /management/health/liveness and /readiness for Kubernetes
   health:
     livenessstate:
       enabled: true
