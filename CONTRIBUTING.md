@@ -11,9 +11,10 @@ This project combines a Kotlin/Spring Boot backend with a Vue 3 + Vuetify fronte
 1. [Scope](#scope)
 2. [Core Principles](#core-principles)
 3. [Development Workflow](#development-workflow)
-4. [Documentation Rules](#documentation-rules)
-5. [Pull Requests](#pull-requests)
-6. [Commit Messages](#commit-messages)
+4. [Formatting](#formatting)
+5. [Documentation Rules](#documentation-rules)
+6. [Pull Requests](#pull-requests)
+7. [Commit Messages](#commit-messages)
 
 ---
 
@@ -42,6 +43,7 @@ This repository prefers:
 | Data model               | [`DATA_MODEL.md`](./DATA_MODEL.md) |
 | Security model           | [`SECURITY.md`](./SECURITY.md)   |
 | Testing strategy         | [`TESTING.md`](./TESTING.md)     |
+| Formatting rules         | [`.editorconfig`](./.editorconfig) |
 | Prompt template details  | [`PROMPTS.md`](./PROMPTS.md)     |
 | Architecture decisions   | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
 
@@ -119,9 +121,38 @@ Avoid mixing unrelated UI, backend, and docs changes unless they are directly co
 2. Create a focused branch
 3. Make one coherent change
 4. Test the affected areas — run backend tests (`./gradlew test -Pprofile=test`) and frontend unit tests (`npm run test:unit`). See [`TESTING.md`](./TESTING.md) for full strategy.
-5. Update docs if the change affects architecture, UI rules, AI behavior, or workflow
-6. Commit with a clear message
-7. Open a PR
+5. Check formatting with `./gradlew editorconfigCheck` (auto-fix with `./gradlew editorconfigFormat`).
+6. Update docs if the change affects architecture, UI rules, AI behavior, or workflow
+7. Commit with a clear message
+8. Open a PR
+
+---
+
+## Formatting
+
+The repository uses [EditorConfig](https://editorconfig.org/) as the single source of truth for indentation, line endings, charset, and whitespace. The rules live in [`.editorconfig`](./.editorconfig).
+
+### Local commands
+
+```bash
+# Check every tracked source file
+./gradlew editorconfigCheck
+
+# Auto-fix violations in place
+./gradlew editorconfigFormat
+```
+
+`editorconfigCheck` runs in CI as the **EditorConfig** status check. Run it before opening a PR, or run `editorconfigFormat` and commit the result.
+
+### Line endings
+
+- All text files are checked out with **LF**. `gradlew.bat` is the only CRLF file (see [`.gitattributes`](./.gitattributes)).
+- Do not commit CRLF line endings. If Git reports CRLF or the check flags `end_of_line`, run `git config core.autocrlf false` for this repository and re-checkout the affected files.
+- `.editorconfig` sections apply in order: the common `[*]` block is at the top, and file-specific sections below it override it.
+
+### Excluded paths
+
+`editorconfigCheck` ignores generated and vendor directories such as `.gradle`, `build`, `node_modules`, `bin`, IDE caches, Cypress output, and heap dumps. The list is maintained in the `editorconfig` block in [`build.gradle.kts`](./build.gradle.kts); add an entry there if a new generated directory appears.
 
 ---
 
@@ -186,6 +217,14 @@ A good pull request should:
 - mention any trade-offs
 - note follow-up work if needed
 - include docs updates when relevant
+- pass the required CI checks
+
+### Required checks
+
+The protected branches require these status checks to pass before a pull request can be merged:
+
+- **Backend tests** — full backend suite (`./gradlew test -Pprofile=test`), including the application smoke test.
+- **EditorConfig** — `./gradlew editorconfigCheck`.
 
 ### PR checklist
 
@@ -198,6 +237,7 @@ Before opening a PR, confirm:
 - [ ] Migrations are additive and correctly named.
 - [ ] Related docs were updated.
 - [ ] Tests were added or updated where appropriate.
+- [ ] Formatting passes with `./gradlew editorconfigCheck`.
 - [ ] Removed code is actually unused.
 
 ### Review mindset
