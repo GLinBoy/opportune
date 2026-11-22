@@ -34,6 +34,11 @@ spring:
     username: test
     password: test
 
+management:
+  health:
+    mail:
+      enabled: false          # No mail server runs during tests; this indicator would mark the app DOWN
+
 application:
   security:
     authentication:
